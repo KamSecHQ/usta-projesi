@@ -1,29 +1,30 @@
 import { Link } from 'react-router-dom'
+
 function Hero() {
     return (
-        <section className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-            <span className="text-[#C97D3C] text-sm tracking-widest uppercase font-mono mb-6">
+        <section className="min-h-screen bg-black flex flex-col items-center justify-center text-center px-6">
+            <span className="text-white/50 text-xs tracking-[0.2em] uppercase font-light mb-8">
                 Türkiye'nin Yazılım Çarşısı
             </span>
-            <h1 className="text-[#F3ECE1] text-5xl md:text-6xl font-bold max-w-2xl leading-tight">
-                İşini <span className="text-[#E3B776] italic">emin ellere</span> teslim et.
+            <h1 className="text-white text-6xl md:text-8xl font-semibold max-w-4xl leading-[1.05] tracking-tight">
+                İşini emin ellere teslim et.
             </h1>
-            <p className="text-[#9FC2BC] max-w-xl mt-6 text-lg">
-                Usta, doğrulanmış Türk yazılımcılarla işletmeleri bir araya getiren bir pazaryeri.
+            <p className="text-white/50 max-w-xl mt-8 text-xl font-light leading-relaxed">
+                Doğrulanmış Türk yazılımcılarla işletmeleri bir araya getiren bir pazaryeri.
             </p>
-            <div className="mt-8 flex gap-4">
-                <Link to="/kayit-ol" className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded hover:scale-105 transition-transform
-                ">
+            <div className="mt-12 flex gap-4">
+                <Link
+                    to="/kayit-ol"
+                    className="bg-white text-black font-medium px-8 py-4 rounded-full hover:scale-105 transition-transform text-sm"
+                >
                     Yazılımcı Olarak Katıl
-
                 </Link>
-
-
-                <Link to="/is-ver" className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded  hover:scale-105 transition-transform
-">
+                <Link
+                    to="/is-ver"
+                    className="border border-white/20 text-white font-medium px-8 py-4 rounded-full hover:bg-white/10 hover:scale-105 transition-all text-sm"
+                >
                     İş Vermek İstiyorum
                 </Link>
-
             </div>
         </section>
     )

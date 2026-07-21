@@ -28,7 +28,8 @@ function Navbar() {
     }
 
     return (
-        <header className="sticky top-0 z-50 bg-[#0D2626]/90 backdrop-blur border-b border-[#21504E]">
+        <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
+
             <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
                 <div className="text-[#F3ECE1] font-bold text-xl">
                     USTA<span className="text-[#C97D3C]">.</span>
