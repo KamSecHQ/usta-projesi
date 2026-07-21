@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 function CtaFooter() {
     return (
         <>
@@ -11,9 +12,10 @@ function CtaFooter() {
                         <button className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded">
                             Yazılımcı Olarak Katıl
                         </button>
-                        <button className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded">
+                        <Link to="/is-ver" className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded">
                             İş Vermek İstiyorum
-                        </button>
+                        </Link>
+
                     </div>
                 </div>
             </section>

@@ -16,9 +16,10 @@ function Hero() {
                     Yazılımcı Olarak Katıl
                 </Link>
 
-                <button className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded">
+                <Link to="/is-ver" className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded">
                     İş Vermek İstiyorum
-                </button>
+                </Link>
+
             </div>
         </section>
     )
