@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import UstaCard from './UstaCard'
 
 function Ustalar() {
@@ -35,6 +36,10 @@ function Ustalar() {
                 <h2 className="text-[#F3ECE1] text-3xl font-bold mt-3 mb-12">
                     Ustalarımızdan örnekler
                 </h2>
+                <Link to="/ustalar" className="text-[#C97D3C] text-sm hover:underline mb-8 inline-block">
+                    Tüm ustaları gör →
+                </Link>
+
                 <div className="grid md:grid-cols-3 gap-6">
                     {ustalar.map((usta) => (
                         <UstaCard key={usta.name + usta.role} {...usta} />
