@@ -14,7 +14,7 @@ function KayitOl() {
     async function formGonder(e) {
         e.preventDefault()
         const { error } = await supabase.from('basvurular').insert([
-            { ad: form.firma, email: form.email, uzmanlik: form.ihtiyac, tip: 'is-veren' }
+            { ad: form.ad, email: form.email, uzmanlik: form.uzmanlik, tip: 'yazilimci' }
         ])
         if (error) {
             console.error('Hata:', error)
