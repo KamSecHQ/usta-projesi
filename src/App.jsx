@@ -1,19 +1,16 @@
+import { Routes, Route } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Hero from './components/Hero'
-import Steps from './components/Steps'
-import Ustalar from './components/Ustalar'
-import NedenUsta from './components/NedenUsta'
-import CtaFooter from './components/CtaFooter'
+import Anasayfa from './pages/Anasayfa'
+import KayitOl from './pages/KayitOl'
 
 function App() {
   return (
     <div>
       <Navbar />
-      <Hero />
-      <Steps />
-      <Ustalar />
-      <NedenUsta />
-      <CtaFooter />
+      <Routes>
+        <Route path="/" element={<Anasayfa />} />
+        <Route path="/kayit-ol" element={<KayitOl />} />
+      </Routes>
     </div>
   )
 }

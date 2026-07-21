@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 function Hero() {
     return (
         <section className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
@@ -11,9 +12,10 @@ function Hero() {
                 Usta, doğrulanmış Türk yazılımcılarla işletmeleri bir araya getiren bir pazaryeri.
             </p>
             <div className="mt-8 flex gap-4">
-                <button className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded">
+                <Link to="/kayit-ol" className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded">
                     Yazılımcı Olarak Katıl
-                </button>
+                </Link>
+
                 <button className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded">
                     İş Vermek İstiyorum
                 </button>
