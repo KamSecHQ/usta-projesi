@@ -12,11 +12,15 @@ function Hero() {
                 Usta, doğrulanmış Türk yazılımcılarla işletmeleri bir araya getiren bir pazaryeri.
             </p>
             <div className="mt-8 flex gap-4">
-                <Link to="/kayit-ol" className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded">
+                <Link to="/kayit-ol" className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded hover:scale-105 transition-transform
+                ">
                     Yazılımcı Olarak Katıl
+
                 </Link>
 
-                <Link to="/is-ver" className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded">
+
+                <Link to="/is-ver" className="border border-[#21504E] text-[#F3ECE1] px-6 py-3 rounded  hover:scale-105 transition-transform
+">
                     İş Vermek İstiyorum
                 </Link>
 
