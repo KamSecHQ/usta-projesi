@@ -5,6 +5,10 @@ import KayitOl from './pages/KayitOl'
 import IsVer from './pages/IsVer'
 import AdminPanel from './pages/AdminPanel'
 import TumUstalar from './pages/TumUstalar'
+import GirisYap from './pages/GirisYap'
+import HesapOlustur from './pages/HesapOlustur'
+// ...
+
 
 
 
@@ -15,6 +19,8 @@ function App() {
     <div>
       <Navbar />
       <Routes>
+        <Route path="/giris" element={<GirisYap />} />
+        <Route path="/hesap-olustur" element={<HesapOlustur />} />
         <Route path="/ustalar" element={<TumUstalar />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/" element={<Anasayfa />} />

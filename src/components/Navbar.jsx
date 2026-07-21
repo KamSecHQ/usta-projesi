@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { useAuth } from '../AuthContext'
+import { supabase } from '../supabaseClient'
+import { Link } from 'react-router-dom'
+
 
 function Navbar() {
     const [menuAcik, setMenuAcik] = useState(false)
@@ -8,6 +12,12 @@ function Navbar() {
         { ad: "Nasıl Çalışır", hedef: "surec" },
         { ad: "Neden Usta", hedef: "neden" },
     ]
+    const { user } = useAuth()
+
+    async function cikisYap() {
+        await supabase.auth.signOut()
+    }
+
 
     function bolumeGit(id) {
         setMenuAcik(false)
@@ -36,9 +46,21 @@ function Navbar() {
                         </button>
                     ))}
                 </nav>
-                <button className="hidden md:block border border-[#C97D3C] text-[#C97D3C] px-4 py-2 rounded text-sm hover:bg-[#C97D3C] hover:text-[#0D2626] transition">
-                    Giriş Yap
-                </button>
+                {user ? (
+                    <div className="hidden md:flex items-center gap-3">
+                        <Link to="/admin" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1]">
+                            {user.email}
+                        </Link>
+                        <button onClick={cikisYap} className="border border-[#21504E] text-[#F3ECE1] px-4 py-2 rounded text-sm">
+                            Çıkış Yap
+                        </button>
+                    </div>
+                ) : (
+                    <Link to="/giris" className="hidden md:block border border-[#C97D3C] text-[#C97D3C] px-4 py-2 rounded text-sm hover:bg-[#C97D3C] hover:text-[#0D2626] transition">
+                        Giriş Yap
+                    </Link>
+                )}
+
 
                 {/* Mobil hamburger buton */}
                 <button
