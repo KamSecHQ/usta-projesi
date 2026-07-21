@@ -1,3 +1,4 @@
+import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Steps from './components/Steps'
 import Ustalar from './components/Ustalar'
@@ -7,6 +8,7 @@ import CtaFooter from './components/CtaFooter'
 function App() {
   return (
     <div>
+      <Navbar />
       <Hero />
       <Steps />
       <Ustalar />

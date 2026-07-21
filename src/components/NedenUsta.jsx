@@ -19,7 +19,8 @@ function NedenUsta() {
     ]
 
     return (
-        <section className="bg-[#0D2626] py-24 px-6 border-t border-[#21504E]">
+        <section id="neden" className="bg-[#0D2626] py-24 px-6 border-t border-[#21504E]">
+
             <div className="max-w-5xl mx-auto">
                 <span className="text-[#C97D3C] text-sm tracking-widest uppercase font-mono">
                     Fark
