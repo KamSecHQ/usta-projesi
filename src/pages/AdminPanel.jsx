@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { useAuth } from '../AuthContext'
 
 function AdminPanel() {
+    const { user, yukleniyor: authYukleniyor } = useAuth()
     const [basvurular, setBasvurular] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
+    const [filtre, setFiltre] = useState('tumu')
 
     useEffect(() => {
         async function veriGetir() {
@@ -23,6 +26,24 @@ function AdminPanel() {
         veriGetir()
     }, [])
 
+    useEffect(() => {
+        if (!authYukleniyor && !user) {
+            window.location.href = '/giris'
+        }
+    }, [user, authYukleniyor])
+
+    if (authYukleniyor) {
+        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+    }
+
+    if (!user) {
+        return null
+    }
+
+    const gosterilecekler = filtre === 'tumu'
+        ? basvurular
+        : basvurular.filter((b) => b.tip === filtre)
+
     return (
         <div className="min-h-screen bg-[#0D2626] px-6 py-16">
             <div className="max-w-4xl mx-auto">
@@ -33,13 +54,37 @@ function AdminPanel() {
                     Başvurular ({basvurular.length})
                 </h1>
 
+                <div className="flex gap-2 mb-8">
+                    <button
+                        onClick={() => setFiltre('tumu')}
+                        className={`text-sm px-4 py-2 rounded font-mono ${filtre === 'tumu' ? 'bg-[#C97D3C] text-[#0D2626]' : 'border border-[#21504E] text-[#9FC2BC]'
+                            }`}
+                    >
+                        Tümü ({basvurular.length})
+                    </button>
+                    <button
+                        onClick={() => setFiltre('yazilimci')}
+                        className={`text-sm px-4 py-2 rounded font-mono ${filtre === 'yazilimci' ? 'bg-[#5FA8D3] text-[#0D2626]' : 'border border-[#21504E] text-[#9FC2BC]'
+                            }`}
+                    >
+                        Yazılımcılar ({basvurular.filter((b) => b.tip === 'yazilimci').length})
+                    </button>
+                    <button
+                        onClick={() => setFiltre('is-veren')}
+                        className={`text-sm px-4 py-2 rounded font-mono ${filtre === 'is-veren' ? 'bg-[#C97D3C] text-[#0D2626]' : 'border border-[#21504E] text-[#9FC2BC]'
+                            }`}
+                    >
+                        İş Verenler ({basvurular.filter((b) => b.tip === 'is-veren').length})
+                    </button>
+                </div>
+
                 {yukleniyor ? (
                     <p className="text-[#9FC2BC]">Yükleniyor...</p>
-                ) : basvurular.length === 0 ? (
-                    <p className="text-[#9FC2BC]">Henüz başvuru yok.</p>
+                ) : gosterilecekler.length === 0 ? (
+                    <p className="text-[#9FC2BC]">Bu kategoride başvuru yok.</p>
                 ) : (
                     <div className="flex flex-col gap-3">
-                        {basvurular.map((b) => (
+                        {gosterilecekler.map((b) => (
                             <div
                                 key={b.id}
                                 className="bg-[#123434] border border-[#21504E] rounded p-5"
