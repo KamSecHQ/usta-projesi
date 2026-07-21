@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '../supabaseClient'
+
 
 function IsVer() {
     const [form, setForm] = useState({ firma: "", email: "", ihtiyac: "" })
@@ -9,11 +11,19 @@ function IsVer() {
         setForm({ ...form, [e.target.name]: e.target.value })
     }
 
-    function formGonder(e) {
+    async function formGonder(e) {
         e.preventDefault()
-        console.log("İş talebi:", form)
+        const { error } = await supabase.from('basvurular').insert([
+            { ad: form.firma, email: form.email, uzmanlik: form.ihtiyac, tip: 'is-veren' }
+        ])
+        if (error) {
+            console.error('Hata:', error)
+            alert('Bir sorun oluştu, tekrar dener misin?')
+            return
+        }
         setGonderildi(true)
     }
+
 
     return (
         <div className="min-h-screen bg-[#0D2626] px-6 py-20">
