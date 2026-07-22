@@ -10,13 +10,13 @@ function CtaFooter() {
                     <p className="text-[#9FC2BC] mb-8">Usta'ya katıl, ilk adımı at.</p>
                     <div className="flex gap-4 justify-center flex-wrap">
                         <Link
-                            to="/kayit-ol"
+                            to="/hesap-olustur?rol=yazilimci"
                             className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded-full hover:bg-[#E3B776] hover:scale-105 transition-all duration-300"
                         >
                             Yazılımcı Olarak Katıl
                         </Link>
                         <Link
-                            to="/is-ver"
+                            to="/hesap-olustur?rol=is-veren"
                             className="bg-white/[0.05] backdrop-blur-md border border-white/[0.12] text-[#F3ECE1] px-6 py-3 rounded-full hover:bg-white/[0.1] hover:border-[#C97D3C]/40 hover:scale-105 transition-all duration-300"
                         >
                             İş Vermek İstiyorum

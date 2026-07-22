@@ -8,6 +8,25 @@ function AdminPanel() {
     const [basvurular, setBasvurular] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
     const [filtre, setFiltre] = useState('tumu')
+    const [adminMi, setAdminMi] = useState(null)
+
+    useEffect(() => {
+        async function adminKontrolEt() {
+            if (!user) return
+            const { data, error } = await supabase
+                .from('profiller')
+                .select('admin')
+                .eq('id', user.id)
+                .single()
+
+            if (error || !data?.admin) {
+                setAdminMi(false)
+            } else {
+                setAdminMi(true)
+            }
+        }
+        if (user) adminKontrolEt()
+    }, [user])
 
     useEffect(() => {
         async function veriGetir() {
@@ -23,8 +42,8 @@ function AdminPanel() {
             }
             setYukleniyor(false)
         }
-        veriGetir()
-    }, [])
+        if (adminMi) veriGetir()
+    }, [adminMi])
 
     useEffect(() => {
         if (!authYukleniyor && !user) {
@@ -32,12 +51,22 @@ function AdminPanel() {
         }
     }, [user, authYukleniyor])
 
-    if (authYukleniyor) {
+    if (authYukleniyor || (user && adminMi === null)) {
         return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
     }
 
     if (!user) {
         return null
+    }
+
+    if (adminMi === false) {
+        return (
+            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
+                <h1 className="text-[#F3ECE1] text-2xl font-bold mb-3">Bu sayfayı görme yetkin yok</h1>
+                <p className="text-[#9FC2BC] mb-6">Başvuru paneli sadece yöneticiler içindir.</p>
+                <Link to="/" className="text-[#C97D3C] hover:underline">← Anasayfaya dön</Link>
+            </div>
+        )
     }
 
     const gosterilecekler = filtre === 'tumu'
@@ -93,8 +122,8 @@ function AdminPanel() {
                                     <span className="text-[#F3ECE1] font-semibold">{b.ad}</span>
                                     <span
                                         className={`text-xs font-mono px-2 py-1 rounded ${b.tip === 'yazilimci'
-                                                ? 'text-[#5FA8D3] border border-[#5FA8D3]'
-                                                : 'text-[#C97D3C] border border-[#C97D3C]'
+                                            ? 'text-[#5FA8D3] border border-[#5FA8D3]'
+                                            : 'text-[#C97D3C] border border-[#C97D3C]'
                                             }`}
                                     >
                                         {b.tip === 'yazilimci' ? 'YAZILIMCI' : 'İŞ VEREN'}

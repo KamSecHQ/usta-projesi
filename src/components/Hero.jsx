@@ -16,13 +16,13 @@ function Hero() {
             </p>
             <div className="relative mt-12 flex gap-4 flex-wrap justify-center">
                 <Link
-                    to="/kayit-ol"
+                    to="/hesap-olustur?rol=yazilimci"
                     className="bg-[#C97D3C] text-[#0D2626] font-semibold px-8 py-4 rounded-full hover:bg-[#E3B776] hover:scale-105 transition-all duration-300 text-sm"
                 >
                     Yazılımcı Olarak Katıl
                 </Link>
                 <Link
-                    to="/is-ver"
+                    to="/hesap-olustur?rol=is-veren"
                     className="bg-white/[0.05] backdrop-blur-md border border-white/[0.12] text-[#F3ECE1] font-medium px-8 py-4 rounded-full hover:bg-white/[0.1] hover:border-[#C97D3C]/40 hover:scale-105 transition-all duration-300 text-sm"
                 >
                     İş Vermek İstiyorum

@@ -1,18 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Anasayfa from './pages/Anasayfa'
-import KayitOl from './pages/KayitOl'
-import IsVer from './pages/IsVer'
 import AdminPanel from './pages/AdminPanel'
 import TumUstalar from './pages/TumUstalar'
 import GirisYap from './pages/GirisYap'
 import HesapOlustur from './pages/HesapOlustur'
-// ...
-
-
-
-
-
 
 function App() {
   return (
@@ -24,8 +16,8 @@ function App() {
         <Route path="/ustalar" element={<TumUstalar />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/" element={<Anasayfa />} />
-        <Route path="/kayit-ol" element={<KayitOl />} />
-        <Route path="/is-ver" element={<IsVer />} />
+        <Route path="/kayit-ol" element={<Navigate to="/hesap-olustur?rol=yazilimci" replace />} />
+        <Route path="/is-ver" element={<Navigate to="/hesap-olustur?rol=is-veren" replace />} />
       </Routes>
     </div>
   )

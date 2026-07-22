@@ -1,10 +1,14 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 
 function HesapOlustur() {
+    const [searchParams] = useSearchParams()
+    const varsayilanRol = searchParams.get('rol') === 'is-veren' ? 'is-veren' : 'yazilimci'
+
     const [email, setEmail] = useState("")
     const [sifre, setSifre] = useState("")
+    const [rol, setRol] = useState(varsayilanRol)
     const [hata, setHata] = useState("")
     const [basarili, setBasarili] = useState(false)
     const navigate = useNavigate()
@@ -12,7 +16,11 @@ function HesapOlustur() {
     async function kayitOl(e) {
         e.preventDefault()
         setHata("")
-        const { error } = await supabase.auth.signUp({ email, password: sifre })
+        const { error } = await supabase.auth.signUp({
+            email,
+            password: sifre,
+            options: { data: { rol } }
+        })
         if (error) {
             setHata(error.message)
             return
@@ -39,6 +47,31 @@ function HesapOlustur() {
                     </div>
                 ) : (
                     <form onSubmit={kayitOl} className="flex flex-col gap-4">
+                        <div>
+                            <label className="text-[#9FC2BC] text-sm block mb-2">Ben bir...</label>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setRol("yazilimci")}
+                                    className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "yazilimci"
+                                        ? "bg-[#C97D3C] text-[#0D2626] border-[#C97D3C]"
+                                        : "bg-white/[0.03] text-[#9FC2BC] border-white/[0.1] hover:bg-white/[0.06]"
+                                        }`}
+                                >
+                                    Yazılımcıyım
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setRol("is-veren")}
+                                    className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "is-veren"
+                                        ? "bg-[#C97D3C] text-[#0D2626] border-[#C97D3C]"
+                                        : "bg-white/[0.03] text-[#9FC2BC] border-white/[0.1] hover:bg-white/[0.06]"
+                                        }`}
+                                >
+                                    İş Verenim
+                                </button>
+                            </div>
+                        </div>
                         <div>
                             <label className="text-[#9FC2BC] text-sm block mb-1">E-posta</label>
                             <input
