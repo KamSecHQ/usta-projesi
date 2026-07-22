@@ -1,24 +1,45 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '../supabaseClient'
 import UstaCard from '../components/UstaCard'
+
+function baslangicHarfleri(adSoyad) {
+    if (!adSoyad) return "?"
+    return adSoyad
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((k) => k[0].toUpperCase())
+        .join("")
+}
 
 function TumUstalar() {
     const [arama, setArama] = useState("")
+    const [ustalar, setUstalar] = useState([])
+    const [yukleniyor, setYukleniyor] = useState(true)
 
-    const ustalar = [
-        { initials: "AY", name: "Ahmet Yıldız", role: "Frontend Geliştirici", desc: "React ve modern web arayüzleri konusunda uzman. 12 tamamlanmış proje.", tags: ["React", "Tailwind", "API"] },
-        { initials: "MK", name: "Merve Kaya", role: "Full-Stack Geliştirici", desc: "E-ticaret ve işletme siteleri konusunda deneyimli. 20 tamamlanmış proje.", tags: ["Node.js", "React", "PostgreSQL"] },
-        { initials: "SD", name: "Selin Demir", role: "Mobil Uygulama Geliştirici", desc: "React Native ile iOS/Android uygulamaları. 8 tamamlanmış proje.", tags: ["React Native", "Expo"] },
-        { initials: "BÖ", name: "Berk Öztürk", role: "Backend Geliştirici", desc: "API tasarımı ve veritabanı optimizasyonu konusunda uzman. 15 proje.", tags: ["Node.js", "PostgreSQL", "Docker"] },
-        { initials: "EÇ", name: "Ela Çelik", role: "UI/UX + Frontend", desc: "Tasarım ve kod arasında köprü kuruyor. 10 tamamlanmış proje.", tags: ["Figma", "React", "Tailwind"] },
-    ]
+    useEffect(() => {
+        async function veriGetir() {
+            const { data, error } = await supabase
+                .from('profiller')
+                .select('*')
+                .eq('rol', 'yazilimci')
+                .not('unvan', 'is', null)
+                .order('created_at', { ascending: false })
+
+            if (!error) setUstalar(data)
+            setYukleniyor(false)
+        }
+        veriGetir()
+    }, [])
 
     const filtrelenmis = ustalar.filter((u) => {
         const aramaKucuk = arama.toLowerCase()
+        const teknolojiler = u.teknolojiler || []
         return (
-            u.name.toLowerCase().includes(aramaKucuk) ||
-            u.role.toLowerCase().includes(aramaKucuk) ||
-            u.tags.some((t) => t.toLowerCase().includes(aramaKucuk))
+            (u.ad_soyad || "").toLowerCase().includes(aramaKucuk) ||
+            (u.unvan || "").toLowerCase().includes(aramaKucuk) ||
+            teknolojiler.some((t) => t.toLowerCase().includes(aramaKucuk))
         )
     })
 
@@ -39,16 +60,30 @@ function TumUstalar() {
                     type="text"
                     value={arama}
                     onChange={(e) => setArama(e.target.value)}
-                    placeholder="örn. React, Merve, Mobil..."
+                    placeholder="örn. React, Mobil..."
                     className="w-full max-w-md bg-[#123434] border border-[#21504E] rounded px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C] mb-10"
                 />
 
-                {filtrelenmis.length === 0 ? (
-                    <p className="text-[#9FC2BC]">Aramanla eşleşen usta bulunamadı.</p>
+                {yukleniyor ? (
+                    <p className="text-[#9FC2BC]">Yükleniyor...</p>
+                ) : filtrelenmis.length === 0 ? (
+                    <p className="text-[#9FC2BC]">
+                        {ustalar.length === 0
+                            ? "Henüz profilini tamamlamış bir usta yok."
+                            : "Aramanla eşleşen usta bulunamadı."}
+                    </p>
                 ) : (
                     <div className="grid md:grid-cols-3 gap-6">
                         {filtrelenmis.map((usta) => (
-                            <UstaCard key={usta.name} {...usta} />
+                            <UstaCard
+                                key={usta.id}
+                                initials={baslangicHarfleri(usta.ad_soyad)}
+                                name={usta.ad_soyad || "İsimsiz Usta"}
+                                role={usta.unvan}
+                                desc={usta.bio}
+                                tags={usta.teknolojiler}
+                                onayli={usta.onayli}
+                            />
                         ))}
                     </div>
                 )}

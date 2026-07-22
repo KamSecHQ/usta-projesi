@@ -1,30 +1,37 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { supabase } from '../supabaseClient'
 import UstaCard from './UstaCard'
 
+function baslangicHarfleri(adSoyad) {
+    if (!adSoyad) return "?"
+    return adSoyad
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map((k) => k[0].toUpperCase())
+        .join("")
+}
+
 function Ustalar() {
-    const ustalar = [
-        {
-            initials: "AY",
-            name: "Ad Soyad",
-            role: "Frontend Geliştirici",
-            desc: "React ve modern web arayüzleri konusunda uzman. 12 tamamlanmış proje.",
-            tags: ["React", "Tailwind", "API"]
-        },
-        {
-            initials: "MK",
-            name: "Ad Soyad",
-            role: "Full-Stack Geliştirici",
-            desc: "E-ticaret ve işletme siteleri konusunda deneyimli. 20 tamamlanmış proje.",
-            tags: ["Node.js", "React", "PostgreSQL"]
-        },
-        {
-            initials: "SD",
-            name: "Ad Soyad",
-            role: "Mobil Uygulama Geliştirici",
-            desc: "React Native ile iOS/Android uygulamaları. 8 tamamlanmış proje.",
-            tags: ["React Native", "Expo"]
+    const [ustalar, setUstalar] = useState([])
+    const [yukleniyor, setYukleniyor] = useState(true)
+
+    useEffect(() => {
+        async function veriGetir() {
+            const { data, error } = await supabase
+                .from('profiller')
+                .select('*')
+                .eq('rol', 'yazilimci')
+                .not('unvan', 'is', null)
+                .order('created_at', { ascending: false })
+                .limit(3)
+
+            if (!error) setUstalar(data)
+            setYukleniyor(false)
         }
-    ]
+        veriGetir()
+    }, [])
 
     return (
         <section id="ustalar" className="relative bg-[#0D2626] py-24 px-6">
@@ -42,11 +49,27 @@ function Ustalar() {
                     Tüm ustaları gör →
                 </Link>
 
-                <div className="grid md:grid-cols-3 gap-6">
-                    {ustalar.map((usta) => (
-                        <UstaCard key={usta.name + usta.role} {...usta} />
-                    ))}
-                </div>
+                {yukleniyor ? (
+                    <p className="text-[#9FC2BC] text-sm">Yükleniyor...</p>
+                ) : ustalar.length === 0 ? (
+                    <p className="text-[#9FC2BC] text-sm">
+                        Henüz profilini tamamlamış bir usta yok — ilk sen ol!
+                    </p>
+                ) : (
+                    <div className="grid md:grid-cols-3 gap-6">
+                        {ustalar.map((usta) => (
+                            <UstaCard
+                                key={usta.id}
+                                initials={baslangicHarfleri(usta.ad_soyad)}
+                                name={usta.ad_soyad || "İsimsiz Usta"}
+                                role={usta.unvan}
+                                desc={usta.bio}
+                                tags={usta.teknolojiler}
+                                onayli={usta.onayli}
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </section>
     )

@@ -60,6 +60,12 @@ function Navbar() {
                             </span>
                         </div>
                         <Link
+                            to="/profilim"
+                            className="text-[#9FC2BC] text-sm px-4 py-2 rounded-full hover:text-[#F3ECE1] hover:bg-white/[0.06] transition-all duration-300"
+                        >
+                            Profilim
+                        </Link>
+                        <Link
                             to="/admin"
                             className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#F3ECE1] px-4 py-2 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300"
                         >
@@ -116,6 +122,13 @@ function Navbar() {
                                 </div>
                                 <span className="text-[#9FC2BC] text-sm truncate">{user.email}</span>
                             </div>
+                            <Link
+                                to="/profilim"
+                                onClick={() => setMenuAcik(false)}
+                                className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                            >
+                                Profilim
+                            </Link>
                             <Link
                                 to="/admin"
                                 onClick={() => setMenuAcik(false)}
