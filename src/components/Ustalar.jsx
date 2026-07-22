@@ -58,17 +58,19 @@ function Ustalar() {
                 ) : (
                     <div className="grid md:grid-cols-3 gap-6">
                         {ustalar.map((usta) => (
-                            <UstaCard
-                                key={usta.id}
-                                initials={baslangicHarfleri(usta.ad_soyad)}
-                                name={usta.ad_soyad || "İsimsiz Usta"}
-                                role={usta.unvan}
-                                desc={usta.bio}
-                                tags={usta.teknolojiler}
-                                onayli={usta.onayli}
-                            />
+                            <Link to={`/ustalar/${usta.id}`} key={usta.id}>
+                                <UstaCard
+                                    initials={baslangicHarfleri(usta.ad_soyad)}
+                                    name={usta.ad_soyad || "İsimsiz Usta"}
+                                    role={usta.unvan}
+                                    desc={usta.bio}
+                                    tags={usta.teknolojiler}
+                                    onayli={usta.onayli}
+                                />
+                            </Link>
                         ))}
                     </div>
+
                 )}
             </div>
         </section>

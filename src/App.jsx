@@ -6,6 +6,7 @@ import TumUstalar from './pages/TumUstalar'
 import GirisYap from './pages/GirisYap'
 import HesapOlustur from './pages/HesapOlustur'
 import ProfilDuzenle from './pages/ProfilDuzenle'
+import UstaProfili from './pages/UstaProfili'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/giris" element={<GirisYap />} />
         <Route path="/hesap-olustur" element={<HesapOlustur />} />
         <Route path="/ustalar" element={<TumUstalar />} />
+        <Route path="/ustalar/:id" element={<UstaProfili />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/profilim" element={<ProfilDuzenle />} />
         <Route path="/" element={<Anasayfa />} />
