@@ -27,9 +27,11 @@ function Ustalar() {
     ]
 
     return (
-        <section id="ustalar" className="bg-[#0D2626] py-24 px-6">
+        <section id="ustalar" className="relative bg-[#0D2626] py-24 px-6">
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
 
             <div className="max-w-5xl mx-auto">
+
                 <span className="text-[#C97D3C] text-sm tracking-widest uppercase font-mono">
                     Öne Çıkanlar
                 </span>
