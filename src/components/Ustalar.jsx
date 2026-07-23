@@ -23,6 +23,7 @@ function Ustalar() {
                 .from('profiller')
                 .select('*')
                 .eq('rol', 'yazilimci')
+                .eq('onayli', true)
                 .not('unvan', 'is', null)
                 .order('created_at', { ascending: false })
                 .limit(3)

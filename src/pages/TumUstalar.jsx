@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import UstaCard from '../components/UstaCard'
 
@@ -14,7 +14,9 @@ function baslangicHarfleri(adSoyad) {
 }
 
 function TumUstalar() {
-    const [arama, setArama] = useState("")
+
+    const [searchParams] = useSearchParams()
+    const [arama, setArama] = useState(searchParams.get('arama') || "")
     const [ustalar, setUstalar] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
 
@@ -24,6 +26,7 @@ function TumUstalar() {
                 .from('profiller')
                 .select('*')
                 .eq('rol', 'yazilimci')
+                .eq('onayli', true)
                 .not('unvan', 'is', null)
                 .order('created_at', { ascending: false })
 

@@ -63,7 +63,14 @@ function UstaProfili() {
                     ← Tüm ustalara dön
                 </Link>
 
+                {!profil.onayli && (
+                    <div className="mt-4 bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#9FC2BC] text-sm">
+                        Bu profil henüz yönetici onayından geçmedi, bu yüzden Ustalar listesinde ve aramada görünmüyor. Yalnızca bu doğrudan linkle görüntülenebiliyor.
+                    </div>
+                )}
+
                 {/* Header */}
+
                 <div className="relative bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6 mb-6 overflow-hidden">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_0%,rgba(201,125,60,0.08),transparent)]" />
 
