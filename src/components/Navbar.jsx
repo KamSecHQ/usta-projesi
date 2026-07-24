@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../AuthContext'
 import { supabase } from '../supabaseClient'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import AramaPaleti from './AramaPaleti'
 import DuyuruCubugu from './DuyuruCubugu'
 
@@ -9,16 +9,20 @@ import DuyuruCubugu from './DuyuruCubugu'
 function Navbar() {
     const [menuAcik, setMenuAcik] = useState(false)
     const [hesapMenuAcik, setHesapMenuAcik] = useState(false)
+    const [kesfetMenuAcik, setKesfetMenuAcik] = useState(false)
     const [aramaAcik, setAramaAcik] = useState(false)
     const [kaydirildi, setKaydirildi] = useState(false)
     const hesapMenuRef = useRef(null)
+    const kesfetMenuRef = useRef(null)
+    const bekleyenHedef = useRef(null)
 
-    const linkler = [
-        { ad: "Ustalar", hedef: "ustalar" },
+    const kesfetLinkleri = [
         { ad: "Nasıl Çalışır", hedef: "surec" },
         { ad: "Neden Usta", hedef: "neden" },
     ]
     const { user } = useAuth()
+    const navigate = useNavigate()
+    const location = useLocation()
 
     async function cikisYap() {
         await supabase.auth.signOut()
@@ -26,16 +30,36 @@ function Navbar() {
 
     function bolumeGit(id) {
         setMenuAcik(false)
-        const eleman = document.getElementById(id)
-        if (eleman) {
-            eleman.scrollIntoView({ behavior: "smooth" })
+        setKesfetMenuAcik(false)
+        if (location.pathname !== "/") {
+            bekleyenHedef.current = id
+            navigate("/")
+            return
         }
+        const eleman = document.getElementById(id)
+        if (eleman) eleman.scrollIntoView({ behavior: "smooth" })
     }
+
+    // Başka bir sayfadayken bir bölüme gitmek istendiyse, anasayfaya
+    // döndükten sonra hedefe kaydır.
+    useEffect(() => {
+        if (location.pathname === "/" && bekleyenHedef.current) {
+            const hedef = bekleyenHedef.current
+            bekleyenHedef.current = null
+            setTimeout(() => {
+                const eleman = document.getElementById(hedef)
+                if (eleman) eleman.scrollIntoView({ behavior: "smooth" })
+            }, 80)
+        }
+    }, [location.pathname])
 
     useEffect(() => {
         function disariTiklandi(e) {
             if (hesapMenuRef.current && !hesapMenuRef.current.contains(e.target)) {
                 setHesapMenuAcik(false)
+            }
+            if (kesfetMenuRef.current && !kesfetMenuRef.current.contains(e.target)) {
+                setKesfetMenuAcik(false)
             }
         }
         document.addEventListener("mousedown", disariTiklandi)
@@ -77,21 +101,47 @@ function Navbar() {
                 >
 
                     {/* Logo */}
-                    <div className="text-[#F3ECE1] font-semibold text-lg tracking-tight">
+                    <Link to="/" className="text-[#F3ECE1] font-semibold text-lg tracking-tight">
                         USTA<span className="text-[#C97D3C]">.</span>
-                    </div>
+                    </Link>
 
                     {/* Masaüstü menü */}
                     <nav className="hidden md:flex items-center gap-1">
-                        {linkler.map((link) => (
+                        <Link
+                            to="/ustalar"
+                            className="text-[#9FC2BC] text-sm px-4 py-2 rounded-full hover:text-[#F3ECE1] hover:bg-white/[0.06] transition-all duration-300"
+                        >
+                            Ustalar
+                        </Link>
+
+                        <div className="relative" ref={kesfetMenuRef}>
                             <button
-                                key={link.hedef}
-                                onClick={() => bolumeGit(link.hedef)}
-                                className="text-[#9FC2BC] text-sm px-4 py-2 rounded-full hover:text-[#F3ECE1] hover:bg-white/[0.06] transition-all duration-300"
+                                onClick={() => setKesfetMenuAcik(!kesfetMenuAcik)}
+                                className="flex items-center gap-1.5 text-[#9FC2BC] text-sm px-4 py-2 rounded-full hover:text-[#F3ECE1] hover:bg-white/[0.06] transition-all duration-300"
                             >
-                                {link.ad}
+                                Keşfet
+                                <svg
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                                    className={`w-3 h-3 transition-transform duration-300 ${kesfetMenuAcik ? "rotate-180" : ""}`}
+                                >
+                                    <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
                             </button>
-                        ))}
+                            {kesfetMenuAcik && (
+                                <div className="absolute left-0 mt-2 w-48 bg-[#123434]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden py-1.5">
+                                    {kesfetLinkleri.map((link) => (
+                                        <button
+                                            key={link.hedef}
+                                            onClick={() => bolumeGit(link.hedef)}
+                                            className="w-full flex items-center px-4 py-2.5 text-[#9FC2BC] text-sm text-left hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                        >
+                                            {link.ad}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
                         <button
                             onClick={() => setAramaAcik(true)}
                             className="flex items-center gap-2 text-[#9FC2BC] text-sm px-3.5 py-2 ml-1 rounded-full border border-white/[0.08] hover:border-white/[0.18] hover:bg-white/[0.04] hover:text-[#F3ECE1] transition-all duration-300"
@@ -193,7 +243,14 @@ function Navbar() {
                 {/* Mobil açılır menü */}
                 {menuAcik && (
                     <nav className="md:hidden flex flex-col gap-1 px-6 pb-6 pt-2 bg-[#0D2626]/95 backdrop-blur-2xl border-t border-white/[0.06]">
-                        {linkler.map((link) => (
+                        <Link
+                            to="/ustalar"
+                            onClick={() => setMenuAcik(false)}
+                            className="text-[#9FC2BC] text-left px-4 py-3 rounded-xl hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                        >
+                            Ustalar
+                        </Link>
+                        {kesfetLinkleri.map((link) => (
                             <button
                                 key={link.hedef}
                                 onClick={() => bolumeGit(link.hedef)}
