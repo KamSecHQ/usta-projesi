@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
+import ProjeKarti from '../components/ProjeKarti'
+import { IskeletProfilBasligi, IskeletProjeKarti } from '../components/Iskelet'
 
 
 function baslangicHarfleri(adSoyad) {
@@ -16,7 +18,6 @@ function UstaProfili() {
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
     useSayfaBasligi(profil ? `${profil.ad_soyad || "Usta"} — ${profil.unvan || "Portföy"}` : "Portföy")
-
 
     useEffect(() => {
         async function veriGetir() {
@@ -46,7 +47,19 @@ function UstaProfili() {
     }, [id])
 
     if (yukleniyor) {
-        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+        return (
+            <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+                <div className="max-w-3xl mx-auto">
+                    <div className="h-4 w-32 bg-white/[0.06] rounded animate-pulse mb-6" />
+                    <IskeletProfilBasligi />
+                    <div className="h-6 w-28 bg-white/[0.06] rounded animate-pulse mt-10 mb-4" />
+                    <div className="grid sm:grid-cols-2 gap-4">
+                        <IskeletProjeKarti />
+                        <IskeletProjeKarti />
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     if (bulunamadi) {
@@ -74,7 +87,6 @@ function UstaProfili() {
                 )}
 
                 {/* Header */}
-
                 <div className="relative bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6 mb-6 overflow-hidden">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_0%,rgba(201,125,60,0.08),transparent)]" />
 
@@ -138,31 +150,7 @@ function UstaProfili() {
                 ) : (
                     <div className="grid sm:grid-cols-2 gap-4">
                         {projeler.map((p) => (
-                            <div key={p.id} className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-5 hover:border-[#C97D3C]/40 hover:bg-white/[0.05] transition-all duration-300">
-                                <div className="flex items-start justify-between gap-2">
-                                    <h3 className="text-[#F3ECE1] font-semibold">{p.baslik}</h3>
-                                    {p.link && (
-                                        <a
-                                            href={p.link}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="text-[#C97D3C] text-sm shrink-0 hover:underline"
-                                        >
-                                            İncele ↗
-                                        </a>
-                                    )}
-                                </div>
-                                {p.aciklama && (
-                                    <p className="text-[#9FC2BC] text-sm mt-2">{p.aciklama}</p>
-                                )}
-                                <div className="flex gap-2 flex-wrap mt-3">
-                                    {(p.teknolojiler || []).map((t) => (
-                                        <span key={t} className="text-[#9FC2BC] text-xs border border-white/[0.1] px-2 py-0.5 rounded-full font-mono">
-                                            {t}
-                                        </span>
-                                    ))}
-                                </div>
-                            </div>
+                            <ProjeKarti key={p.id} proje={p} />
                         ))}
                     </div>
                 )}

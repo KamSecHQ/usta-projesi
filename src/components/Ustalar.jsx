@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import UstaCard from './UstaCard'
+import { IskeletUstaKarti } from './Iskelet'
+
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
@@ -51,8 +53,13 @@ function Ustalar() {
                 </Link>
 
                 {yukleniyor ? (
-                    <p className="text-[#9FC2BC] text-sm">Yükleniyor...</p>
+                    <div className="grid md:grid-cols-3 gap-6">
+                        <IskeletUstaKarti />
+                        <IskeletUstaKarti />
+                        <IskeletUstaKarti />
+                    </div>
                 ) : ustalar.length === 0 ? (
+
                     <p className="text-[#9FC2BC] text-sm">
                         Henüz profilini tamamlamış bir usta yok — ilk sen ol!
                     </p>

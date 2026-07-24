@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
+import ProjeKarti from '../components/ProjeKarti'
+import { IskeletProjeKarti } from '../components/Iskelet'
 
 
 function baslangicHarfleri(adSoyad) {
@@ -309,29 +311,27 @@ function ProfilDuzenle() {
                             </form>
 
                             {projelerYukleniyor ? (
-                                <p className="text-[#9FC2BC] text-sm">Yükleniyor...</p>
+                                <div className="grid sm:grid-cols-2 gap-3">
+                                    <IskeletProjeKarti />
+                                    <IskeletProjeKarti />
+                                </div>
                             ) : projeler.length === 0 ? (
                                 <p className="text-[#9FC2BC] text-sm">Henüz proje eklemedin.</p>
                             ) : (
-                                <div className="flex flex-col gap-3">
+                                <div className="grid sm:grid-cols-2 gap-3">
                                     {projeler.map((p) => (
-                                        <div key={p.id} className="bg-white/[0.02] border border-white/[0.06] rounded-xl p-4 flex justify-between items-start gap-3">
-                                            <div className="min-w-0">
-                                                <div className="text-[#F3ECE1] font-medium">{p.baslik}</div>
-                                                {p.aciklama && <p className="text-[#9FC2BC] text-sm mt-1">{p.aciklama}</p>}
-                                                <div className="flex gap-2 flex-wrap mt-2">
-                                                    {(p.teknolojiler || []).map((t) => (
-                                                        <span key={t} className="text-[#9FC2BC] text-xs border border-white/[0.1] px-2 py-0.5 rounded-full font-mono">{t}</span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <button
-                                                onClick={() => projeSil(p.id)}
-                                                className="shrink-0 text-[#9FC2BC] hover:text-red-300 text-sm transition-colors"
-                                            >
-                                                Sil
-                                            </button>
-                                        </div>
+                                        <ProjeKarti
+                                            key={p.id}
+                                            proje={p}
+                                            aksiyon={
+                                                <button
+                                                    onClick={() => projeSil(p.id)}
+                                                    className="text-[#9FC2BC] hover:text-red-300 text-xs transition-colors"
+                                                >
+                                                    Sil
+                                                </button>
+                                            }
+                                        />
                                     ))}
                                 </div>
                             )}

@@ -10,10 +10,14 @@ function Navbar() {
     const [menuAcik, setMenuAcik] = useState(false)
     const [hesapMenuAcik, setHesapMenuAcik] = useState(false)
     const [kesfetMenuAcik, setKesfetMenuAcik] = useState(false)
+    const [olusturMenuAcik, setOlusturMenuAcik] = useState(false)
     const [aramaAcik, setAramaAcik] = useState(false)
     const [kaydirildi, setKaydirildi] = useState(false)
+    const [adminMi, setAdminMi] = useState(false)
+    const [bekleyenSayisi, setBekleyenSayisi] = useState(0)
     const hesapMenuRef = useRef(null)
     const kesfetMenuRef = useRef(null)
+    const olusturMenuRef = useRef(null)
     const bekleyenHedef = useRef(null)
 
     const kesfetLinkleri = [
@@ -53,6 +57,37 @@ function Navbar() {
         }
     }, [location.pathname])
 
+    // Kullanıcı admin mi? Adminse, onay bekleyen profil sayısını çek
+    // (bildirim zilindeki rozet için — gerçek veri, sahte sayı değil).
+    useEffect(() => {
+        async function adminVeBekleyenleriGetir() {
+            if (!user) {
+                setAdminMi(false)
+                setBekleyenSayisi(0)
+                return
+            }
+            const { data: profil } = await supabase
+                .from('profiller')
+                .select('admin')
+                .eq('id', user.id)
+                .single()
+
+            const gercekAdmin = !!profil?.admin
+            setAdminMi(gercekAdmin)
+
+            if (gercekAdmin) {
+                const { count } = await supabase
+                    .from('profiller')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('rol', 'yazilimci')
+                    .eq('onayli', false)
+                    .not('unvan', 'is', null)
+                setBekleyenSayisi(count || 0)
+            }
+        }
+        adminVeBekleyenleriGetir()
+    }, [user, location.pathname])
+
     useEffect(() => {
         function disariTiklandi(e) {
             if (hesapMenuRef.current && !hesapMenuRef.current.contains(e.target)) {
@@ -60,6 +95,9 @@ function Navbar() {
             }
             if (kesfetMenuRef.current && !kesfetMenuRef.current.contains(e.target)) {
                 setKesfetMenuAcik(false)
+            }
+            if (olusturMenuRef.current && !olusturMenuRef.current.contains(e.target)) {
+                setOlusturMenuAcik(false)
             }
         }
         document.addEventListener("mousedown", disariTiklandi)
@@ -155,69 +193,197 @@ function Navbar() {
                         </button>
                     </nav>
 
-                    {user ? (
-                        <div className="hidden md:block relative" ref={hesapMenuRef}>
+                    {/* Sağ taraf: hızlı oluştur + bildirim + hesap */}
+                    <div className="hidden md:flex items-center gap-2">
+
+                        {/* "+" Hızlı Oluştur menüsü (GitHub'daki artı butonu gibi) */}
+                        <div className="relative" ref={olusturMenuRef}>
                             <button
-                                onClick={() => setHesapMenuAcik(!hesapMenuAcik)}
-                                className="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.18] hover:bg-white/[0.06] transition-all duration-300"
+                                onClick={() => setOlusturMenuAcik(!olusturMenuAcik)}
+                                className="w-8 h-8 flex items-center justify-center text-[#9FC2BC] rounded-full hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-all duration-300"
+                                aria-label="Hızlı oluştur"
                             >
-                                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] text-xs font-semibold shrink-0">
-                                    {user.email?.[0]?.toUpperCase()}
-                                </div>
-                                <span className="text-[#9FC2BC] text-xs max-w-[130px] truncate">
-                                    {user.email}
-                                </span>
-                                <svg
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                                    className={`w-3.5 h-3.5 text-[#9FC2BC] transition-transform duration-300 ${hesapMenuAcik ? "rotate-180" : ""}`}
-                                >
-                                    <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-4.5 h-4.5">
+                                    <path d="M12 5v14M5 12h14" strokeLinecap="round" />
                                 </svg>
                             </button>
-
-                            {hesapMenuAcik && (
-                                <div className="absolute right-0 mt-2 w-56 bg-[#123434]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden">
-                                    <div className="px-4 py-3 border-b border-white/[0.08]">
-                                        <div className="text-[#F3ECE1] text-sm font-medium truncate">{user.email}</div>
-                                    </div>
-                                    <div className="py-1.5">
-                                        <Link
-                                            to="/profilim"
-                                            onClick={() => setHesapMenuAcik(false)}
-                                            className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
-                                        >
-                                            Profilim
-                                        </Link>
-                                        <Link
-                                            to="/admin"
-                                            onClick={() => setHesapMenuAcik(false)}
-                                            className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
-                                        >
-                                            Başvurular
-                                        </Link>
-                                    </div>
-                                    <div className="border-t border-white/[0.08] py-1.5">
-                                        <button
-                                            onClick={() => { setHesapMenuAcik(false); cikisYap() }}
-                                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm text-left hover:bg-red-400/[0.08] hover:text-red-300 transition-colors duration-200"
-                                        >
-                                            Çıkış Yap
-                                        </button>
-                                    </div>
+                            {olusturMenuAcik && (
+                                <div className="absolute right-0 mt-2 w-56 bg-[#123434]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden py-1.5">
+                                    {user ? (
+                                        <>
+                                            <Link
+                                                to="/profilim"
+                                                onClick={() => setOlusturMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
+                                                    <path d="M4 4h6l2 2h8v12a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" strokeLinecap="round" strokeLinejoin="round" />
+                                                </svg>
+                                                Yeni Proje Ekle
+                                            </Link>
+                                            <Link
+                                                to={`/ustalar/${user.id}`}
+                                                onClick={() => setOlusturMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
+                                                    <circle cx="12" cy="8" r="4" />
+                                                    <path d="M4 21v-1a8 8 0 0116 0v1" strokeLinecap="round" />
+                                                </svg>
+                                                Portföyümü Görüntüle
+                                            </Link>
+                                            <div className="h-px bg-white/[0.08] my-1.5" />
+                                            <Link
+                                                to="/ustalar"
+                                                onClick={() => setOlusturMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                            >
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
+                                                    <circle cx="11" cy="11" r="7" />
+                                                    <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
+                                                </svg>
+                                                Yazılımcı Bul
+                                            </Link>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Link
+                                                to="/hesap-olustur?rol=yazilimci"
+                                                onClick={() => setOlusturMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                            >
+                                                Yazılımcı Olarak Katıl
+                                            </Link>
+                                            <Link
+                                                to="/hesap-olustur?rol=is-veren"
+                                                onClick={() => setOlusturMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                            >
+                                                İş Vermek İstiyorum
+                                            </Link>
+                                        </>
+                                    )}
                                 </div>
                             )}
                         </div>
-                    ) : (
-                        <Link
-                            to="/giris"
-                            className="hidden md:block bg-white/[0.05] backdrop-blur-md border border-[#C97D3C]/50 text-[#E3B776] px-5 py-2 rounded-full text-sm font-medium hover:bg-[#C97D3C] hover:text-[#0D2626] hover:border-[#C97D3C] transition-all duration-300"
-                        >
-                            Giriş Yap
-                        </Link>
-                    )}
+
+                        {/* Bildirim zili — sadece adminler için, gerçek onay bekleyen sayısı */}
+                        {adminMi && (
+                            <Link
+                                to="/admin"
+                                className="relative w-8 h-8 flex items-center justify-center text-[#9FC2BC] rounded-full hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-all duration-300"
+                                aria-label="Onay bekleyen profiller"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4.5 h-4.5">
+                                    <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                {bekleyenSayisi > 0 && (
+                                    <span className="absolute -top-0.5 -right-0.5 bg-[#C97D3C] text-[#0D2626] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                        {bekleyenSayisi > 9 ? "9+" : bekleyenSayisi}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
+
+                        {user ? (
+                            <div className="relative" ref={hesapMenuRef}>
+                                <button
+                                    onClick={() => setHesapMenuAcik(!hesapMenuAcik)}
+                                    className="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.18] hover:bg-white/[0.06] transition-all duration-300"
+                                >
+                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] text-xs font-semibold shrink-0">
+                                        {user.email?.[0]?.toUpperCase()}
+                                    </div>
+                                    <span className="text-[#9FC2BC] text-xs max-w-[130px] truncate">
+                                        {user.email}
+                                    </span>
+                                    <svg
+                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                                        className={`w-3.5 h-3.5 text-[#9FC2BC] transition-transform duration-300 ${hesapMenuAcik ? "rotate-180" : ""}`}
+                                    >
+                                        <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                                    </svg>
+                                </button>
+
+                                {hesapMenuAcik && (
+                                    <div className="absolute right-0 mt-2 w-56 bg-[#123434]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden">
+                                        <div className="px-4 py-3 border-b border-white/[0.08]">
+                                            <div className="text-[#F3ECE1] text-sm font-medium truncate">{user.email}</div>
+                                            {adminMi && (
+                                                <span className="inline-block mt-1.5 text-[#C97D3C] text-[10px] font-mono border border-[#C97D3C]/30 rounded-full px-2 py-0.5">
+                                                    YÖNETİCİ
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="py-1.5">
+                                            <Link
+                                                to="/profilim"
+                                                onClick={() => setHesapMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                            >
+                                                Profilim
+                                            </Link>
+                                            {adminMi && (
+                                                <Link
+                                                    to="/admin"
+                                                    onClick={() => setHesapMenuAcik(false)}
+                                                    className="flex items-center justify-between gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                                >
+                                                    Yönetim Paneli
+                                                    {bekleyenSayisi > 0 && (
+                                                        <span className="bg-[#C97D3C]/15 text-[#C97D3C] text-[10px] font-mono rounded-full px-1.5 py-0.5">
+                                                            {bekleyenSayisi}
+                                                        </span>
+                                                    )}
+                                                </Link>
+                                            )}
+                                            <Link
+                                                to="/ayarlar"
+                                                onClick={() => setHesapMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                            >
+                                                Ayarlar
+                                            </Link>
+                                        </div>
+                                        <div className="border-t border-white/[0.08] py-1.5">
+                                            <button
+                                                onClick={() => { setHesapMenuAcik(false); cikisYap() }}
+                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm text-left hover:bg-red-400/[0.08] hover:text-red-300 transition-colors duration-200"
+                                            >
+                                                Çıkış Yap
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <Link
+                                to="/giris"
+                                className="bg-white/[0.05] backdrop-blur-md border border-[#C97D3C]/50 text-[#E3B776] px-5 py-2 rounded-full text-sm font-medium hover:bg-[#C97D3C] hover:text-[#0D2626] hover:border-[#C97D3C] transition-all duration-300"
+                            >
+                                Giriş Yap
+                            </Link>
+                        )}
+                    </div>
 
                     {/* Mobil sağ taraf: arama + hamburger */}
                     <div className="md:hidden flex items-center gap-1">
+                        {adminMi && bekleyenSayisi > 0 && (
+                            <Link
+                                to="/admin"
+                                className="relative w-9 h-9 flex items-center justify-center text-[#9FC2BC]"
+                                aria-label="Onay bekleyen profiller"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
+                                    <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
+                                    <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                <span className="absolute top-0.5 right-0.5 bg-[#C97D3C] text-[#0D2626] text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                    {bekleyenSayisi > 9 ? "9+" : bekleyenSayisi}
+                                </span>
+                            </Link>
+                        )}
                         <button
                             onClick={() => setAramaAcik(true)}
                             className="w-9 h-9 flex items-center justify-center text-[#9FC2BC]"
@@ -268,7 +434,14 @@ function Navbar() {
                                     <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] text-sm font-semibold shrink-0">
                                         {user.email?.[0]?.toUpperCase()}
                                     </div>
-                                    <span className="text-[#9FC2BC] text-sm truncate">{user.email}</span>
+                                    <div className="min-w-0">
+                                        <span className="text-[#9FC2BC] text-sm truncate block">{user.email}</span>
+                                        {adminMi && (
+                                            <span className="inline-block mt-0.5 text-[#C97D3C] text-[10px] font-mono border border-[#C97D3C]/30 rounded-full px-2 py-0.5">
+                                                YÖNETİCİ
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <Link
                                     to="/profilim"
@@ -277,12 +450,21 @@ function Navbar() {
                                 >
                                     Profilim
                                 </Link>
+                                {adminMi && (
+                                    <Link
+                                        to="/admin"
+                                        onClick={() => setMenuAcik(false)}
+                                        className="bg-white/[0.05] border border-white/[0.1] text-[#F3ECE1] px-4 py-3 rounded-xl text-sm font-medium text-center hover:bg-white/[0.1] transition-all duration-300"
+                                    >
+                                        Yönetim Paneli {bekleyenSayisi > 0 && `(${bekleyenSayisi})`}
+                                    </Link>
+                                )}
                                 <Link
-                                    to="/admin"
+                                    to="/ayarlar"
                                     onClick={() => setMenuAcik(false)}
-                                    className="bg-white/[0.05] border border-white/[0.1] text-[#F3ECE1] px-4 py-3 rounded-xl text-sm font-medium text-center hover:bg-white/[0.1] transition-all duration-300"
+                                    className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
                                 >
-                                    Başvurular
+                                    Ayarlar
                                 </Link>
                                 <button
                                     onClick={() => { setMenuAcik(false); cikisYap() }}

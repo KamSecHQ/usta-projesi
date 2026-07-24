@@ -3,6 +3,8 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import UstaCard from '../components/UstaCard'
 import useSayfaBasligi from '../useSayfaBasligi'
+import { IskeletUstaKarti } from '../components/Iskelet'
+
 
 
 function baslangicHarfleri(adSoyad) {
@@ -72,8 +74,16 @@ function TumUstalar() {
                 />
 
                 {yukleniyor ? (
-                    <p className="text-[#9FC2BC]">Yükleniyor...</p>
+                    <div className="grid md:grid-cols-3 gap-6">
+                        <IskeletUstaKarti />
+                        <IskeletUstaKarti />
+                        <IskeletUstaKarti />
+                        <IskeletUstaKarti />
+                        <IskeletUstaKarti />
+                        <IskeletUstaKarti />
+                    </div>
                 ) : filtrelenmis.length === 0 ? (
+
                     <p className="text-[#9FC2BC]">
                         {ustalar.length === 0
                             ? "Henüz profilini tamamlamış bir usta yok."
