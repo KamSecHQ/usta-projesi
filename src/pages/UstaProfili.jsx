@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import useSayfaBasligi from '../useSayfaBasligi'
+
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
@@ -13,6 +15,8 @@ function UstaProfili() {
     const [projeler, setProjeler] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
+    useSayfaBasligi(profil ? `${profil.ad_soyad || "Usta"} — ${profil.unvan || "Portföy"}` : "Portföy")
+
 
     useEffect(() => {
         async function veriGetir() {

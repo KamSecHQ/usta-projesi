@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import useSayfaBasligi from '../useSayfaBasligi'
+
 
 function GirisYap() {
+    useSayfaBasligi('Giriş Yap')
+
     const [email, setEmail] = useState("")
     const [sifre, setSifre] = useState("")
     const [hata, setHata] = useState("")

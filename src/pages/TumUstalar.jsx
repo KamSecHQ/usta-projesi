@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import UstaCard from '../components/UstaCard'
+import useSayfaBasligi from '../useSayfaBasligi'
+
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
@@ -14,6 +16,8 @@ function baslangicHarfleri(adSoyad) {
 }
 
 function TumUstalar() {
+    useSayfaBasligi('Tüm Ustalar')
+
 
     const [searchParams] = useSearchParams()
     const [arama, setArama] = useState(searchParams.get('arama') || "")

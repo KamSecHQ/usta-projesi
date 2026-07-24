@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../AuthContext'
+import useSayfaBasligi from '../useSayfaBasligi'
+
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
@@ -38,6 +40,8 @@ function ProfilKarti({ profil, aksiyonlar }) {
 }
 
 function AdminPanel() {
+    useSayfaBasligi('Yönetim Paneli')
+
     const { user, yukleniyor: authYukleniyor } = useAuth()
     const [adminMi, setAdminMi] = useState(null)
     const [sekme, setSekme] = useState('bekleyen')

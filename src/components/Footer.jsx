@@ -38,6 +38,8 @@ function Footer() {
                         <div className="flex flex-col gap-2.5">
                             <a href="mailto:merhaba@usta.app" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">merhaba@usta.app</a>
                             <span className="text-[#9FC2BC]/60 text-sm">İstanbul, Türkiye</span>
+                            <Link to="/gizlilik" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">Gizlilik Politikası</Link>
+
                         </div>
                     </div>
                 </div>

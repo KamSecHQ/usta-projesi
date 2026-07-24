@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../AuthContext'
+import useSayfaBasligi from '../useSayfaBasligi'
+
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
@@ -9,6 +11,8 @@ function baslangicHarfleri(adSoyad) {
 }
 
 function ProfilDuzenle() {
+    useSayfaBasligi('Portföyümü Düzenle')
+
     const { user, yukleniyor: authYukleniyor } = useAuth()
     const [yukleniyor, setYukleniyor] = useState(true)
     const [kaydediliyor, setKaydediliyor] = useState(false)

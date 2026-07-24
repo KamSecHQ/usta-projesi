@@ -7,8 +7,12 @@ import NedenUsta from '../components/NedenUsta'
 import SSS from '../components/SSS'
 import CtaFooter from '../components/CtaFooter'
 import Footer from '../components/Footer'
+import useSayfaBasligi from '../useSayfaBasligi'
+
 
 function Anasayfa() {
+    useSayfaBasligi(null)
+
     return (
         <div>
             <Hero />

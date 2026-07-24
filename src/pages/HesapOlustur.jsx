@@ -1,8 +1,12 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import useSayfaBasligi from '../useSayfaBasligi'
+
 
 function HesapOlustur() {
+    useSayfaBasligi('Hesap Oluştur')
+
     const [searchParams] = useSearchParams()
     const varsayilanRol = searchParams.get('rol') === 'is-veren' ? 'is-veren' : 'yazilimci'
 

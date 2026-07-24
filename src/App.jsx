@@ -7,6 +7,8 @@ import GirisYap from './pages/GirisYap'
 import HesapOlustur from './pages/HesapOlustur'
 import ProfilDuzenle from './pages/ProfilDuzenle'
 import UstaProfili from './pages/UstaProfili'
+import GizlilikPolitikasi from './pages/GizlilikPolitikasi'
+import SayfaBulunamadi from './pages/SayfaBulunamadi'
 
 function App() {
   return (
@@ -19,9 +21,11 @@ function App() {
         <Route path="/ustalar/:id" element={<UstaProfili />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/profilim" element={<ProfilDuzenle />} />
+        <Route path="/gizlilik" element={<GizlilikPolitikasi />} />
         <Route path="/" element={<Anasayfa />} />
         <Route path="/kayit-ol" element={<Navigate to="/hesap-olustur?rol=yazilimci" replace />} />
         <Route path="/is-ver" element={<Navigate to="/hesap-olustur?rol=is-veren" replace />} />
+        <Route path="*" element={<SayfaBulunamadi />} />
       </Routes>
     </div>
   )
