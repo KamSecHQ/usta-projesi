@@ -20,6 +20,20 @@ export function AuthProvider({ children }) {
         return () => listener.subscription.unsubscribe()
     }, [])
 
+    // Çevrimiçi göstergesi için "son görülme" nabzı: kullanıcı giriş
+    // yapmışken belirli aralıklarla profilinin son_gorulme alanını günceller.
+    useEffect(() => {
+        if (!user) return
+
+        function nabizAt() {
+            supabase.from('profiller').update({ son_gorulme: new Date().toISOString() }).eq('id', user.id)
+        }
+
+        nabizAt()
+        const aralik = setInterval(nabizAt, 4 * 60 * 1000)
+        return () => clearInterval(aralik)
+    }, [user])
+
     return (
         <AuthContext.Provider value={{ user, yukleniyor }}>
             {children}

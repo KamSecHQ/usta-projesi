@@ -100,7 +100,12 @@ function TumUstalar() {
                                     desc={usta.bio}
                                     tags={usta.teknolojiler}
                                     onayli={usta.onayli}
+                                    musaitlik={usta.musaitlik}
+                                    sonGorulme={usta.son_gorulme}
+                                    ucretMin={usta.saatlik_ucret_min}
+                                    ucretMax={usta.saatlik_ucret_max}
                                 />
+
                             </Link>
                         ))}
                     </div>

@@ -10,7 +10,7 @@ function baslangicHarfleri(adSoyad) {
     return adSoyad.split(" ").filter(Boolean).slice(0, 2).map((k) => k[0].toUpperCase()).join("")
 }
 
-function ProfilKarti({ profil, aksiyonlar }) {
+function ProfilKarti({ profil, aksiyonlar, onTelefonDogrula }) {
     const teknolojiler = profil.teknolojiler || []
     return (
         <div className="bg-[#123434] border border-[#21504E] rounded-xl p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
@@ -27,6 +27,21 @@ function ProfilKarti({ profil, aksiyonlar }) {
                             <span key={t} className="text-[#9FC2BC] text-xs border border-white/[0.1] px-2 py-0.5 rounded-full font-mono">{t}</span>
                         ))}
                     </div>
+                    {profil.telefon && (
+                        <div className="flex items-center gap-2 mt-2.5">
+                            <span className="text-[#9FC2BC] text-xs font-mono">📞 {profil.telefon}</span>
+                            {profil.telefon_dogrulandi ? (
+                                <span className="text-[#4ADE80] text-xs">✓ Doğrulandı</span>
+                            ) : (
+                                <button
+                                    onClick={() => onTelefonDogrula(profil.id)}
+                                    className="text-[#C97D3C] text-xs hover:underline"
+                                >
+                                    Telefonu Doğrula
+                                </button>
+                            )}
+                        </div>
+                    )}
                     <Link to={`/ustalar/${profil.id}`} target="_blank" className="text-[#C97D3C] text-xs hover:underline mt-2 inline-block">
                         Portföyü görüntüle ↗
                     </Link>
@@ -116,6 +131,11 @@ function AdminPanel() {
         profilleriGetir()
     }
 
+    async function telefonDogrula(id) {
+        await supabase.from('profiller').update({ telefon_dogrulandi: true }).eq('id', id)
+        profilleriGetir()
+    }
+
     if (authYukleniyor || (user && adminMi === null)) {
         return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
     }
@@ -178,6 +198,7 @@ function AdminPanel() {
                                 <ProfilKarti
                                     key={p.id}
                                     profil={p}
+                                    onTelefonDogrula={telefonDogrula}
                                     aksiyonlar={
                                         <button
                                             onClick={() => onayla(p.id)}
@@ -203,6 +224,7 @@ function AdminPanel() {
                                 <ProfilKarti
                                     key={p.id}
                                     profil={p}
+                                    onTelefonDogrula={telefonDogrula}
                                     aksiyonlar={
                                         <button
                                             onClick={() => onayiKaldir(p.id)}
