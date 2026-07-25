@@ -7,10 +7,155 @@ import ProjeKarti from '../components/ProjeKarti'
 import { IskeletProjeKarti } from '../components/Iskelet'
 import { musaitlikBilgisi, ucretAraligiGoster, videoEmbedUrl } from '../ustaYardimcilari'
 
+const ONE_CIKAN_LIMIT = 3
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
     return adSoyad.split(" ").filter(Boolean).slice(0, 2).map((k) => k[0].toUpperCase()).join("")
+}
+
+function ProjeFormu({ inputClass, baslangic, oneCikanSayisi, gonderiliyor, onKaydet, onIptal, gonderMetni }) {
+    const [baslik, setBaslik] = useState(baslangic?.baslik || "")
+    const [aciklama, setAciklama] = useState(baslangic?.aciklama || "")
+    const [link, setLink] = useState(baslangic?.link || "")
+    const [teknolojiMetni, setTeknolojiMetni] = useState((baslangic?.teknolojiler || []).join(", "))
+    const [kapakUrl, setKapakUrl] = useState(baslangic?.kapak_gorseli_url || "")
+    const [rol, setRol] = useState(baslangic?.rol || "")
+    const [problem, setProblem] = useState(baslangic?.problem || "")
+    const [cozum, setCozum] = useState(baslangic?.cozum || "")
+    const [sonuc, setSonuc] = useState(baslangic?.sonuc || "")
+    const [oneCikan, setOneCikan] = useState(baslangic?.one_cikan || false)
+
+    const oneCikanEngelli = !oneCikan && oneCikanSayisi >= ONE_CIKAN_LIMIT
+
+    function gonder(e) {
+        e.preventDefault()
+        if (!baslik.trim()) return
+        onKaydet({
+            baslik,
+            aciklama: aciklama || null,
+            link: link || null,
+            teknolojiler: teknolojiMetni.split(",").map((t) => t.trim()).filter((t) => t.length > 0),
+            kapak_gorseli_url: kapakUrl || null,
+            rol: rol || null,
+            problem: problem || null,
+            cozum: cozum || null,
+            sonuc: sonuc || null,
+            one_cikan: oneCikan,
+        })
+    }
+
+    return (
+        <form onSubmit={gonder} className="flex flex-col gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl p-4">
+            <input
+                type="text"
+                value={baslik}
+                onChange={(e) => setBaslik(e.target.value)}
+                placeholder="Proje başlığı"
+                className={inputClass}
+            />
+            <textarea
+                value={aciklama}
+                onChange={(e) => setAciklama(e.target.value)}
+                rows={2}
+                placeholder="Kısa özet (kartlarda görünür)"
+                className={inputClass + " resize-none"}
+            />
+            <div className="grid sm:grid-cols-2 gap-3">
+                <input
+                    type="url"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
+                    placeholder="Canlı proje linki (isteğe bağlı)"
+                    className={inputClass}
+                />
+                <input
+                    type="text"
+                    value={teknolojiMetni}
+                    onChange={(e) => setTeknolojiMetni(e.target.value)}
+                    placeholder="Teknolojiler (virgülle ayır)"
+                    className={inputClass}
+                />
+            </div>
+            <div className="grid sm:grid-cols-2 gap-3">
+                <input
+                    type="url"
+                    value={kapakUrl}
+                    onChange={(e) => setKapakUrl(e.target.value)}
+                    placeholder="Kapak görseli linki (isteğe bağlı)"
+                    className={inputClass}
+                />
+                <input
+                    type="text"
+                    value={rol}
+                    onChange={(e) => setRol(e.target.value)}
+                    placeholder="Bu projedeki rolün (örn. Tek geliştirici)"
+                    className={inputClass}
+                />
+            </div>
+
+            <div className="h-px bg-white/[0.06] my-1" />
+            <p className="text-[#9FC2BC]/60 text-xs -mt-1">
+                Aşağıdakiler doldurulursa proje detay sayfasında "Problem → Çözüm → Sonuç" formatında tam bir vaka çalışması olarak gösterilir.
+            </p>
+            <textarea
+                value={problem}
+                onChange={(e) => setProblem(e.target.value)}
+                rows={2}
+                placeholder="Problem — müşteri ya da kullanıcı hangi sorunu yaşıyordu?"
+                className={inputClass + " resize-none"}
+            />
+            <textarea
+                value={cozum}
+                onChange={(e) => setCozum(e.target.value)}
+                rows={2}
+                placeholder="Çözüm — nasıl bir yaklaşım/teknoloji ile çözdün?"
+                className={inputClass + " resize-none"}
+            />
+            <textarea
+                value={sonuc}
+                onChange={(e) => setSonuc(e.target.value)}
+                rows={2}
+                placeholder="Sonuç — ölçülebilir bir etki oldu mu? (örn. yükleme süresi %40 azaldı)"
+                className={inputClass + " resize-none"}
+            />
+
+            <label className="flex items-center gap-2.5 text-[#9FC2BC] text-sm">
+                <input
+                    type="checkbox"
+                    checked={oneCikan}
+                    disabled={oneCikanEngelli}
+                    onChange={(e) => setOneCikan(e.target.checked)}
+                    className="w-4 h-4 accent-[#C97D3C]"
+                />
+                Öne çıkan proje olarak sabitle (en fazla {ONE_CIKAN_LIMIT})
+            </label>
+            {oneCikanEngelli && (
+                <p className="text-[#9FC2BC]/50 text-xs">
+                    En fazla {ONE_CIKAN_LIMIT} proje sabitlenebilir — yeni birini sabitlemek için önce birinin sabitini kaldır.
+                </p>
+            )}
+
+            <div className="flex gap-2 mt-1">
+                <button
+                    type="submit"
+                    disabled={gonderiliyor || !baslik.trim()}
+                    className="bg-white/[0.05] border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300 disabled:opacity-40"
+                >
+                    {gonderiliyor ? "Kaydediliyor..." : gonderMetni}
+                </button>
+                {onIptal && (
+                    <button
+                        type="button"
+                        onClick={onIptal}
+                        className="text-[#9FC2BC] text-sm px-4 py-2.5 hover:text-[#F3ECE1] transition-colors"
+                    >
+                        İptal
+                    </button>
+                )}
+            </div>
+        </form>
+    )
 }
 
 function ProfilDuzenle() {
@@ -30,7 +175,6 @@ function ProfilDuzenle() {
     const [teknolojiler, setTeknolojiler] = useState([])
     const [teknolojiGirdisi, setTeknolojiGirdisi] = useState("")
 
-    // Faz 1 — profil zenginleştirme alanları
     const [telefon, setTelefon] = useState("")
     const [telefonDogrulandi, setTelefonDogrulandi] = useState(false)
     const [musaitlik, setMusaitlik] = useState("musait")
@@ -41,11 +185,9 @@ function ProfilDuzenle() {
 
     const [projeler, setProjeler] = useState([])
     const [projelerYukleniyor, setProjelerYukleniyor] = useState(true)
-    const [yeniProjeBaslik, setYeniProjeBaslik] = useState("")
-    const [yeniProjeAciklama, setYeniProjeAciklama] = useState("")
-    const [yeniProjeLink, setYeniProjeLink] = useState("")
-    const [yeniProjeTeknoloji, setYeniProjeTeknoloji] = useState("")
-    const [projeEkleniyor, setProjeEkleniyor] = useState(false)
+    const [yeniProjeAcik, setYeniProjeAcik] = useState(false)
+    const [projeGonderiliyor, setProjeGonderiliyor] = useState(false)
+    const [duzenlenenId, setDuzenlenenId] = useState(null)
 
     useEffect(() => {
         async function profilGetir() {
@@ -76,18 +218,19 @@ function ProfilDuzenle() {
         if (user) profilGetir()
     }, [user])
 
-    useEffect(() => {
-        async function projeleriGetir() {
-            if (!user) return
-            const { data, error } = await supabase
-                .from('projeler')
-                .select('*')
-                .eq('kullanici_id', user.id)
-                .order('created_at', { ascending: false })
+    async function projeleriGetir() {
+        if (!user) return
+        const { data, error } = await supabase
+            .from('projeler')
+            .select('*')
+            .eq('kullanici_id', user.id)
+            .order('created_at', { ascending: false })
 
-            if (!error) setProjeler(data)
-            setProjelerYukleniyor(false)
-        }
+        if (!error) setProjeler(data)
+        setProjelerYukleniyor(false)
+    }
+
+    useEffect(() => {
         if (user) projeleriGetir()
     }, [user])
 
@@ -141,35 +284,30 @@ function ProfilDuzenle() {
         }
     }
 
-    async function projeEkle(e) {
-        e.preventDefault()
-        if (!yeniProjeBaslik.trim()) return
-        setProjeEkleniyor(true)
-
-        const teknolojiDizisi = yeniProjeTeknoloji
-            .split(",")
-            .map((t) => t.trim())
-            .filter((t) => t.length > 0)
-
-        const { data, error } = await supabase
+    async function projeEkle(veriler) {
+        setProjeGonderiliyor(true)
+        const { error } = await supabase
             .from('projeler')
-            .insert({
-                kullanici_id: user.id,
-                baslik: yeniProjeBaslik,
-                aciklama: yeniProjeAciklama,
-                link: yeniProjeLink,
-                teknolojiler: teknolojiDizisi,
-            })
-            .select()
-            .single()
+            .insert({ kullanici_id: user.id, ...veriler })
 
-        setProjeEkleniyor(false)
-        if (!error && data) {
-            setProjeler([data, ...projeler])
-            setYeniProjeBaslik("")
-            setYeniProjeAciklama("")
-            setYeniProjeLink("")
-            setYeniProjeTeknoloji("")
+        setProjeGonderiliyor(false)
+        if (!error) {
+            setYeniProjeAcik(false)
+            projeleriGetir()
+        }
+    }
+
+    async function projeGuncelle(id, veriler) {
+        setProjeGonderiliyor(true)
+        const { error } = await supabase
+            .from('projeler')
+            .update(veriler)
+            .eq('id', id)
+
+        setProjeGonderiliyor(false)
+        if (!error) {
+            setDuzenlenenId(null)
+            projeleriGetir()
         }
     }
 
@@ -201,6 +339,7 @@ function ProfilDuzenle() {
     const gomulVideo = videoEmbedUrl(videoUrl)
     const onizlemeUcret = ucretAraligiGoster(ucretMin || null, ucretMax || null)
     const onizlemeMusaitlik = musaitlikBilgisi(musaitlik)
+    const oneCikanSayisi = projeler.filter((p) => p.one_cikan).length
 
     return (
         <div className="min-h-screen bg-[#0D2626] px-6 py-16">
@@ -384,48 +523,31 @@ function ProfilDuzenle() {
 
                         {/* Projelerim */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mt-4">
-                            <h2 className="text-[#F3ECE1] font-semibold mb-1">Projelerim</h2>
+                            <div className="flex items-center justify-between mb-1">
+                                <h2 className="text-[#F3ECE1] font-semibold">Projelerim</h2>
+                                {!yeniProjeAcik && (
+                                    <button
+                                        onClick={() => setYeniProjeAcik(true)}
+                                        className="text-[#C97D3C] text-sm hover:underline"
+                                    >
+                                        + Proje Ekle
+                                    </button>
+                                )}
+                            </div>
                             <p className="text-[#9FC2BC] text-sm mb-5">Portföyünde öne çıkacak çalışmalarını ekle.</p>
 
-                            <form onSubmit={projeEkle} className="flex flex-col gap-3 mb-6 bg-white/[0.02] border border-white/[0.06] rounded-xl p-4">
-                                <input
-                                    type="text"
-                                    value={yeniProjeBaslik}
-                                    onChange={(e) => setYeniProjeBaslik(e.target.value)}
-                                    placeholder="Proje başlığı"
-                                    className={inputClass}
-                                />
-                                <textarea
-                                    value={yeniProjeAciklama}
-                                    onChange={(e) => setYeniProjeAciklama(e.target.value)}
-                                    rows={2}
-                                    placeholder="Kısa açıklama"
-                                    className={inputClass + " resize-none"}
-                                />
-                                <div className="grid sm:grid-cols-2 gap-3">
-                                    <input
-                                        type="url"
-                                        value={yeniProjeLink}
-                                        onChange={(e) => setYeniProjeLink(e.target.value)}
-                                        placeholder="Proje linki (isteğe bağlı)"
-                                        className={inputClass}
-                                    />
-                                    <input
-                                        type="text"
-                                        value={yeniProjeTeknoloji}
-                                        onChange={(e) => setYeniProjeTeknoloji(e.target.value)}
-                                        placeholder="Teknolojiler (virgülle ayır)"
-                                        className={inputClass}
+                            {yeniProjeAcik && (
+                                <div className="mb-6">
+                                    <ProjeFormu
+                                        inputClass={inputClass}
+                                        oneCikanSayisi={oneCikanSayisi}
+                                        gonderiliyor={projeGonderiliyor}
+                                        onKaydet={projeEkle}
+                                        onIptal={() => setYeniProjeAcik(false)}
+                                        gonderMetni="Projeyi Kaydet"
                                     />
                                 </div>
-                                <button
-                                    type="submit"
-                                    disabled={projeEkleniyor || !yeniProjeBaslik.trim()}
-                                    className="bg-white/[0.05] border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300 disabled:opacity-40 self-start"
-                                >
-                                    {projeEkleniyor ? "Ekleniyor..." : "+ Proje Ekle"}
-                                </button>
-                            </form>
+                            )}
 
                             {projelerYukleniyor ? (
                                 <div className="grid sm:grid-cols-2 gap-3">
@@ -437,18 +559,40 @@ function ProfilDuzenle() {
                             ) : (
                                 <div className="grid sm:grid-cols-2 gap-3">
                                     {projeler.map((p) => (
-                                        <ProjeKarti
-                                            key={p.id}
-                                            proje={p}
-                                            aksiyon={
-                                                <button
-                                                    onClick={() => projeSil(p.id)}
-                                                    className="text-[#9FC2BC] hover:text-red-300 text-xs transition-colors"
-                                                >
-                                                    Sil
-                                                </button>
-                                            }
-                                        />
+                                        duzenlenenId === p.id ? (
+                                            <div key={p.id} className="sm:col-span-2">
+                                                <ProjeFormu
+                                                    inputClass={inputClass}
+                                                    baslangic={p}
+                                                    oneCikanSayisi={projeler.filter((x) => x.one_cikan && x.id !== p.id).length}
+                                                    gonderiliyor={projeGonderiliyor}
+                                                    onKaydet={(veriler) => projeGuncelle(p.id, veriler)}
+                                                    onIptal={() => setDuzenlenenId(null)}
+                                                    gonderMetni="Değişiklikleri Kaydet"
+                                                />
+                                            </div>
+                                        ) : (
+                                            <ProjeKarti
+                                                key={p.id}
+                                                proje={p}
+                                                aksiyon={
+                                                    <div className="flex gap-4">
+                                                        <button
+                                                            onClick={() => setDuzenlenenId(p.id)}
+                                                            className="text-[#9FC2BC] hover:text-[#F3ECE1] text-xs transition-colors"
+                                                        >
+                                                            Düzenle
+                                                        </button>
+                                                        <button
+                                                            onClick={() => projeSil(p.id)}
+                                                            className="text-[#9FC2BC] hover:text-red-300 text-xs transition-colors"
+                                                        >
+                                                            Sil
+                                                        </button>
+                                                    </div>
+                                                }
+                                            />
+                                        )
                                     ))}
                                 </div>
                             )}
@@ -509,6 +653,7 @@ function ProfilDuzenle() {
                             <div className="h-px bg-white/[0.08] mb-4" />
                             <div className="text-[#9FC2BC] text-xs font-mono">
                                 {projeler.length} proje eklendi
+                                {oneCikanSayisi > 0 && ` · ${oneCikanSayisi} öne çıkan`}
                             </div>
                         </div>
                     </div>

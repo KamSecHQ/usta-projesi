@@ -11,28 +11,30 @@ import GizlilikPolitikasi from './pages/GizlilikPolitikasi'
 import SayfaBulunamadi from './pages/SayfaBulunamadi'
 import Ayarlar from './pages/Ayarlar'
 import Favorilerim from './pages/Favorilerim'
+import ProjeDetay from './pages/ProjeDetay'
 
 function App() {
-  return (
-    <div>
-      <Navbar />
-      <Routes>
-        <Route path="/giris" element={<GirisYap />} />
-        <Route path="/hesap-olustur" element={<HesapOlustur />} />
-        <Route path="/ustalar" element={<TumUstalar />} />
-        <Route path="/ustalar/:id" element={<UstaProfili />} />
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/profilim" element={<ProfilDuzenle />} />
-        <Route path="/gizlilik" element={<GizlilikPolitikasi />} />
-        <Route path="/ayarlar" element={<Ayarlar />} />
-        <Route path="/favorilerim" element={<Favorilerim />} />
-        <Route path="/" element={<Anasayfa />} />
-        <Route path="/kayit-ol" element={<Navigate to="/hesap-olustur?rol=yazilimci" replace />} />
-        <Route path="/is-ver" element={<Navigate to="/hesap-olustur?rol=is-veren" replace />} />
-        <Route path="*" element={<SayfaBulunamadi />} />
-      </Routes>
-    </div>
-  )
+    return (
+        <div>
+            <Navbar />
+            <Routes>
+                <Route path="/giris" element={<GirisYap />} />
+                <Route path="/hesap-olustur" element={<HesapOlustur />} />
+                <Route path="/ustalar" element={<TumUstalar />} />
+                <Route path="/ustalar/:id" element={<UstaProfili />} />
+                <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/profilim" element={<ProfilDuzenle />} />
+                <Route path="/gizlilik" element={<GizlilikPolitikasi />} />
+                <Route path="/ayarlar" element={<Ayarlar />} />
+                <Route path="/favorilerim" element={<Favorilerim />} />
+                <Route path="/proje/:id" element={<ProjeDetay />} />
+                <Route path="/" element={<Anasayfa />} />
+                <Route path="/kayit-ol" element={<Navigate to="/hesap-olustur?rol=yazilimci" replace />} />
+                <Route path="/is-ver" element={<Navigate to="/hesap-olustur?rol=is-veren" replace />} />
+                <Route path="*" element={<SayfaBulunamadi />} />
+            </Routes>
+        </div>
+    )
 }
 
 export default App

@@ -41,9 +41,15 @@ function UstaProfili() {
                 .eq('kullanici_id', id)
                 .order('created_at', { ascending: false })
 
+            const siraliProjeler = (projeData || []).slice().sort((a, b) => {
+                if (a.one_cikan === b.one_cikan) return 0
+                return a.one_cikan ? -1 : 1
+            })
+
             setProfil(profilData)
-            setProjeler(projeData || [])
+            setProjeler(siraliProjeler)
             setYukleniyor(false)
+
         }
         veriGetir()
     }, [id])
