@@ -4,6 +4,8 @@ import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
 import ProjeKarti from '../components/ProjeKarti'
 import { IskeletProfilBasligi, IskeletProjeKarti } from '../components/Iskelet'
+import FavoriButonu from '../components/FavoriButonu'
+
 
 
 function baslangicHarfleri(adSoyad) {
@@ -140,6 +142,8 @@ function UstaProfili() {
                         >
                             Bu Ustayla Çalış
                         </Link>
+                        <FavoriButonu ustaId={profil.id} />
+
                     </div>
                 </div>
 

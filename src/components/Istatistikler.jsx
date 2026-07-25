@@ -25,15 +25,16 @@ function useSayac(hedef, sureMs = 1200) {
 function IstatistikKutu({ hedef, etiket }) {
     const deger = useSayac(hedef)
     return (
-        <div className="text-center">
-            <div className="text-[#F3ECE1] text-4xl md:text-5xl font-bold tabular-nums">
+        <div className="text-center px-1">
+            <div className="text-[#F3ECE1] text-2xl sm:text-4xl md:text-5xl font-bold tabular-nums">
                 {hedef === null ? "—" : deger}
                 <span className="text-[#C97D3C]">+</span>
             </div>
-            <div className="text-[#9FC2BC] text-sm mt-2">{etiket}</div>
+            <div className="text-[#9FC2BC] text-xs sm:text-sm mt-2 leading-tight">{etiket}</div>
         </div>
     )
 }
+
 
 function Istatistikler() {
     const [veriler, setVeriler] = useState({

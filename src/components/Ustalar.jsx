@@ -68,6 +68,7 @@ function Ustalar() {
                         {ustalar.map((usta) => (
                             <Link to={`/ustalar/${usta.id}`} key={usta.id}>
                                 <UstaCard
+                                    id={usta.id}
                                     initials={baslangicHarfleri(usta.ad_soyad)}
                                     name={usta.ad_soyad || "İsimsiz Usta"}
                                     role={usta.unvan}

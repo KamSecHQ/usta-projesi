@@ -301,7 +301,7 @@ function ProfilDuzenle() {
                         {/* Müsaitlik */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <h2 className="text-[#F3ECE1] font-semibold mb-5">Müsaitlik Durumu</h2>
-                            <div className="grid grid-cols-3 gap-3 mb-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                                 {musaitlikSecenekleri.map((s) => (
                                     <button
                                         key={s.deger}

@@ -1,6 +1,7 @@
 import { musaitlikBilgisi, ucretAraligiGoster, cevrimiciMi } from '../ustaYardimcilari'
+import FavoriButonu from './FavoriButonu'
 
-function UstaCard({ initials, name, role, desc, tags, onayli, musaitlik, sonGorulme, ucretMin, ucretMax }) {
+function UstaCard({ id, initials, name, role, desc, tags, onayli, musaitlik, sonGorulme, ucretMin, ucretMax }) {
     const etiketler = tags || []
     const musBilgi = musaitlikBilgisi(musaitlik)
     const ucret = ucretAraligiGoster(ucretMin, ucretMax)
@@ -13,21 +14,24 @@ function UstaCard({ initials, name, role, desc, tags, onayli, musaitlik, sonGoru
                     ONAYLI<br />USTA
                 </div>
             )}
-            <div className="flex items-center gap-3 mb-4">
-                <div className="relative shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] font-bold">
-                        {initials}
+            <div className={`flex items-start justify-between gap-2 mb-4 ${onayli ? "pr-14" : ""}`}>
+                <div className="flex items-center gap-3 min-w-0">
+                    <div className="relative shrink-0">
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] font-bold">
+                            {initials}
+                        </div>
+                        <span
+                            className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#0D2626]"
+                            style={{ backgroundColor: musBilgi.renk }}
+                            title={musBilgi.etiket}
+                        />
                     </div>
-                    <span
-                        className="absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-[#0D2626]"
-                        style={{ backgroundColor: musBilgi.renk }}
-                        title={musBilgi.etiket}
-                    />
+                    <div className="min-w-0">
+                        <div className="text-[#F3ECE1] font-semibold truncate">{name}</div>
+                        <div className="text-[#9FC2BC] text-sm truncate">{role}</div>
+                    </div>
                 </div>
-                <div className="min-w-0">
-                    <div className="text-[#F3ECE1] font-semibold truncate">{name}</div>
-                    <div className="text-[#9FC2BC] text-sm truncate">{role}</div>
-                </div>
+                {id && <FavoriButonu ustaId={id} boyut="kucuk" />}
             </div>
 
             <div className="flex items-center gap-2 flex-wrap mb-3">

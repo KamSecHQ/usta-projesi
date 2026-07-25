@@ -145,6 +145,15 @@ function Navbar() {
 
                     {/* Masaüstü menü */}
                     <nav className="hidden md:flex items-center gap-1">
+
+                        <Link
+                            to="/favorilerim"
+                            onClick={() => setHesapMenuAcik(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                        >
+                            Favorilerim
+                        </Link>
+
                         <Link
                             to="/ustalar"
                             className="text-[#9FC2BC] text-sm px-4 py-2 rounded-full hover:text-[#F3ECE1] hover:bg-white/[0.06] transition-all duration-300"
@@ -409,6 +418,18 @@ function Navbar() {
                 {/* Mobil açılır menü */}
                 {menuAcik && (
                     <nav className="md:hidden flex flex-col gap-1 px-6 pb-6 pt-2 bg-[#0D2626]/95 backdrop-blur-2xl border-t border-white/[0.06]">
+
+
+                        <Link
+                            to="/favorilerim"
+                            onClick={() => setHesapMenuAcik(false)}
+                            className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                        >
+                            Favorilerim
+                        </Link>
+
+
+
                         <Link
                             to="/ustalar"
                             onClick={() => setMenuAcik(false)}
@@ -459,11 +480,16 @@ function Navbar() {
                                         Yönetim Paneli {bekleyenSayisi > 0 && `(${bekleyenSayisi})`}
                                     </Link>
                                 )}
+
+
                                 <Link
                                     to="/ayarlar"
                                     onClick={() => setMenuAcik(false)}
                                     className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
                                 >
+
+
+
                                     Ayarlar
                                 </Link>
                                 <button
