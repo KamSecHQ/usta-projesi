@@ -17,6 +17,7 @@ import IlanVer from './pages/IlanVer'
 import IlanDetay from './pages/IlanDetay'
 import Ilanlarim from './pages/Ilanlarim'
 import Tekliflerim from './pages/Tekliflerim'
+import Dashboard from './pages/Dashboard'
 
 function App() {
     return (
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/ilan-ver" element={<IlanVer />} />
                 <Route path="/ilanlarim" element={<Ilanlarim />} />
                 <Route path="/tekliflerim" element={<Tekliflerim />} />
+                <Route path="/panel" element={<Dashboard />} />
                 <Route path="/" element={<Anasayfa />} />
                 <Route path="/kayit-ol" element={<Navigate to="/hesap-olustur?rol=yazilimci" replace />} />
                 <Route path="/is-ver" element={<Navigate to="/hesap-olustur?rol=is-veren" replace />} />

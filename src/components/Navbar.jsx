@@ -383,12 +383,27 @@ function Navbar() {
                                         </div>
                                         <div className="py-1.5">
                                             <Link
-                                                to="/profilim"
+                                                to="/panel"
                                                 onClick={() => setHesapMenuAcik(false)}
                                                 className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
                                             >
+                                            </Link>
+                                            <Link
+                                                to="/panel"
+                                                onClick={() => setMenuAcik(false)}
+                                                className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                                            >
+                                                Panelim
+                                            </Link>
+                                            <Link
+                                                to="/profilim"
+                                                onClick={() => setMenuAcik(false)}
+                                                className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                                            >
                                                 Profilim
                                             </Link>
+
+
                                             <Link
                                                 to="/favorilerim"
                                                 onClick={() => setHesapMenuAcik(false)}

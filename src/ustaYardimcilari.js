@@ -98,6 +98,19 @@ export function kidemRozetiHesapla(rol, tamamlananSayisi) {
     const liste = rol === 'is-veren' ? KIDEM_ROZETLERI_ISVEREN : KIDEM_ROZETLERI_YAZILIMCI
     return liste.find((r) => tamamlananSayisi >= r.min) || liste[liste.length - 1]
 }
+// Bir sonraki kıdem rozetine kaç tamamlanmış iş kaldığını hesaplar.
+// Zaten en üst seviyedeyse null döner.
+export function sonrakiKidemHesapla(rol, tamamlananSayisi) {
+    const liste = rol === 'is-veren' ? KIDEM_ROZETLERI_ISVEREN : KIDEM_ROZETLERI_YAZILIMCI
+    const artanSirali = [...liste].sort((a, b) => a.min - b.min)
+    for (const seviye of artanSirali) {
+        if (tamamlananSayisi < seviye.min) {
+            return { etiket: seviye.etiket, kalan: seviye.min - tamamlananSayisi, renk: seviye.renk }
+        }
+    }
+    return null
+}
+
 
 // Bir kullanıcının kaç tamamlanmış iş birliği olduğunu Supabase'den çeker.
 // yazilimci: kabul edilmiş teklifi olan VE ilanı "tamamlandı" olarak işaretlenmiş işler
