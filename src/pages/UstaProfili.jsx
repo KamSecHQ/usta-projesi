@@ -1,11 +1,19 @@
 import { useState, useEffect } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import ProjeKarti from '../components/ProjeKarti'
 import { IskeletProfilBasligi, IskeletProjeKarti } from '../components/Iskelet'
 import FavoriButonu from '../components/FavoriButonu'
-
+import {
+    cevrimiciMi,
+    musaitlikBilgisi,
+    ucretAraligiGoster,
+    videoEmbedUrl,
+    kidemRozetiHesapla,
+    tamamlananIsSayisiGetir,
+} from '../ustaYardimcilari'
 
 
 function baslangicHarfleri(adSoyad) {
@@ -15,8 +23,10 @@ function baslangicHarfleri(adSoyad) {
 
 function UstaProfili() {
     const { id } = useParams()
+    const { user } = useAuth()
     const [profil, setProfil] = useState(null)
     const [projeler, setProjeler] = useState([])
+    const [kidem, setKidem] = useState(null)
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
     useSayfaBasligi(profil ? `${profil.ad_soyad || "Usta"} — ${profil.unvan || "Portföy"}` : "Portföy")
@@ -48,8 +58,11 @@ function UstaProfili() {
 
             setProfil(profilData)
             setProjeler(siraliProjeler)
-            setYukleniyor(false)
 
+            const tamamlanan = await tamamlananIsSayisiGetir(supabase, id, profilData.rol)
+            setKidem(kidemRozetiHesapla(profilData.rol, tamamlanan))
+
+            setYukleniyor(false)
         }
         veriGetir()
     }, [id])
@@ -80,6 +93,10 @@ function UstaProfili() {
     }
 
     const teknolojiler = profil.teknolojiler || []
+    const musBilgi = musaitlikBilgisi(profil.musaitlik)
+    const ucret = ucretAraligiGoster(profil.saatlik_ucret_min, profil.saatlik_ucret_max)
+    const gomulVideo = videoEmbedUrl(profil.video_url)
+    const cevrimici = cevrimiciMi(profil.son_gorulme)
 
     return (
         <div className="min-h-screen bg-[#0D2626] px-6 py-16">
@@ -105,19 +122,70 @@ function UstaProfili() {
                     )}
 
                     <div className="relative flex items-start gap-5 flex-wrap">
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] font-bold text-2xl shrink-0">
-                            {baslangicHarfleri(profil.ad_soyad)}
+                        <div className="relative shrink-0">
+                            <div
+                                className="w-20 h-20 rounded-full p-[2px]"
+                                style={{ background: kidem ? `linear-gradient(135deg, ${kidem.renk}, transparent)` : 'transparent' }}
+                            >
+                                <div className="w-full h-full rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] font-bold text-2xl">
+                                    {baslangicHarfleri(profil.ad_soyad)}
+                                </div>
+                            </div>
+                            <span
+                                className="absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-[#123434]"
+                                style={{ backgroundColor: musBilgi.renk }}
+                                title={musBilgi.etiket}
+                            />
                         </div>
                         <div className="min-w-0">
                             <h1 className="text-[#F3ECE1] text-2xl font-bold">
                                 {profil.ad_soyad || "İsimsiz Usta"}
                             </h1>
                             <p className="text-[#C97D3C] font-medium mt-0.5">{profil.unvan}</p>
-                            {profil.konum && (
-                                <p className="text-[#9FC2BC] text-sm mt-1">📍 {profil.konum}</p>
-                            )}
+                            <div className="flex items-center gap-3 flex-wrap mt-1.5">
+                                {profil.konum && (
+                                    <span className="text-[#9FC2BC] text-sm">📍 {profil.konum}</span>
+                                )}
+                                {cevrimici && (
+                                    <span className="flex items-center gap-1.5 text-[#4ADE80] text-xs font-medium">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-[#4ADE80]" />
+                                        Şu an aktif
+                                    </span>
+                                )}
+                            </div>
                         </div>
                     </div>
+
+                    {/* Rozet sırası */}
+                    <div className="relative flex gap-2 flex-wrap mt-5">
+                        {kidem && (
+                            <span
+                                className="text-xs font-semibold px-3 py-1.5 rounded-full border"
+                                style={{ color: kidem.renk, borderColor: `${kidem.renk}50`, backgroundColor: `${kidem.renk}12` }}
+                            >
+                                {kidem.etiket}
+                            </span>
+                        )}
+                        <span
+                            className="text-xs font-medium px-3 py-1.5 rounded-full"
+                            style={{ color: musBilgi.renk, backgroundColor: `${musBilgi.renk}1A` }}
+                        >
+                            {musBilgi.etiket}
+                        </span>
+                        {profil.telefon_dogrulandi && (
+                            <span className="text-[#4ADE80] text-xs font-medium px-3 py-1.5 rounded-full bg-[#4ADE80]/10">
+                                ✓ Kimlik Doğrulandı
+                            </span>
+                        )}
+                        {ucret && (
+                            <span className="text-[#E3B776] text-xs font-medium px-3 py-1.5 rounded-full bg-[#E3B776]/10">
+                                {ucret}
+                            </span>
+                        )}
+                    </div>
+                    {profil.musaitlik === 'kismi_musait' && profil.musaitlik_notu && (
+                        <p className="relative text-[#9FC2BC]/70 text-xs mt-2">{profil.musaitlik_notu}</p>
+                    )}
 
                     {profil.bio && (
                         <p className="relative text-[#9FC2BC] mt-6 leading-relaxed">{profil.bio}</p>
@@ -131,6 +199,27 @@ function UstaProfili() {
                         ))}
                     </div>
 
+                    {gomulVideo && (
+                        <div className="relative mt-6 aspect-video rounded-xl overflow-hidden border border-white/[0.08]">
+                            <iframe
+                                src={gomulVideo}
+                                title={`${profil.ad_soyad || "Usta"} tanıtım videosu`}
+                                className="w-full h-full"
+                                allowFullScreen
+                            />
+                        </div>
+                    )}
+                    {!gomulVideo && profil.video_url && (
+                        <a
+                            href={profil.video_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="relative mt-6 flex items-center gap-2 text-[#C97D3C] text-sm hover:underline"
+                        >
+                            ▶ Tanıtım videosunu izle ↗
+                        </a>
+                    )}
+
                     <div className="relative flex gap-3 mt-6 flex-wrap">
                         {profil.github_url && (
                             <a
@@ -143,13 +232,12 @@ function UstaProfili() {
                             </a>
                         )}
                         <Link
-                            to="/hesap-olustur?rol=is-veren"
+                            to={user ? "/ilan-ver" : "/hesap-olustur?rol=is-veren"}
                             className="bg-[#C97D3C] text-[#0D2626] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#E3B776] transition-all duration-300"
                         >
                             Bu Ustayla Çalış
                         </Link>
                         <FavoriButonu ustaId={profil.id} />
-
                     </div>
                 </div>
 

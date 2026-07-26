@@ -76,3 +76,49 @@ export function zamanFarki(tarihStr) {
     if (ay < 12) return `${ay} ay önce`
     return `${Math.floor(ay / 12)} yıl önce`
 }
+// KIDEM ROZETİ SİSTEMİ
+// Tamamen gerçek veriye dayalı: sahte bir sayı değil, ilanlar/teklifler
+// tablolarındaki "tamamlandı" durumundaki gerçek iş birliği sayısı üzerinden
+// hesaplanır. Usta ↔ Kalfa ↔ Çırak hiyerarşisi markanın hikayesiyle örtüşüyor.
+
+const KIDEM_ROZETLERI_YAZILIMCI = [
+    { min: 10, etiket: 'Kıdemli Usta', renk: '#FFD76A' },
+    { min: 3, etiket: 'Usta', renk: '#C97D3C' },
+    { min: 1, etiket: 'Kalfa', renk: '#E3B776' },
+    { min: 0, etiket: 'Çırak', renk: '#9CA3AF' },
+]
+
+const KIDEM_ROZETLERI_ISVEREN = [
+    { min: 5, etiket: 'Kıdemli İş Veren', renk: '#FFD76A' },
+    { min: 1, etiket: 'Güvenilir İş Veren', renk: '#E3B776' },
+    { min: 0, etiket: 'Yeni İş Veren', renk: '#9CA3AF' },
+]
+
+export function kidemRozetiHesapla(rol, tamamlananSayisi) {
+    const liste = rol === 'is-veren' ? KIDEM_ROZETLERI_ISVEREN : KIDEM_ROZETLERI_YAZILIMCI
+    return liste.find((r) => tamamlananSayisi >= r.min) || liste[liste.length - 1]
+}
+
+// Bir kullanıcının kaç tamamlanmış iş birliği olduğunu Supabase'den çeker.
+// yazilimci: kabul edilmiş teklifi olan VE ilanı "tamamlandı" olarak işaretlenmiş işler
+// is-veren: kendi verdiği, "tamamlandı" durumundaki ilanlar
+export async function tamamlananIsSayisiGetir(supabase, kullaniciId, rol) {
+    if (rol === 'is-veren') {
+        const { count } = await supabase
+            .from('ilanlar')
+            .select('*', { count: 'exact', head: true })
+            .eq('is_veren_id', kullaniciId)
+            .eq('durum', 'tamamlandi')
+        return count || 0
+    }
+    if (rol === 'yazilimci') {
+        const { count } = await supabase
+            .from('teklifler')
+            .select('*, ilanlar!inner(durum)', { count: 'exact', head: true })
+            .eq('yazilimci_id', kullaniciId)
+            .eq('durum', 'kabul_edildi')
+            .eq('ilanlar.durum', 'tamamlandi')
+        return count || 0
+    }
+    return 0
+}
