@@ -34,78 +34,93 @@ function Dashboard() {
     const [sonrakiKidem, setSonrakiKidem] = useState(null)
 
     const [teklifOzet, setTeklifOzet] = useState({ beklemede: 0, kabul_edildi: 0, reddedildi: 0 })
-    const [ilanOzet, setIlanOzet] = useState({ acik: 0, tamamlandi: 0, bekleyenTeklif: 0 })
+    const [ilanOzet, setIlanOzet] = useState({ acik: 0, devamEdiyor: 0, tamamlandi: 0, bekleyenTeklif: 0 })
+    const [ajansDavetleri, setAjansDavetleri] = useState([])
 
     const [yukleniyor, setYukleniyor] = useState(true)
 
-    useEffect(() => {
-        async function veriGetir() {
-            if (!user) return
+    async function veriGetir() {
+        if (!user) return
 
-            const { data: profilData } = await supabase
-                .from('profiller')
-                .select('*')
-                .eq('id', user.id)
-                .single()
+        const { data: profilData } = await supabase
+            .from('profiller')
+            .select('*')
+            .eq('id', user.id)
+            .single()
 
-            if (!profilData) {
-                setYukleniyor(false)
-                return
-            }
-            setProfil(profilData)
-
-            const tamamlanan = await tamamlananIsSayisiGetir(supabase, user.id, profilData.rol)
-            setKidem(kidemRozetiHesapla(profilData.rol, tamamlanan))
-            setSonrakiKidem(sonrakiKidemHesapla(profilData.rol, tamamlanan))
-
-            if (profilData.rol === 'yazilimci') {
-                const { count: pSayisi } = await supabase
-                    .from('projeler')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('kullanici_id', user.id)
-                setProjeSayisi(pSayisi || 0)
-
-                const { count: fSayisi } = await supabase
-                    .from('favoriler')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('usta_id', user.id)
-                setFavoriSayisi(fSayisi || 0)
-
-                const { data: teklifler } = await supabase
-                    .from('teklifler')
-                    .select('durum')
-                    .eq('yazilimci_id', user.id)
-
-                const ozet = { beklemede: 0, kabul_edildi: 0, reddedildi: 0 }
-                for (const t of teklifler || []) ozet[t.durum] = (ozet[t.durum] || 0) + 1
-                setTeklifOzet(ozet)
-            }
-
-            if (profilData.rol === 'is-veren') {
-                const { data: ilanlar } = await supabase
-                    .from('ilanlar')
-                    .select('id, durum')
-                    .eq('is_veren_id', user.id)
-
-                const acik = (ilanlar || []).filter((i) => i.durum === 'acik').length
-                const tamamlandi = (ilanlar || []).filter((i) => i.durum === 'tamamlandi').length
-
-                let bekleyenTeklif = 0
-                if (ilanlar && ilanlar.length > 0) {
-                    const { count } = await supabase
-                        .from('teklifler')
-                        .select('*', { count: 'exact', head: true })
-                        .in('ilan_id', ilanlar.map((i) => i.id))
-                        .eq('durum', 'beklemede')
-                    bekleyenTeklif = count || 0
-                }
-                setIlanOzet({ acik, tamamlandi, bekleyenTeklif })
-            }
-
+        if (!profilData) {
             setYukleniyor(false)
+            return
         }
+        setProfil(profilData)
+
+        const tamamlanan = await tamamlananIsSayisiGetir(supabase, user.id, profilData.rol)
+        setKidem(kidemRozetiHesapla(profilData.rol, tamamlanan))
+        setSonrakiKidem(sonrakiKidemHesapla(profilData.rol, tamamlanan))
+
+        if (profilData.rol === 'yazilimci') {
+            const { count: pSayisi } = await supabase
+                .from('projeler')
+                .select('*', { count: 'exact', head: true })
+                .eq('kullanici_id', user.id)
+            setProjeSayisi(pSayisi || 0)
+
+            const { count: fSayisi } = await supabase
+                .from('favoriler')
+                .select('*', { count: 'exact', head: true })
+                .eq('usta_id', user.id)
+            setFavoriSayisi(fSayisi || 0)
+
+            const { data: teklifler } = await supabase
+                .from('teklifler')
+                .select('durum')
+                .eq('yazilimci_id', user.id)
+
+            const ozet = { beklemede: 0, kabul_edildi: 0, reddedildi: 0 }
+            for (const t of teklifler || []) ozet[t.durum] = (ozet[t.durum] || 0) + 1
+            setTeklifOzet(ozet)
+
+            const { data: davetlerData } = await supabase
+                .from('ajans_davetleri')
+                .select('*, profiller!ajans_davetleri_ajans_id_fkey(ad_soyad, unvan)')
+                .eq('davet_edilen_id', user.id)
+                .eq('durum', 'beklemede')
+            setAjansDavetleri(davetlerData || [])
+        }
+
+        if (profilData.rol === 'is-veren') {
+            const { data: ilanlar } = await supabase
+                .from('ilanlar')
+                .select('id, durum')
+                .eq('is_veren_id', user.id)
+
+            const acik = (ilanlar || []).filter((i) => i.durum === 'acik').length
+            const devamEdiyor = (ilanlar || []).filter((i) => i.durum === 'devam_ediyor').length
+            const tamamlandi = (ilanlar || []).filter((i) => i.durum === 'tamamlandi').length
+
+            let bekleyenTeklif = 0
+            if (ilanlar && ilanlar.length > 0) {
+                const { count } = await supabase
+                    .from('teklifler')
+                    .select('*', { count: 'exact', head: true })
+                    .in('ilan_id', ilanlar.map((i) => i.id))
+                    .eq('durum', 'beklemede')
+                bekleyenTeklif = count || 0
+            }
+            setIlanOzet({ acik, devamEdiyor, tamamlandi, bekleyenTeklif })
+        }
+
+        setYukleniyor(false)
+    }
+
+    useEffect(() => {
         if (user) veriGetir()
     }, [user])
+
+    async function davetYanitla(davetId, yeniDurum) {
+        await supabase.from('ajans_davetleri').update({ durum: yeniDurum }).eq('id', davetId)
+        veriGetir()
+    }
 
     if (authYukleniyor || yukleniyor) {
         return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
@@ -263,13 +278,41 @@ function Dashboard() {
                         </OzetKart>
                     )}
 
+                    {/* Yazılımcıya özel: bekleyen ajans davetleri */}
+                    {profil.rol === 'yazilimci' && ajansDavetleri.length > 0 && (
+                        <OzetKart baslik="Ajans Davetlerin">
+                            <div className="flex flex-col gap-2">
+                                {ajansDavetleri.map((d) => (
+                                    <div key={d.id} className="flex items-center justify-between gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3">
+                                        <div className="min-w-0">
+                                            <div className="text-[#F3ECE1] text-sm truncate">{d.profiller?.ad_soyad}</div>
+                                            <div className="text-[#9FC2BC]/70 text-xs">Ajansına katılmanı istiyor{d.rol_aciklamasi ? ` · ${d.rol_aciklamasi}` : ''}</div>
+                                        </div>
+                                        <div className="flex gap-2 shrink-0">
+                                            <button onClick={() => davetYanitla(d.id, 'kabul_edildi')} className="bg-[#C97D3C] text-[#0D2626] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#E3B776] transition-all duration-300">
+                                                Kabul Et
+                                            </button>
+                                            <button onClick={() => davetYanitla(d.id, 'reddedildi')} className="border border-white/[0.1] text-[#9FC2BC] text-xs px-3 py-1.5 rounded-full hover:text-red-300 transition-all duration-300">
+                                                Reddet
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </OzetKart>
+                    )}
+
                     {/* İş verene özel: ilan özeti */}
                     {profil.rol === 'is-veren' && (
                         <OzetKart baslik="İlanlarım">
-                            <div className="grid grid-cols-2 gap-3 text-center mb-4">
+                            <div className="grid grid-cols-3 gap-3 text-center mb-4">
                                 <div>
                                     <div className="text-[#F3ECE1] text-2xl font-bold">{ilanOzet.acik}</div>
-                                    <div className="text-[#9FC2BC] text-xs mt-1">Açık İlan</div>
+                                    <div className="text-[#9FC2BC] text-xs mt-1">Açık</div>
+                                </div>
+                                <div>
+                                    <div className="text-[#E3B776] text-2xl font-bold">{ilanOzet.devamEdiyor}</div>
+                                    <div className="text-[#9FC2BC] text-xs mt-1">Devam Ediyor</div>
                                 </div>
                                 <div>
                                     <div className="text-[#4ADE80] text-2xl font-bold">{ilanOzet.tamamlandi}</div>

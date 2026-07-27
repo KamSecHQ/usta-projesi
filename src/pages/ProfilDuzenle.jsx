@@ -356,15 +356,24 @@ function ProfilDuzenle() {
                             Buradaki bilgiler herkese açık portföy sayfanda görünecek.
                         </p>
                     </div>
-                    <Link
-                        to={`/ustalar/${user.id}`}
-                        className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300"
-                    >
-                        Portföyümü Görüntüle ↗
-                    </Link>
+                    <div className="flex gap-3 flex-wrap">
+                        <Link
+                            to="/ajansim"
+                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300"
+                        >
+                            Ajansım
+                        </Link>
+                        <Link
+                            to={`/ustalar/${user.id}`}
+                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300"
+                        >
+                            Portföyümü Görüntüle ↗
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="grid lg:grid-cols-[1fr_380px] gap-8">
+
                     {/* SOL: Form */}
                     <div className="flex flex-col gap-6">
 
@@ -374,7 +383,7 @@ function ProfilDuzenle() {
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className={labelClass}>Ad Soyad</label>
-                                    <input type="text" value={adSoyad} onChange={(e) => setAdSoyad(e.target.value)} placeholder="Emirhan Baydere" className={inputClass} />
+                                    <input type="text" value={adSoyad} onChange={(e) => setAdSoyad(e.target.value)} placeholder="Ad Soyad" className={inputClass} />
                                 </div>
                                 <div>
                                     <label className={labelClass}>Unvan</label>

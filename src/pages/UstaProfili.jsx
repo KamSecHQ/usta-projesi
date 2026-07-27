@@ -27,6 +27,8 @@ function UstaProfili() {
     const [profil, setProfil] = useState(null)
     const [projeler, setProjeler] = useState([])
     const [kidem, setKidem] = useState(null)
+    const [ajansUyeleri, setAjansUyeleri] = useState([])
+    const [uyesiOldugum, setUyesiOldugum] = useState(null)
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
     useSayfaBasligi(profil ? `${profil.ad_soyad || "Usta"} — ${profil.unvan || "Portföy"}` : "Portföy")
@@ -61,6 +63,23 @@ function UstaProfili() {
 
             const tamamlanan = await tamamlananIsSayisiGetir(supabase, id, profilData.rol)
             setKidem(kidemRozetiHesapla(profilData.rol, tamamlanan))
+
+            if (profilData.profil_tipi === 'ajans') {
+                const { data: uyelerData } = await supabase
+                    .from('ajans_davetleri')
+                    .select('davet_edilen_id, rol_aciklamasi, profiller!ajans_davetleri_davet_edilen_id_fkey(ad_soyad, unvan)')
+                    .eq('ajans_id', id)
+                    .eq('durum', 'kabul_edildi')
+                setAjansUyeleri(uyelerData || [])
+            } else {
+                const { data: ajansData } = await supabase
+                    .from('ajans_davetleri')
+                    .select('ajans_id, profiller!ajans_davetleri_ajans_id_fkey(ad_soyad)')
+                    .eq('davet_edilen_id', id)
+                    .eq('durum', 'kabul_edildi')
+                    .maybeSingle()
+                setUyesiOldugum(ajansData || null)
+            }
 
             setYukleniyor(false)
         }
@@ -142,6 +161,11 @@ function UstaProfili() {
                                 {profil.ad_soyad || "İsimsiz Usta"}
                             </h1>
                             <p className="text-[#C97D3C] font-medium mt-0.5">{profil.unvan}</p>
+                            {uyesiOldugum && (
+                                <Link to={`/ustalar/${uyesiOldugum.ajans_id}`} className="text-[#9FC2BC] text-xs hover:text-[#C97D3C] transition-colors">
+                                    🏢 {uyesiOldugum.profiller?.ad_soyad} ajansının üyesi
+                                </Link>
+                            )}
                             <div className="flex items-center gap-3 flex-wrap mt-1.5">
                                 {profil.konum && (
                                     <span className="text-[#9FC2BC] text-sm">📍 {profil.konum}</span>
@@ -158,6 +182,11 @@ function UstaProfili() {
 
                     {/* Rozet sırası */}
                     <div className="relative flex gap-2 flex-wrap mt-5">
+                        {profil.profil_tipi === 'ajans' && (
+                            <span className="text-xs font-semibold px-3 py-1.5 rounded-full border border-[#9FC2BC]/40 text-[#9FC2BC] bg-white/[0.03]">
+                                🏢 Ajans
+                            </span>
+                        )}
                         {kidem && (
                             <span
                                 className="text-xs font-semibold px-3 py-1.5 rounded-full border"
@@ -198,6 +227,29 @@ function UstaProfili() {
                             </span>
                         ))}
                     </div>
+
+                    {profil.profil_tipi === 'ajans' && ajansUyeleri.length > 0 && (
+                        <div className="relative mt-6">
+                            <p className="text-[#9FC2BC] text-xs uppercase tracking-wider font-mono mb-3">Ekip</p>
+                            <div className="flex flex-wrap gap-3">
+                                {ajansUyeleri.map((u) => (
+                                    <Link
+                                        key={u.davet_edilen_id}
+                                        to={`/ustalar/${u.davet_edilen_id}`}
+                                        className="flex items-center gap-2.5 bg-white/[0.04] border border-white/[0.08] rounded-full pl-1.5 pr-4 py-1.5 hover:bg-white/[0.08] hover:border-[#C97D3C]/40 transition-all duration-300"
+                                    >
+                                        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] text-xs font-bold shrink-0">
+                                            {baslangicHarfleri(u.profiller?.ad_soyad)}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <div className="text-[#F3ECE1] text-xs font-medium">{u.profiller?.ad_soyad}</div>
+                                            {u.rol_aciklamasi && <div className="text-[#9FC2BC]/70 text-[10px]">{u.rol_aciklamasi}</div>}
+                                        </div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {gomulVideo && (
                         <div className="relative mt-6 aspect-video rounded-xl overflow-hidden border border-white/[0.08]">

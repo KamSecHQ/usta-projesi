@@ -109,7 +109,7 @@ function HesapOlustur() {
                                 type="text"
                                 value={adSoyad}
                                 onChange={(e) => setAdSoyad(e.target.value)}
-                                placeholder="Emirhan Baydere"
+                                placeholder="Ad Soyad"
                                 required
                                 className={inputClass}
                             />
