@@ -135,3 +135,15 @@ export async function tamamlananIsSayisiGetir(supabase, kullaniciId, rol) {
     }
     return 0
 }
+// Blog başlığından URL-dostu bir slug üretir (Türkçe karakterleri de dönüştürür).
+export function slugOlustur(metin) {
+    const turkceHaritasi = { ç: 'c', ğ: 'g', ı: 'i', ö: 'o', ş: 's', ü: 'u', İ: 'i', Ç: 'c', Ğ: 'g', Ö: 'o', Ş: 's', Ü: 'u' }
+    return metin
+        .split('').map((h) => turkceHaritasi[h] || h).join('')
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+}

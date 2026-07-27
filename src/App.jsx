@@ -19,6 +19,9 @@ import Ilanlarim from './pages/Ilanlarim'
 import Tekliflerim from './pages/Tekliflerim'
 import Dashboard from './pages/Dashboard'
 import AjansYonetimi from './pages/AjansYonetimi'
+import BlogListesi from './pages/BlogListesi'
+import BlogYazisi from './pages/BlogYazisi'
+import AdminBlog from './pages/AdminBlog'
 
 function App() {
     return (
@@ -30,6 +33,7 @@ function App() {
                 <Route path="/ustalar" element={<TumUstalar />} />
                 <Route path="/ustalar/:id" element={<UstaProfili />} />
                 <Route path="/admin" element={<AdminPanel />} />
+                <Route path="/admin/blog" element={<AdminBlog />} />
                 <Route path="/profilim" element={<ProfilDuzenle />} />
                 <Route path="/gizlilik" element={<GizlilikPolitikasi />} />
                 <Route path="/ayarlar" element={<Ayarlar />} />
@@ -42,6 +46,8 @@ function App() {
                 <Route path="/tekliflerim" element={<Tekliflerim />} />
                 <Route path="/panel" element={<Dashboard />} />
                 <Route path="/ajansim" element={<AjansYonetimi />} />
+                <Route path="/blog" element={<BlogListesi />} />
+                <Route path="/blog/:slug" element={<BlogYazisi />} />
                 <Route path="/" element={<Anasayfa />} />
                 <Route path="/kayit-ol" element={<Navigate to="/hesap-olustur?rol=yazilimci" replace />} />
                 <Route path="/is-ver" element={<Navigate to="/hesap-olustur?rol=is-veren" replace />} />

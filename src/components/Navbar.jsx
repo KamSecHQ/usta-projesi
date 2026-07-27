@@ -203,6 +203,13 @@ function Navbar() {
                                             {link.ad}
                                         </button>
                                     ))}
+                                    <Link
+                                        to="/blog"
+                                        onClick={() => setKesfetMenuAcik(false)}
+                                        className="flex items-center px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                    >
+                                        Blog
+                                    </Link>
                                 </div>
                             )}
                         </div>
@@ -387,23 +394,15 @@ function Navbar() {
                                                 onClick={() => setHesapMenuAcik(false)}
                                                 className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
                                             >
-                                            </Link>
-                                            <Link
-                                                to="/panel"
-                                                onClick={() => setMenuAcik(false)}
-                                                className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
-                                            >
                                                 Panelim
                                             </Link>
                                             <Link
                                                 to="/profilim"
-                                                onClick={() => setMenuAcik(false)}
-                                                className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                                                onClick={() => setHesapMenuAcik(false)}
+                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
                                             >
                                                 Profilim
                                             </Link>
-
-
                                             <Link
                                                 to="/favorilerim"
                                                 onClick={() => setHesapMenuAcik(false)}
@@ -441,6 +440,15 @@ function Navbar() {
                                                             {bekleyenSayisi}
                                                         </span>
                                                     )}
+                                                </Link>
+                                            )}
+                                            {adminMi && (
+                                                <Link
+                                                    to="/admin/blog"
+                                                    onClick={() => setHesapMenuAcik(false)}
+                                                    className="flex items-center gap-2.5 px-4 py-2.5 text-[#9FC2BC] text-sm hover:bg-white/[0.06] hover:text-[#F3ECE1] transition-colors duration-200"
+                                                >
+                                                    Blog Yönetimi
                                                 </Link>
                                             )}
                                             <Link
@@ -537,6 +545,13 @@ function Navbar() {
                                 {link.ad}
                             </button>
                         ))}
+                        <Link
+                            to="/blog"
+                            onClick={() => setMenuAcik(false)}
+                            className="text-[#9FC2BC] text-left px-4 py-3 rounded-xl hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                        >
+                            Blog
+                        </Link>
 
                         <div className="h-px bg-white/[0.08] my-2" />
 
@@ -571,6 +586,13 @@ function Navbar() {
                                         </div>
                                     </div>
                                 </div>
+                                <Link
+                                    to="/panel"
+                                    onClick={() => setMenuAcik(false)}
+                                    className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                                >
+                                    Panelim
+                                </Link>
                                 <Link
                                     to="/profilim"
                                     onClick={() => setMenuAcik(false)}
@@ -610,6 +632,15 @@ function Navbar() {
                                         className="bg-white/[0.05] border border-white/[0.1] text-[#F3ECE1] px-4 py-3 rounded-xl text-sm font-medium text-center hover:bg-white/[0.1] transition-all duration-300"
                                     >
                                         Yönetim Paneli {bekleyenSayisi > 0 && `(${bekleyenSayisi})`}
+                                    </Link>
+                                )}
+                                {adminMi && (
+                                    <Link
+                                        to="/admin/blog"
+                                        onClick={() => setMenuAcik(false)}
+                                        className="text-[#9FC2BC] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#F3ECE1] transition-all duration-300"
+                                    >
+                                        Blog Yönetimi
                                     </Link>
                                 )}
                                 <Link
