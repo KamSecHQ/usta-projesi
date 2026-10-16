@@ -2,6 +2,8 @@
 
 Türk yazılımcılarla ("usta") işletmeleri buluşturan pazaryeri. Repo adı eski marka "usta-projesi"; marka artık **Kalfahane**.
 
+Yeni bir oturumda önce `DEVAM.md` oku: kurulum, yapılanlar, bekleyen işler ve kullanıcıyla çalışma şekli orada. Veritabanı şeması: `supabase/SEMA.md`.
+
 ## Çalıştırma
 - `npm run dev` → http://localhost:5173
 - `npm run build`, `npm run lint` (oxlint)
