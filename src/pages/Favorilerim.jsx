@@ -35,26 +35,26 @@ function Favorilerim() {
     }, [user])
 
     if (authYukleniyor) {
-        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
     }
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-                <p className="text-[#9FC2BC] mb-4">Favorilerini görmek için giriş yapmalısın.</p>
-                <Link to="/giris" className="text-[#C97D3C] hover:underline">Giriş yap</Link>
+            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
+                <p className="text-[#A1A1AA] mb-4">Favorilerini görmek için giriş yapmalısın.</p>
+                <Link to="/giris" className="text-[#A78BFA] hover:underline">Giriş yap</Link>
             </div>
         )
     }
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+        <div className="min-h-screen bg-[#000000] px-6 py-16">
             <div className="max-w-5xl mx-auto">
-                <Link to="/ustalar" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">
+                <Link to="/ustalar" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
                     ← Tüm ustalara dön
                 </Link>
-                <h1 className="text-[#F3ECE1] text-3xl font-bold mt-6 mb-2">Favorilerim</h1>
-                <p className="text-[#9FC2BC] text-sm mb-10">Kaydettiğin ustalar burada listelenir.</p>
+                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-2">Favorilerim</h1>
+                <p className="text-[#A1A1AA] text-sm mb-10">Kaydettiğin ustalar burada listelenir.</p>
 
                 {yukleniyor ? (
                     <div className="grid md:grid-cols-3 gap-6">
@@ -64,8 +64,8 @@ function Favorilerim() {
                     </div>
                 ) : ustalar.length === 0 ? (
                     <div className="text-center py-16">
-                        <p className="text-[#9FC2BC] mb-4">Henüz favori eklemedin.</p>
-                        <Link to="/ustalar" className="text-[#C97D3C] hover:underline text-sm">
+                        <p className="text-[#A1A1AA] mb-4">Henüz favori eklemedin.</p>
+                        <Link to="/ustalar" className="text-[#A78BFA] hover:underline text-sm">
                             Ustalara göz at →
                         </Link>
                     </div>

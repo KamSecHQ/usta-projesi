@@ -1,9 +1,10 @@
+import { Sahne, SatirBaslik } from './uzay/Hareket'
 import { useState } from 'react'
 
 const sorular = [
     {
-        soru: "Usta tam olarak nedir?",
-        cevap: "Usta, Türk yazılımcılarla iş sahiplerini bir araya getiren bir pazaryeri. Yazılımcılar profil ve portföylerini oluşturur, iş verenler bu portföylere bakarak doğrudan iletişime geçer."
+        soru: "Kalfahane tam olarak nedir?",
+        cevap: "Kalfahane, Türk yazılımcılarla iş sahiplerini bir araya getiren bir pazaryeri. Yazılımcılar profil ve portföylerini oluşturur, iş verenler bu portföylere bakarak doğrudan iletişime geçer."
     },
     {
         soru: "Yazılımcı olarak nasıl katılırım?",
@@ -15,7 +16,7 @@ const sorular = [
     },
     {
         soru: "Platformu kullanmak ücretli mi?",
-        cevap: "Usta şu an geliştirme aşamasında ve profil oluşturmak, arama yapmak, iletişime geçmek tamamen ücretsiz. Ödeme ve komisyon sistemi ileride ayrıca duyurulacak."
+        cevap: "Kalfahane şu an geliştirme aşamasında ve profil oluşturmak, arama yapmak, iletişime geçmek tamamen ücretsiz. Ödeme ve komisyon sistemi ileride ayrıca duyurulacak."
     },
     {
         soru: "Verilerim güvende mi?",
@@ -23,25 +24,27 @@ const sorular = [
     },
 ]
 
-function SSSOgesi({ soru, cevap, acik, onClick }) {
+function SSSOgesi({ soru, cevap, acik, onClick, sira }) {
     return (
-        <div className="border-b border-white/[0.08]">
+        <div className="uz-kalk border-b border-white/[0.08] last:border-b-0" style={{ '--d': `${0.2 + sira * 0.06}s` }}>
             <button
                 onClick={onClick}
-                className="w-full flex items-center justify-between gap-4 py-5 text-left group"
+                aria-expanded={acik}
+                className="group flex w-full items-center justify-between gap-6 px-5 py-5 text-left sm:px-7 sm:py-6"
             >
-                <span className="text-[#F3ECE1] font-medium group-hover:text-[#C97D3C] transition-colors duration-300">
+                <span className="text-[17px] font-medium tracking-[-0.01em] text-white transition-colors duration-300 group-hover:text-mor-soluk sm:text-[19px]">
                     {soru}
                 </span>
-                <span className={`shrink-0 text-[#C97D3C] text-xl transition-transform duration-300 ${acik ? "rotate-45" : ""}`}>
-                    +
+                <span className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-colors duration-300 ${acik ? 'border-white bg-white text-black' : 'border-white/[0.12] text-white'}`} aria-hidden>
+                    <span className="absolute h-[1.5px] w-3 bg-current" />
+                    <span className={`absolute h-3 w-[1.5px] bg-current transition-transform duration-500 ease-(--ease-cekic) ${acik ? 'scale-y-0' : ''}`} />
                 </span>
             </button>
             <div
-                className={`grid transition-all duration-300 ease-out ${acik ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+                className={`grid transition-[grid-template-rows,opacity] duration-500 ease-(--ease-cekic) ${acik ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
             >
                 <div className="overflow-hidden">
-                    <p className="text-[#9FC2BC] text-sm leading-relaxed pb-5 pr-8">
+                    <p className="max-w-[64ch] px-5 pb-6 pr-14 text-[15.5px] font-light leading-relaxed text-gri sm:px-7">
                         {cevap}
                     </p>
                 </div>
@@ -54,29 +57,26 @@ function SSS() {
     const [acikIndex, setAcikIndex] = useState(0)
 
     return (
-        <section className="relative bg-[#0D2626] py-24 px-6">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
-            <div className="max-w-2xl mx-auto">
-                <span className="text-[#C97D3C] text-sm tracking-widest uppercase font-mono">
-                    Merak Ettiklerin
-                </span>
-                <h2 className="text-[#F3ECE1] text-3xl font-bold mt-3 mb-10">
-                    Sıkça Sorulan Sorular
-                </h2>
-
-                <div>
-                    {sorular.map((s, i) => (
-                        <SSSOgesi
-                            key={s.soru}
-                            soru={s.soru}
-                            cevap={s.cevap}
-                            acik={acikIndex === i}
-                            onClick={() => setAcikIndex(acikIndex === i ? -1 : i)}
-                        />
-                    ))}
-                </div>
+        <Sahne as="section" className="uz-ufuk px-4 py-28 sm:px-8 lg:py-36">
+            <div className="mx-auto max-w-[1100px] text-center">
+                <SatirBaslik
+                    satirlar={['Çarşıya girmeden önce.']}
+                    className="font-pjs text-[clamp(2.4rem,5.6vw,4.6rem)] font-medium leading-[1.02] tracking-[-0.025em] text-white"
+                />
             </div>
-        </section>
+            <div className="uz-panel uz-otur mx-auto mt-12 max-w-[860px]" style={{ '--d': '0.2s' }}>
+                {sorular.map((s, i) => (
+                    <SSSOgesi
+                        key={s.soru}
+                        soru={s.soru}
+                        cevap={s.cevap}
+                        sira={i}
+                        acik={acikIndex === i}
+                        onClick={() => setAcikIndex(acikIndex === i ? -1 : i)}
+                    />
+                ))}
+            </div>
+        </Sahne>
     )
 }
 

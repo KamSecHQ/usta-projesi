@@ -95,7 +95,7 @@ function ProjeFormu({ inputClass, baslangic, oneCikanSayisi, gonderiliyor, onKay
             </div>
 
             <div className="h-px bg-white/[0.06] my-1" />
-            <p className="text-[#9FC2BC]/60 text-xs -mt-1">
+            <p className="text-[#A1A1AA]/60 text-xs -mt-1">
                 Aşağıdakiler doldurulursa proje detay sayfasında "Problem → Çözüm → Sonuç" formatında tam bir vaka çalışması olarak gösterilir.
             </p>
             <textarea
@@ -120,18 +120,18 @@ function ProjeFormu({ inputClass, baslangic, oneCikanSayisi, gonderiliyor, onKay
                 className={inputClass + " resize-none"}
             />
 
-            <label className="flex items-center gap-2.5 text-[#9FC2BC] text-sm">
+            <label className="flex items-center gap-2.5 text-[#A1A1AA] text-sm">
                 <input
                     type="checkbox"
                     checked={oneCikan}
                     disabled={oneCikanEngelli}
                     onChange={(e) => setOneCikan(e.target.checked)}
-                    className="w-4 h-4 accent-[#C97D3C]"
+                    className="w-4 h-4 accent-[#8B5CF6]"
                 />
                 Öne çıkan proje olarak sabitle (en fazla {ONE_CIKAN_LIMIT})
             </label>
             {oneCikanEngelli && (
-                <p className="text-[#9FC2BC]/50 text-xs">
+                <p className="text-[#A1A1AA]/50 text-xs">
                     En fazla {ONE_CIKAN_LIMIT} proje sabitlenebilir — yeni birini sabitlemek için önce birinin sabitini kaldır.
                 </p>
             )}
@@ -140,7 +140,7 @@ function ProjeFormu({ inputClass, baslangic, oneCikanSayisi, gonderiliyor, onKay
                 <button
                     type="submit"
                     disabled={gonderiliyor || !baslik.trim()}
-                    className="bg-white/[0.05] border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300 disabled:opacity-40"
+                    className="bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300 disabled:opacity-40"
                 >
                     {gonderiliyor ? "Kaydediliyor..." : gonderMetni}
                 </button>
@@ -148,7 +148,7 @@ function ProjeFormu({ inputClass, baslangic, oneCikanSayisi, gonderiliyor, onKay
                     <button
                         type="button"
                         onClick={onIptal}
-                        className="text-[#9FC2BC] text-sm px-4 py-2.5 hover:text-[#F3ECE1] transition-colors"
+                        className="text-[#A1A1AA] text-sm px-4 py-2.5 hover:text-[#FFFFFF] transition-colors"
                     >
                         İptal
                     </button>
@@ -317,20 +317,20 @@ function ProfilDuzenle() {
     }
 
     if (authYukleniyor || yukleniyor) {
-        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
     }
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-                <p className="text-[#9FC2BC] mb-4">Profilini düzenlemek için giriş yapmalısın.</p>
-                <Link to="/giris" className="text-[#C97D3C] hover:underline">Giriş yap</Link>
+            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
+                <p className="text-[#A1A1AA] mb-4">Profilini düzenlemek için giriş yapmalısın.</p>
+                <Link to="/giris" className="text-[#A78BFA] hover:underline">Giriş yap</Link>
             </div>
         )
     }
 
-    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#9FC2BC]/40"
-    const labelClass = "text-[#9FC2BC] text-xs uppercase tracking-wider font-mono block mb-2"
+    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#A1A1AA]/40"
+    const labelClass = "text-[#A1A1AA] text-xs uppercase tracking-wider font-mono block mb-2"
     const musaitlikSecenekleri = [
         { deger: 'musait', ad: 'Müsait' },
         { deger: 'kismi_musait', ad: 'Kısmi Müsait' },
@@ -342,30 +342,30 @@ function ProfilDuzenle() {
     const oneCikanSayisi = projeler.filter((p) => p.one_cikan).length
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+        <div className="min-h-screen bg-[#000000] px-6 py-16">
             <div className="max-w-6xl mx-auto">
-                <Link to="/" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">
+                <Link to="/" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
                     ← Anasayfaya dön
                 </Link>
                 <div className="flex items-center justify-between mt-6 mb-10 flex-wrap gap-4">
                     <div>
-                        <h1 className="text-[#F3ECE1] text-3xl font-bold">
+                        <h1 className="text-[#FFFFFF] text-3xl font-bold">
                             Portföyümü Düzenle
                         </h1>
-                        <p className="text-[#9FC2BC] text-sm mt-1">
+                        <p className="text-[#A1A1AA] text-sm mt-1">
                             Buradaki bilgiler herkese açık portföy sayfanda görünecek.
                         </p>
                     </div>
                     <div className="flex gap-3 flex-wrap">
                         <Link
                             to="/ajansim"
-                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300"
+                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
                         >
                             Ajansım
                         </Link>
                         <Link
                             to={`/ustalar/${user.id}`}
-                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#F3ECE1] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300"
+                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
                         >
                             Portföyümü Görüntüle ↗
                         </Link>
@@ -379,7 +379,7 @@ function ProfilDuzenle() {
 
                         {/* Temel Bilgiler */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
-                            <h2 className="text-[#F3ECE1] font-semibold mb-5">Temel Bilgiler</h2>
+                            <h2 className="text-[#FFFFFF] font-semibold mb-5">Temel Bilgiler</h2>
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
                                     <label className={labelClass}>Ad Soyad</label>
@@ -404,7 +404,7 @@ function ProfilDuzenle() {
                                             telefonDogrulandi ? (
                                                 <span className="ml-2 normal-case text-[#4ADE80] text-xs">✓ Doğrulandı</span>
                                             ) : (
-                                                <span className="ml-2 normal-case text-[#9FC2BC]/60 text-xs">Doğrulanmadı — yönetici incelemesi bekleniyor</span>
+                                                <span className="ml-2 normal-case text-[#A1A1AA]/60 text-xs">Doğrulanmadı — yönetici incelemesi bekleniyor</span>
                                             )
                                         )}
                                     </label>
@@ -415,7 +415,7 @@ function ProfilDuzenle() {
 
                         {/* Hakkımda */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
-                            <h2 className="text-[#F3ECE1] font-semibold mb-5">Hakkımda</h2>
+                            <h2 className="text-[#FFFFFF] font-semibold mb-5">Hakkımda</h2>
                             <textarea
                                 value={bio}
                                 onChange={(e) => setBio(e.target.value)}
@@ -427,10 +427,10 @@ function ProfilDuzenle() {
 
                         {/* Teknolojiler - chip input */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
-                            <h2 className="text-[#F3ECE1] font-semibold mb-5">Teknolojiler</h2>
+                            <h2 className="text-[#FFFFFF] font-semibold mb-5">Teknolojiler</h2>
                             <div className="flex flex-wrap gap-2 mb-3">
                                 {teknolojiler.map((t) => (
-                                    <span key={t} className="flex items-center gap-1.5 bg-[#C97D3C]/10 border border-[#C97D3C]/30 text-[#E3B776] text-xs px-3 py-1.5 rounded-full font-mono">
+                                    <span key={t} className="flex items-center gap-1.5 bg-[#8B5CF6]/10 border border-[#8B5CF6]/30 text-[#C4B5FD] text-xs px-3 py-1.5 rounded-full font-mono">
                                         {t}
                                         <button type="button" onClick={() => teknolojiSil(t)} className="hover:text-red-300 transition-colors">×</button>
                                     </span>
@@ -448,7 +448,7 @@ function ProfilDuzenle() {
 
                         {/* Müsaitlik */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
-                            <h2 className="text-[#F3ECE1] font-semibold mb-5">Müsaitlik Durumu</h2>
+                            <h2 className="text-[#FFFFFF] font-semibold mb-5">Müsaitlik Durumu</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                                 {musaitlikSecenekleri.map((s) => (
                                     <button
@@ -456,8 +456,8 @@ function ProfilDuzenle() {
                                         type="button"
                                         onClick={() => setMusaitlik(s.deger)}
                                         className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${musaitlik === s.deger
-                                            ? "bg-[#C97D3C] text-[#0D2626] border-[#C97D3C]"
-                                            : "bg-white/[0.03] text-[#9FC2BC] border-white/[0.1] hover:bg-white/[0.06]"
+                                            ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
+                                            : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
                                             }`}
                                     >
                                         {s.ad}
@@ -477,8 +477,8 @@ function ProfilDuzenle() {
 
                         {/* Ücret Aralığı */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
-                            <h2 className="text-[#F3ECE1] font-semibold mb-1">Saatlik Ücret Aralığı</h2>
-                            <p className="text-[#9FC2BC] text-sm mb-5">İsteğe bağlı — beklentileri baştan netleştirir.</p>
+                            <h2 className="text-[#FFFFFF] font-semibold mb-1">Saatlik Ücret Aralığı</h2>
+                            <p className="text-[#A1A1AA] text-sm mb-5">İsteğe bağlı — beklentileri baştan netleştirir.</p>
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className={labelClass}>Min (₺)</label>
@@ -493,8 +493,8 @@ function ProfilDuzenle() {
 
                         {/* Tanıtım Videosu */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
-                            <h2 className="text-[#F3ECE1] font-semibold mb-1">Tanıtım Videosu</h2>
-                            <p className="text-[#9FC2BC] text-sm mb-5">YouTube ya da Loom linki — kendini kısaca tanıt.</p>
+                            <h2 className="text-[#FFFFFF] font-semibold mb-1">Tanıtım Videosu</h2>
+                            <p className="text-[#A1A1AA] text-sm mb-5">YouTube ya da Loom linki — kendini kısaca tanıt.</p>
                             <input
                                 type="url"
                                 value={videoUrl}
@@ -503,7 +503,7 @@ function ProfilDuzenle() {
                                 className={inputClass}
                             />
                             {videoUrl && !gomulVideo && (
-                                <p className="text-[#9FC2BC]/60 text-xs mt-2">
+                                <p className="text-[#A1A1AA]/60 text-xs mt-2">
                                     Bu link doğrudan gömülemiyor, portföyünde tıklanabilir link olarak gösterilecek.
                                 </p>
                             )}
@@ -520,12 +520,12 @@ function ProfilDuzenle() {
                         </div>
 
                         {hata && <p className="text-red-400 text-sm">{hata}</p>}
-                        {kaydedildi && <p className="text-[#E3B776] text-sm">✓ Profil kaydedildi</p>}
+                        {kaydedildi && <p className="text-[#C4B5FD] text-sm">✓ Profil kaydedildi</p>}
 
                         <button
                             onClick={kaydet}
                             disabled={kaydediliyor}
-                            className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#E3B776] transition-all duration-300 self-start"
+                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
                         >
                             {kaydediliyor ? "Kaydediliyor..." : "Profili Kaydet"}
                         </button>
@@ -533,17 +533,17 @@ function ProfilDuzenle() {
                         {/* Projelerim */}
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mt-4">
                             <div className="flex items-center justify-between mb-1">
-                                <h2 className="text-[#F3ECE1] font-semibold">Projelerim</h2>
+                                <h2 className="text-[#FFFFFF] font-semibold">Projelerim</h2>
                                 {!yeniProjeAcik && (
                                     <button
                                         onClick={() => setYeniProjeAcik(true)}
-                                        className="text-[#C97D3C] text-sm hover:underline"
+                                        className="text-[#A78BFA] text-sm hover:underline"
                                     >
                                         + Proje Ekle
                                     </button>
                                 )}
                             </div>
-                            <p className="text-[#9FC2BC] text-sm mb-5">Portföyünde öne çıkacak çalışmalarını ekle.</p>
+                            <p className="text-[#A1A1AA] text-sm mb-5">Portföyünde öne çıkacak çalışmalarını ekle.</p>
 
                             {yeniProjeAcik && (
                                 <div className="mb-6">
@@ -564,7 +564,7 @@ function ProfilDuzenle() {
                                     <IskeletProjeKarti />
                                 </div>
                             ) : projeler.length === 0 ? (
-                                <p className="text-[#9FC2BC] text-sm">Henüz proje eklemedin.</p>
+                                <p className="text-[#A1A1AA] text-sm">Henüz proje eklemedin.</p>
                             ) : (
                                 <div className="grid sm:grid-cols-2 gap-3">
                                     {projeler.map((p) => (
@@ -588,13 +588,13 @@ function ProfilDuzenle() {
                                                     <div className="flex gap-4">
                                                         <button
                                                             onClick={() => setDuzenlenenId(p.id)}
-                                                            className="text-[#9FC2BC] hover:text-[#F3ECE1] text-xs transition-colors"
+                                                            className="text-[#A1A1AA] hover:text-[#FFFFFF] text-xs transition-colors"
                                                         >
                                                             Düzenle
                                                         </button>
                                                         <button
                                                             onClick={() => projeSil(p.id)}
-                                                            className="text-[#9FC2BC] hover:text-red-300 text-xs transition-colors"
+                                                            className="text-[#A1A1AA] hover:text-red-300 text-xs transition-colors"
                                                         >
                                                             Sil
                                                         </button>
@@ -610,23 +610,23 @@ function ProfilDuzenle() {
 
                     {/* SAĞ: Canlı Önizleme */}
                     <div className="lg:sticky lg:top-24 h-fit">
-                        <p className="text-[#9FC2BC] text-xs uppercase tracking-wider font-mono mb-3">Canlı Önizleme</p>
+                        <p className="text-[#A1A1AA] text-xs uppercase tracking-wider font-mono mb-3">Canlı Önizleme</p>
                         <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="relative shrink-0">
-                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] font-bold text-lg">
+                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] font-bold text-lg">
                                         {baslangicHarfleri(adSoyad)}
                                     </div>
                                     <span
-                                        className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-[#123434]"
+                                        className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-[#0D0D13]"
                                         style={{ backgroundColor: onizlemeMusaitlik.renk }}
                                         title={onizlemeMusaitlik.etiket}
                                     />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[#F3ECE1] font-semibold truncate">{adSoyad || "İsim Soyisim"}</div>
-                                    <div className="text-[#9FC2BC] text-sm truncate">{unvan || "Unvan"}</div>
-                                    {konum && <div className="text-[#9FC2BC]/60 text-xs mt-0.5">{konum}</div>}
+                                    <div className="text-[#FFFFFF] font-semibold truncate">{adSoyad || "İsim Soyisim"}</div>
+                                    <div className="text-[#A1A1AA] text-sm truncate">{unvan || "Unvan"}</div>
+                                    {konum && <div className="text-[#A1A1AA]/60 text-xs mt-0.5">{konum}</div>}
                                 </div>
                             </div>
 
@@ -644,23 +644,23 @@ function ProfilDuzenle() {
                                 )}
                             </div>
 
-                            <p className="text-[#9FC2BC] text-sm mb-4 line-clamp-4">
+                            <p className="text-[#A1A1AA] text-sm mb-4 line-clamp-4">
                                 {bio || "Hakkında yazın buraya yansıyacak..."}
                             </p>
 
                             {onizlemeUcret && (
-                                <p className="text-[#E3B776] text-sm font-medium mb-4">{onizlemeUcret}</p>
+                                <p className="text-[#C4B5FD] text-sm font-medium mb-4">{onizlemeUcret}</p>
                             )}
 
                             <div className="flex gap-2 flex-wrap mb-4">
                                 {teknolojiler.length === 0 ? (
-                                    <span className="text-[#9FC2BC]/40 text-xs">Henüz teknoloji eklenmedi</span>
+                                    <span className="text-[#A1A1AA]/40 text-xs">Henüz teknoloji eklenmedi</span>
                                 ) : teknolojiler.map((t) => (
-                                    <span key={t} className="text-[#9FC2BC] text-xs border border-white/[0.1] px-2 py-1 rounded-full font-mono">{t}</span>
+                                    <span key={t} className="text-[#A1A1AA] text-xs border border-white/[0.1] px-2 py-1 rounded-full font-mono">{t}</span>
                                 ))}
                             </div>
                             <div className="h-px bg-white/[0.08] mb-4" />
-                            <div className="text-[#9FC2BC] text-xs font-mono">
+                            <div className="text-[#A1A1AA] text-xs font-mono">
                                 {projeler.length} proje eklendi
                                 {oneCikanSayisi > 0 && ` · ${oneCikanSayisi} öne çıkan`}
                             </div>

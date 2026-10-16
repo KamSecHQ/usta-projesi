@@ -13,36 +13,36 @@ function baslangicHarfleri(adSoyad) {
 function ProfilKarti({ profil, aksiyonlar, onTelefonDogrula }) {
     const teknolojiler = profil.teknolojiler || []
     return (
-        <div className="bg-[#123434] border border-[#21504E] rounded-xl p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="bg-[#0D0D13] border border-[#2A2A33] rounded-xl p-5 flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="flex gap-3 min-w-0">
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] font-bold shrink-0">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] font-bold shrink-0">
                     {baslangicHarfleri(profil.ad_soyad)}
                 </div>
                 <div className="min-w-0">
-                    <div className="text-[#F3ECE1] font-semibold">{profil.ad_soyad || "İsimsiz Usta"}</div>
-                    <div className="text-[#9FC2BC] text-sm">{profil.unvan}</div>
-                    {profil.bio && <p className="text-[#9FC2BC]/80 text-sm mt-2 max-w-md">{profil.bio}</p>}
+                    <div className="text-[#FFFFFF] font-semibold">{profil.ad_soyad || "İsimsiz Usta"}</div>
+                    <div className="text-[#A1A1AA] text-sm">{profil.unvan}</div>
+                    {profil.bio && <p className="text-[#A1A1AA]/80 text-sm mt-2 max-w-md">{profil.bio}</p>}
                     <div className="flex gap-2 flex-wrap mt-2">
                         {teknolojiler.map((t) => (
-                            <span key={t} className="text-[#9FC2BC] text-xs border border-white/[0.1] px-2 py-0.5 rounded-full font-mono">{t}</span>
+                            <span key={t} className="text-[#A1A1AA] text-xs border border-white/[0.1] px-2 py-0.5 rounded-full font-mono">{t}</span>
                         ))}
                     </div>
                     {profil.telefon && (
                         <div className="flex items-center gap-2 mt-2.5">
-                            <span className="text-[#9FC2BC] text-xs font-mono">📞 {profil.telefon}</span>
+                            <span className="text-[#A1A1AA] text-xs font-mono">📞 {profil.telefon}</span>
                             {profil.telefon_dogrulandi ? (
                                 <span className="text-[#4ADE80] text-xs">✓ Doğrulandı</span>
                             ) : (
                                 <button
                                     onClick={() => onTelefonDogrula(profil.id)}
-                                    className="text-[#C97D3C] text-xs hover:underline"
+                                    className="text-[#A78BFA] text-xs hover:underline"
                                 >
                                     Telefonu Doğrula
                                 </button>
                             )}
                         </div>
                     )}
-                    <Link to={`/ustalar/${profil.id}`} target="_blank" className="text-[#C97D3C] text-xs hover:underline mt-2 inline-block">
+                    <Link to={`/ustalar/${profil.id}`} target="_blank" className="text-[#A78BFA] text-xs hover:underline mt-2 inline-block">
                         Portföyü görüntüle ↗
                     </Link>
                 </div>
@@ -137,17 +137,17 @@ function AdminPanel() {
     }
 
     if (authYukleniyor || (user && adminMi === null)) {
-        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
     }
 
     if (!user) return null
 
     if (adminMi === false) {
         return (
-            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-                <h1 className="text-[#F3ECE1] text-2xl font-bold mb-3">Bu sayfayı görme yetkin yok</h1>
-                <p className="text-[#9FC2BC] mb-6">Yönetim paneli sadece yöneticiler içindir.</p>
-                <Link to="/" className="text-[#C97D3C] hover:underline">← Anasayfaya dön</Link>
+            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
+                <h1 className="text-[#FFFFFF] text-2xl font-bold mb-3">Bu sayfayı görme yetkin yok</h1>
+                <p className="text-[#A1A1AA] mb-6">Yönetim paneli sadece yöneticiler içindir.</p>
+                <Link to="/" className="text-[#A78BFA] hover:underline">← Anasayfaya dön</Link>
             </div>
         )
     }
@@ -163,12 +163,12 @@ function AdminPanel() {
     ]
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+        <div className="min-h-screen bg-[#000000] px-6 py-16">
             <div className="max-w-4xl mx-auto">
-                <Link to="/" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1]">
+                <Link to="/" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF]">
                     ← Anasayfaya dön
                 </Link>
-                <h1 className="text-[#F3ECE1] text-3xl font-bold mt-6 mb-8">
+                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-8">
                     Yönetim Paneli
                 </h1>
 
@@ -178,8 +178,8 @@ function AdminPanel() {
                             key={s.id}
                             onClick={() => setSekme(s.id)}
                             className={`text-sm px-4 py-2 rounded-full font-mono transition-all duration-300 ${sekme === s.id
-                                ? 'bg-[#C97D3C] text-[#0D2626]'
-                                : 'border border-white/[0.1] text-[#9FC2BC] hover:bg-white/[0.05]'
+                                ? 'bg-[#FDFDFD] text-[#050505]'
+                                : 'border border-white/[0.1] text-[#A1A1AA] hover:bg-white/[0.05]'
                                 }`}
                         >
                             {s.ad} ({s.sayi})
@@ -189,9 +189,9 @@ function AdminPanel() {
 
                 {sekme === 'bekleyen' && (
                     profillerYukleniyor ? (
-                        <p className="text-[#9FC2BC]">Yükleniyor...</p>
+                        <p className="text-[#A1A1AA]">Yükleniyor...</p>
                     ) : bekleyenler.length === 0 ? (
-                        <p className="text-[#9FC2BC]">Onay bekleyen profil yok.</p>
+                        <p className="text-[#A1A1AA]">Onay bekleyen profil yok.</p>
                     ) : (
                         <div className="flex flex-col gap-3">
                             {bekleyenler.map((p) => (
@@ -202,7 +202,7 @@ function AdminPanel() {
                                     aksiyonlar={
                                         <button
                                             onClick={() => onayla(p.id)}
-                                            className="bg-[#C97D3C] text-[#0D2626] text-sm font-medium px-4 py-2 rounded-full hover:bg-[#E3B776] transition-all duration-300 whitespace-nowrap"
+                                            className="bg-[#FDFDFD] text-[#050505] text-sm font-medium px-4 py-2 rounded-full hover:bg-[#FFFFFF] transition-all duration-300 whitespace-nowrap"
                                         >
                                             Onayla
                                         </button>
@@ -215,9 +215,9 @@ function AdminPanel() {
 
                 {sekme === 'onayli' && (
                     profillerYukleniyor ? (
-                        <p className="text-[#9FC2BC]">Yükleniyor...</p>
+                        <p className="text-[#A1A1AA]">Yükleniyor...</p>
                     ) : onayliUstalar.length === 0 ? (
-                        <p className="text-[#9FC2BC]">Henüz onaylanmış usta yok.</p>
+                        <p className="text-[#A1A1AA]">Henüz onaylanmış usta yok.</p>
                     ) : (
                         <div className="flex flex-col gap-3">
                             {onayliUstalar.map((p) => (
@@ -228,7 +228,7 @@ function AdminPanel() {
                                     aksiyonlar={
                                         <button
                                             onClick={() => onayiKaldir(p.id)}
-                                            className="border border-white/[0.1] text-[#9FC2BC] text-sm px-4 py-2 rounded-full hover:text-red-300 hover:border-red-300/40 transition-all duration-300 whitespace-nowrap"
+                                            className="border border-white/[0.1] text-[#A1A1AA] text-sm px-4 py-2 rounded-full hover:text-red-300 hover:border-red-300/40 transition-all duration-300 whitespace-nowrap"
                                         >
                                             Onayı Kaldır
                                         </button>
@@ -241,47 +241,47 @@ function AdminPanel() {
 
                 {sekme === 'eski' && (
                     <>
-                        <p className="text-[#9FC2BC]/60 text-xs mb-4">
+                        <p className="text-[#A1A1AA]/60 text-xs mb-4">
                             Bu liste artık kullanılmayan eski başvuru formlarından kalan geçmiş kayıtlardır.
                         </p>
                         <div className="flex gap-2 mb-6">
                             <button
                                 onClick={() => setBasvuruFiltre('tumu')}
-                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'tumu' ? 'bg-[#C97D3C] text-[#0D2626]' : 'border border-[#21504E] text-[#9FC2BC]'}`}
+                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'tumu' ? 'bg-[#FDFDFD] text-[#050505]' : 'border border-[#2A2A33] text-[#A1A1AA]'}`}
                             >
                                 Tümü ({basvurular.length})
                             </button>
                             <button
                                 onClick={() => setBasvuruFiltre('yazilimci')}
-                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'yazilimci' ? 'bg-[#5FA8D3] text-[#0D2626]' : 'border border-[#21504E] text-[#9FC2BC]'}`}
+                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'yazilimci' ? 'bg-[#5FA8D3] text-[#050505]' : 'border border-[#2A2A33] text-[#A1A1AA]'}`}
                             >
                                 Yazılımcılar ({basvurular.filter((b) => b.tip === 'yazilimci').length})
                             </button>
                             <button
                                 onClick={() => setBasvuruFiltre('is-veren')}
-                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'is-veren' ? 'bg-[#C97D3C] text-[#0D2626]' : 'border border-[#21504E] text-[#9FC2BC]'}`}
+                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'is-veren' ? 'bg-[#FDFDFD] text-[#050505]' : 'border border-[#2A2A33] text-[#A1A1AA]'}`}
                             >
                                 İş Verenler ({basvurular.filter((b) => b.tip === 'is-veren').length})
                             </button>
                         </div>
 
                         {basvurularYukleniyor ? (
-                            <p className="text-[#9FC2BC]">Yükleniyor...</p>
+                            <p className="text-[#A1A1AA]">Yükleniyor...</p>
                         ) : basvuruGosterilecekler.length === 0 ? (
-                            <p className="text-[#9FC2BC]">Bu kategoride başvuru yok.</p>
+                            <p className="text-[#A1A1AA]">Bu kategoride başvuru yok.</p>
                         ) : (
                             <div className="flex flex-col gap-3">
                                 {basvuruGosterilecekler.map((b) => (
-                                    <div key={b.id} className="bg-[#123434] border border-[#21504E] rounded p-5">
+                                    <div key={b.id} className="bg-[#0D0D13] border border-[#2A2A33] rounded p-5">
                                         <div className="flex justify-between items-start mb-2">
-                                            <span className="text-[#F3ECE1] font-semibold">{b.ad}</span>
-                                            <span className={`text-xs font-mono px-2 py-1 rounded ${b.tip === 'yazilimci' ? 'text-[#5FA8D3] border border-[#5FA8D3]' : 'text-[#C97D3C] border border-[#C97D3C]'}`}>
+                                            <span className="text-[#FFFFFF] font-semibold">{b.ad}</span>
+                                            <span className={`text-xs font-mono px-2 py-1 rounded ${b.tip === 'yazilimci' ? 'text-[#5FA8D3] border border-[#5FA8D3]' : 'text-[#A78BFA] border border-[#8B5CF6]'}`}>
                                                 {b.tip === 'yazilimci' ? 'YAZILIMCI' : 'İŞ VEREN'}
                                             </span>
                                         </div>
-                                        <p className="text-[#9FC2BC] text-sm">{b.email}</p>
-                                        <p className="text-[#9FC2BC] text-sm mt-1">{b.uzmanlik}</p>
-                                        <p className="text-[#9FC2BC]/50 text-xs mt-2 font-mono">
+                                        <p className="text-[#A1A1AA] text-sm">{b.email}</p>
+                                        <p className="text-[#A1A1AA] text-sm mt-1">{b.uzmanlik}</p>
+                                        <p className="text-[#A1A1AA]/50 text-xs mt-2 font-mono">
                                             {new Date(b.created_at).toLocaleString('tr-TR')}
                                         </p>
                                     </div>

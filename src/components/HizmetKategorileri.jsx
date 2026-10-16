@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { Sahne, SatirBaslik } from './uzay/Hareket'
 
 const kategoriler = [
     {
@@ -68,38 +69,54 @@ const kategoriler = [
     },
 ]
 
+// İmlecin konumunu hücreye iletir; mor ışık imleci takip eder
+function isikTakip(e) {
+    const r = e.currentTarget.getBoundingClientRect()
+    e.currentTarget.style.setProperty('--x', `${e.clientX - r.left}px`)
+    e.currentTarget.style.setProperty('--y', `${e.clientY - r.top}px`)
+}
+
 function HizmetKategorileri() {
     const navigate = useNavigate()
 
     return (
-        <section className="relative bg-[#0D2626] py-20 px-6">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
-            <div className="max-w-5xl mx-auto">
-                <span className="text-[#C97D3C] text-sm tracking-widest uppercase font-mono">
-                    Ne Arıyorsun
-                </span>
-                <h2 className="text-[#F3ECE1] text-3xl font-bold mt-3 mb-10">
-                    Bir kategori seç, ustanı bul
-                </h2>
+        <Sahne as="section" className="uz-ufuk px-3 py-28 sm:px-5 lg:py-36">
+            <div className="mx-auto max-w-[1100px] text-center">
+                <SatirBaslik
+                    satirlar={['Ne yaptıracaksın?']}
+                    className="font-pjs text-[clamp(2.4rem,5.6vw,4.6rem)] font-medium leading-[1.02] tracking-[-0.025em] text-white"
+                />
+                <p className="uz-sub mx-auto mt-5 max-w-[40ch] text-[17px] font-light leading-[1.6] text-gri" style={{ '--d': '0.2s' }}>
+                    Bir tezgâh seç; o işte uzman ustaları sıralayalım.
+                </p>
+            </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-                    {kategoriler.map((k) => (
+            {/* Tel kafes ızgara: hücreler tek bir panelin içinde ince çizgilerle ayrılır */}
+            <ul className="uz-panel uz-otur mx-auto mt-14 grid max-w-[1100px] grid-cols-2 gap-px bg-white/[0.07] md:grid-cols-3" style={{ '--d': '0.3s' }}>
+                {kategoriler.map((k) => (
+                    <li key={k.ad} className="bg-gece2">
                         <button
-                            key={k.ad}
                             onClick={() => navigate(`/ustalar?arama=${encodeURIComponent(k.arama)}`)}
-                            className="group flex flex-col items-center gap-3 text-center"
+                            onPointerMove={isikTakip}
+                            className="group relative flex h-full min-h-[150px] w-full flex-col justify-between overflow-hidden p-5 text-left sm:min-h-[190px] sm:p-7"
                         >
-                            <div className="w-16 h-16 rounded-full bg-white/[0.04] border border-white/[0.1] flex items-center justify-center text-[#9FC2BC] group-hover:text-[#C97D3C] group-hover:border-[#C97D3C]/50 group-hover:bg-[#C97D3C]/[0.08] group-hover:scale-105 transition-all duration-300">
-                                {k.icon}
-                            </div>
-                            <span className="text-[#9FC2BC] text-xs group-hover:text-[#F3ECE1] transition-colors duration-300 leading-tight">
-                                {k.ad}
+                            <span
+                                aria-hidden
+                                className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                                style={{ background: 'radial-gradient(260px circle at var(--x, 50%) var(--y, 50%), rgba(139,92,246,0.22), transparent 70%)' }}
+                            />
+                            <span className="relative text-gri transition-colors duration-300 group-hover:text-mor-soluk">{k.icon}</span>
+                            <span className="relative flex items-end justify-between gap-3">
+                                <span className="text-[clamp(1.05rem,1.8vw,1.35rem)] font-medium leading-tight tracking-[-0.015em] text-white">{k.ad}</span>
+                                <svg viewBox="0 0 12 10" fill="none" className="mb-1 h-[11px] w-[13px] shrink-0 -translate-x-1 text-white opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden>
+                                    <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
                             </span>
                         </button>
-                    ))}
-                </div>
-            </div>
-        </section>
+                    </li>
+                ))}
+            </ul>
+        </Sahne>
     )
 }
 

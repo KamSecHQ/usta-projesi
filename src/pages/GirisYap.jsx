@@ -24,45 +24,45 @@ function GirisYap() {
     }
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-20">
+        <div className="min-h-screen bg-[#000000] px-6 py-20">
             <div className="max-w-md mx-auto">
-                <Link to="/" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1]">
+                <Link to="/" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF]">
                     ← Anasayfaya dön
                 </Link>
-                <h1 className="text-[#F3ECE1] text-3xl font-bold mt-6 mb-8">
+                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-8">
                     Giriş Yap
                 </h1>
 
                 <form onSubmit={girisYap} className="flex flex-col gap-4">
                     <div>
-                        <label className="text-[#9FC2BC] text-sm block mb-1">E-posta</label>
+                        <label className="text-[#A1A1AA] text-sm block mb-1">E-posta</label>
                         <input
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
-                            className="w-full bg-[#123434] border border-[#21504E] rounded px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C]"
+                            className="w-full bg-[#0D0D13] border border-[#2A2A33] rounded px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]"
                         />
                     </div>
                     <div>
-                        <label className="text-[#9FC2BC] text-sm block mb-1">Şifre</label>
+                        <label className="text-[#A1A1AA] text-sm block mb-1">Şifre</label>
                         <input
                             type="password"
                             value={sifre}
                             onChange={(e) => setSifre(e.target.value)}
                             required
-                            className="w-full bg-[#123434] border border-[#21504E] rounded px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C]"
+                            className="w-full bg-[#0D0D13] border border-[#2A2A33] rounded px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]"
                         />
                     </div>
                     {hata && <p className="text-red-400 text-sm">{hata}</p>}
                     <button
                         type="submit"
-                        className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded mt-2"
+                        className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded mt-2"
                     >
                         Giriş Yap
                     </button>
-                    <p className="text-[#9FC2BC] text-sm text-center mt-2">
-                        Hesabın yok mu? <Link to="/hesap-olustur" className="text-[#C97D3C] hover:underline">Hesap oluştur</Link>
+                    <p className="text-[#A1A1AA] text-sm text-center mt-2">
+                        Hesabın yok mu? <Link to="/hesap-olustur" className="text-[#A78BFA] hover:underline">Hesap oluştur</Link>
                     </p>
                 </form>
             </div>

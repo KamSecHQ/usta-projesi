@@ -53,15 +53,15 @@ function TumUstalar() {
     })
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+        <div className="min-h-screen bg-[#000000] px-6 py-16">
             <div className="max-w-5xl mx-auto">
-                <Link to="/" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1]">
+                <Link to="/" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF]">
                     ← Anasayfaya dön
                 </Link>
-                <h1 className="text-[#F3ECE1] text-3xl font-bold mt-6 mb-2">
+                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-2">
                     Tüm Ustalar
                 </h1>
-                <p className="text-[#9FC2BC] mb-8">
+                <p className="text-[#A1A1AA] mb-8">
                     İsim, uzmanlık ya da teknoloji ile ara.
                 </p>
 
@@ -70,7 +70,7 @@ function TumUstalar() {
                     value={arama}
                     onChange={(e) => setArama(e.target.value)}
                     placeholder="örn. React, Mobil..."
-                    className="w-full max-w-md bg-[#123434] border border-[#21504E] rounded px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C] mb-10"
+                    className="w-full max-w-md bg-[#0D0D13] border border-[#2A2A33] rounded px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6] mb-10"
                 />
 
                 {yukleniyor ? (
@@ -84,7 +84,7 @@ function TumUstalar() {
                     </div>
                 ) : filtrelenmis.length === 0 ? (
 
-                    <p className="text-[#9FC2BC]">
+                    <p className="text-[#A1A1AA]">
                         {ustalar.length === 0
                             ? "Henüz profilini tamamlamış bir usta yok."
                             : "Aramanla eşleşen usta bulunamadı."}

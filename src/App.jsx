@@ -1,6 +1,9 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Anasayfa from './pages/Anasayfa'
+// Anasayfa 3D atölyeyi (three.js) taşır; diğer sayfalar bu yükü indirmesin
+const Anasayfa = lazy(() => import('./pages/Anasayfa'))
+import Yukleyici from './components/hareket/Yukleyici'
 import AdminPanel from './pages/AdminPanel'
 import TumUstalar from './pages/TumUstalar'
 import GirisYap from './pages/GirisYap'
@@ -48,7 +51,7 @@ function App() {
                 <Route path="/ajansim" element={<AjansYonetimi />} />
                 <Route path="/blog" element={<BlogListesi />} />
                 <Route path="/blog/:slug" element={<BlogYazisi />} />
-                <Route path="/" element={<Anasayfa />} />
+                <Route path="/" element={<Suspense fallback={<Yukleyici hedef={55} />}><Anasayfa /></Suspense>} />
                 <Route path="/kayit-ol" element={<Navigate to="/hesap-olustur?rol=yazilimci" replace />} />
                 <Route path="/is-ver" element={<Navigate to="/hesap-olustur?rol=is-veren" replace />} />
                 <Route path="*" element={<SayfaBulunamadi />} />

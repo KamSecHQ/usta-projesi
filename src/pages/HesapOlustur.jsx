@@ -50,28 +50,28 @@ function HesapOlustur() {
         setBasarili(true)
     }
 
-    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#9FC2BC]/40"
-    const labelClass = "text-[#9FC2BC] text-xs uppercase tracking-wider font-mono block mb-2"
+    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#A1A1AA]/40"
+    const labelClass = "text-[#A1A1AA] text-xs uppercase tracking-wider font-mono block mb-2"
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-20 relative overflow-hidden">
+        <div className="min-h-screen bg-[#000000] px-6 py-20 relative overflow-hidden">
             <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(201,125,60,0.08),transparent)]" />
 
             <div className="max-w-md mx-auto relative">
-                <Link to="/" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">
+                <Link to="/" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
                     ← Anasayfaya dön
                 </Link>
-                <h1 className="text-[#F3ECE1] text-3xl font-bold mt-6 mb-2">
+                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-2">
                     Hesap Oluştur
                 </h1>
-                <p className="text-[#9FC2BC] text-sm mb-8">
+                <p className="text-[#A1A1AA] text-sm mb-8">
                     Türkiye'nin yazılım çarşısına katıl.
                 </p>
 
                 {basarili ? (
-                    <div className="bg-white/[0.03] backdrop-blur-md border border-[#C97D3C]/40 rounded-2xl p-6">
-                        <p className="text-[#E3B776] font-semibold">✓ Kayıt başarılı!</p>
-                        <p className="text-[#9FC2BC] text-sm mt-2">
+                    <div className="bg-white/[0.03] backdrop-blur-md border border-[#8B5CF6]/40 rounded-2xl p-6">
+                        <p className="text-[#C4B5FD] font-semibold">✓ Kayıt başarılı!</p>
+                        <p className="text-[#A1A1AA] text-sm mt-2">
                             E-postana gelen onay linkine tıkla, sonra giriş yapabilirsin.
                         </p>
                     </div>
@@ -84,8 +84,8 @@ function HesapOlustur() {
                                     type="button"
                                     onClick={() => setRol("yazilimci")}
                                     className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "yazilimci"
-                                        ? "bg-[#C97D3C] text-[#0D2626] border-[#C97D3C]"
-                                        : "bg-white/[0.03] text-[#9FC2BC] border-white/[0.1] hover:bg-white/[0.06]"
+                                        ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
+                                        : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
                                         }`}
                                 >
                                     Yazılımcıyım
@@ -94,8 +94,8 @@ function HesapOlustur() {
                                     type="button"
                                     onClick={() => setRol("is-veren")}
                                     className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "is-veren"
-                                        ? "bg-[#C97D3C] text-[#0D2626] border-[#C97D3C]"
-                                        : "bg-white/[0.03] text-[#9FC2BC] border-white/[0.1] hover:bg-white/[0.06]"
+                                        ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
+                                        : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
                                         }`}
                                 >
                                     İş Verenim
@@ -154,12 +154,12 @@ function HesapOlustur() {
                         <button
                             type="submit"
                             disabled={gonderiliyor}
-                            className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#E3B776] transition-all duration-300 mt-2"
+                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 mt-2"
                         >
                             {gonderiliyor ? "Kaydediliyor..." : "Kayıt Ol"}
                         </button>
-                        <p className="text-[#9FC2BC] text-sm text-center">
-                            Zaten hesabın var mı? <Link to="/giris" className="text-[#C97D3C] hover:underline">Giriş yap</Link>
+                        <p className="text-[#A1A1AA] text-sm text-center">
+                            Zaten hesabın var mı? <Link to="/giris" className="text-[#A78BFA] hover:underline">Giriş yap</Link>
                         </p>
                     </form>
                 )}

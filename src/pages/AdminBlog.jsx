@@ -103,33 +103,33 @@ function AdminBlog() {
     }
 
     if (authYukleniyor || (user && adminMi === null)) {
-        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
     }
 
     if (!user || adminMi === false) {
         return (
-            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-                <h1 className="text-[#F3ECE1] text-2xl font-bold mb-3">Bu sayfayı görme yetkin yok</h1>
-                <Link to="/" className="text-[#C97D3C] hover:underline">← Anasayfaya dön</Link>
+            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
+                <h1 className="text-[#FFFFFF] text-2xl font-bold mb-3">Bu sayfayı görme yetkin yok</h1>
+                <Link to="/" className="text-[#A78BFA] hover:underline">← Anasayfaya dön</Link>
             </div>
         )
     }
 
-    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#9FC2BC]/40"
-    const labelClass = "text-[#9FC2BC] text-xs uppercase tracking-wider font-mono block mb-2"
+    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#A1A1AA]/40"
+    const labelClass = "text-[#A1A1AA] text-xs uppercase tracking-wider font-mono block mb-2"
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+        <div className="min-h-screen bg-[#000000] px-6 py-16">
             <div className="max-w-3xl mx-auto">
-                <Link to="/admin" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">
+                <Link to="/admin" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
                     ← Yönetim Paneline dön
                 </Link>
                 <div className="flex items-center justify-between flex-wrap gap-4 mt-6 mb-10">
-                    <h1 className="text-[#F3ECE1] text-3xl font-bold">Blog Yönetimi</h1>
+                    <h1 className="text-[#FFFFFF] text-3xl font-bold">Blog Yönetimi</h1>
                     {!formAcik && (
                         <button
                             onClick={yeniYaziAc}
-                            className="bg-[#C97D3C] text-[#0D2626] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#E3B776] transition-all duration-300"
+                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300"
                         >
                             + Yeni Yazı
                         </button>
@@ -150,7 +150,7 @@ function AdminBlog() {
                                 onChange={(e) => { setForm((f) => ({ ...f, slug: e.target.value })); setSlugElleDegisti(true) }}
                                 className={inputClass}
                             />
-                            <p className="text-[#9FC2BC]/50 text-xs mt-1">/blog/{form.slug || "..."}</p>
+                            <p className="text-[#A1A1AA]/50 text-xs mt-1">/blog/{form.slug || "..."}</p>
                         </div>
                         <div>
                             <label className={labelClass}>Kategori</label>
@@ -168,18 +168,18 @@ function AdminBlog() {
                             <label className={labelClass}>İçerik</label>
                             <textarea value={form.icerik} onChange={(e) => setForm((f) => ({ ...f, icerik: e.target.value }))} rows={12} className={inputClass + " resize-none"} />
                         </div>
-                        <label className="flex items-center gap-2.5 text-[#9FC2BC] text-sm">
-                            <input type="checkbox" checked={form.yayinlandi} onChange={(e) => setForm((f) => ({ ...f, yayinlandi: e.target.checked }))} className="w-4 h-4 accent-[#C97D3C]" />
+                        <label className="flex items-center gap-2.5 text-[#A1A1AA] text-sm">
+                            <input type="checkbox" checked={form.yayinlandi} onChange={(e) => setForm((f) => ({ ...f, yayinlandi: e.target.checked }))} className="w-4 h-4 accent-[#8B5CF6]" />
                             Yayınla (işaretlemezsen taslak olarak kalır)
                         </label>
 
                         {hata && <p className="text-red-400 text-sm">{hata}</p>}
 
                         <div className="flex gap-3">
-                            <button type="submit" disabled={kaydediliyor} className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#E3B776] transition-all duration-300">
+                            <button type="submit" disabled={kaydediliyor} className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300">
                                 {kaydediliyor ? "Kaydediliyor..." : "Kaydet"}
                             </button>
-                            <button type="button" onClick={() => setFormAcik(false)} className="text-[#9FC2BC] text-sm px-4 py-3 hover:text-[#F3ECE1] transition-colors">
+                            <button type="button" onClick={() => setFormAcik(false)} className="text-[#A1A1AA] text-sm px-4 py-3 hover:text-[#FFFFFF] transition-colors">
                                 İptal
                             </button>
                         </div>
@@ -187,30 +187,30 @@ function AdminBlog() {
                 )}
 
                 {yukleniyor ? (
-                    <p className="text-[#9FC2BC] text-sm">Yükleniyor...</p>
+                    <p className="text-[#A1A1AA] text-sm">Yükleniyor...</p>
                 ) : yazilar.length === 0 ? (
-                    <p className="text-[#9FC2BC] text-sm">Henüz yazı yok.</p>
+                    <p className="text-[#A1A1AA] text-sm">Henüz yazı yok.</p>
                 ) : (
                     <div className="flex flex-col gap-3">
                         {yazilar.map((yazi) => (
                             <div key={yazi.id} className="bg-white/[0.03] border border-white/[0.08] rounded-xl p-5 flex items-start justify-between gap-3 flex-wrap">
                                 <div className="min-w-0">
                                     <div className="flex items-center gap-2 flex-wrap">
-                                        <span className="text-[#F3ECE1] font-medium">{yazi.baslik}</span>
-                                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${yazi.yayinlandi ? 'bg-[#4ADE80]/10 text-[#4ADE80]' : 'bg-white/[0.06] text-[#9FC2BC]'}`}>
+                                        <span className="text-[#FFFFFF] font-medium">{yazi.baslik}</span>
+                                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${yazi.yayinlandi ? 'bg-[#4ADE80]/10 text-[#4ADE80]' : 'bg-white/[0.06] text-[#A1A1AA]'}`}>
                                             {yazi.yayinlandi ? 'YAYINDA' : 'TASLAK'}
                                         </span>
                                     </div>
-                                    <p className="text-[#9FC2BC]/60 text-xs mt-1">/blog/{yazi.slug} · {zamanFarki(yazi.created_at)}</p>
+                                    <p className="text-[#A1A1AA]/60 text-xs mt-1">/blog/{yazi.slug} · {zamanFarki(yazi.created_at)}</p>
                                 </div>
                                 <div className="flex gap-3 shrink-0">
-                                    <button onClick={() => yayinDurumuDegistir(yazi)} className="text-[#9FC2BC] text-xs hover:text-[#C97D3C] transition-colors">
+                                    <button onClick={() => yayinDurumuDegistir(yazi)} className="text-[#A1A1AA] text-xs hover:text-[#A78BFA] transition-colors">
                                         {yazi.yayinlandi ? 'Yayından Kaldır' : 'Yayınla'}
                                     </button>
-                                    <button onClick={() => yaziDuzenle(yazi)} className="text-[#9FC2BC] text-xs hover:text-[#F3ECE1] transition-colors">
+                                    <button onClick={() => yaziDuzenle(yazi)} className="text-[#A1A1AA] text-xs hover:text-[#FFFFFF] transition-colors">
                                         Düzenle
                                     </button>
-                                    <button onClick={() => yaziSil(yazi.id)} className="text-[#9FC2BC] text-xs hover:text-red-300 transition-colors">
+                                    <button onClick={() => yaziSil(yazi.id)} className="text-[#A1A1AA] text-xs hover:text-red-300 transition-colors">
                                         Sil
                                     </button>
                                 </div>

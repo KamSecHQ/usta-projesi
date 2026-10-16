@@ -1,0 +1,811 @@
+/* Video hero — 1280x800 referans görüntüye göre çizilmiş, tek birimle (--u) orantılı ölçeklenen
+   sinematik açılış. Tüm kurallar .vhero altında; sitenin geri kalanını etkilemez. */
+
+.vhero {
+    --u: min(calc(100vw / 1280), calc(100dvh / 760));
+
+    --ink: #ffffff;
+    --ink-muted: #ededed;
+    --panel: #181818;
+    --white-btn: #fdfdfd;
+    --btn-ink: #050505;
+    --glass-fill: rgba(0, 0, 0, .78);
+    --glass-line: rgba(255, 255, 255, .09);
+
+    --dx: 8.5;
+    --dy: 13.1;
+
+    --e-reveal: cubic-bezier(.16, 1, .3, 1);
+    --e-soft: cubic-bezier(.25, .8, .3, 1);
+
+    position: relative;
+    width: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    /* clip: taşan video kutusu programla (odak, scrollIntoView) bile kaydırılamaz */
+    overflow: clip;
+    background: #000;
+    color: var(--ink);
+    font-family: 'Plus Jakarta Sans Variable', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
+}
+
+@supports not (height: 100dvh) {
+    .vhero {
+        --u: min(calc(100vw / 1280), calc(100vh / 760));
+        height: 100vh;
+    }
+}
+
+.vhero *,
+.vhero *::before,
+.vhero *::after {
+    box-sizing: border-box;
+}
+
+/* ---------- 4. Video arka plan ---------- */
+.vhero .bg {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100vw, calc(100dvh * 1.6));
+    height: max(62.5vw, 100dvh);
+    background-color: #000;
+}
+
+@supports not (height: 100dvh) {
+    .vhero .bg {
+        width: max(100vw, calc(100vh * 1.6));
+        height: max(62.5vw, 100vh);
+    }
+}
+
+.vhero .bg-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 51% 8%;
+    display: block;
+    background-color: #000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .9s linear;
+}
+
+.vhero .bg-video.is-active {
+    opacity: 1;
+}
+
+/* ---------- 5. Nav (masaüstü) ---------- */
+.vhero .nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: calc(67 * var(--u));
+    display: flex;
+    align-items: center;
+    padding-left: calc(24.5 * var(--u));
+    padding-right: calc(50.7 * var(--u));
+    z-index: 3;
+}
+
+.vhero .logo {
+    font-weight: 800;
+    font-size: calc(26 * var(--u));
+    letter-spacing: calc(0.45 * var(--u));
+    transform: translateY(calc(-2.4 * var(--u)));
+    line-height: 1;
+    color: var(--ink);
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.vhero .nav-links {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) translateX(calc(-23 * var(--u)));
+    display: flex;
+    align-items: center;
+    gap: calc(24.3 * var(--u));
+    white-space: nowrap;
+}
+
+.vhero .nav-links a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    font-size: calc(11.5 * var(--u));
+    font-weight: 500;
+    letter-spacing: calc(-0.15 * var(--u));
+    line-height: 1;
+    transition: color .18s ease;
+}
+
+.vhero .nav-links a:hover {
+    color: #fff;
+}
+
+.vhero .nav-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: calc(6.8 * var(--u));
+}
+
+.vhero .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+    border: 0;
+    cursor: pointer;
+}
+
+.vhero .btn-login {
+    height: calc(28 * var(--u));
+    padding: 0 calc(12.9 * var(--u));
+    border-radius: calc(14 * var(--u));
+    background: var(--panel);
+    color: #e8e8e8;
+    font-size: calc(11.5 * var(--u));
+    font-weight: 500;
+    letter-spacing: calc(-0.15 * var(--u));
+    transition: background .18s ease, color .18s ease;
+}
+
+.vhero .btn-login:hover {
+    background: #232323;
+    color: #fff;
+}
+
+.vhero .btn-nav-start {
+    height: calc(28 * var(--u));
+    padding-left: calc(13.5 * var(--u));
+    padding-right: calc(14.5 * var(--u));
+    border-radius: calc(14 * var(--u));
+    background: var(--white-btn);
+    color: var(--btn-ink);
+    font-size: calc(11.1 * var(--u));
+    font-weight: 500;
+    letter-spacing: 0;
+    gap: calc(7 * var(--u));
+    transition: background .18s ease;
+}
+
+.vhero .btn-nav-start:hover {
+    background: #fff;
+}
+
+.vhero .btn-nav-start .arw {
+    width: calc(11.5 * var(--u));
+    height: calc(9.6 * var(--u));
+}
+
+.vhero .arw {
+    flex: 0 0 auto;
+    display: block;
+}
+
+.vhero .burger {
+    display: none;
+    margin-left: auto;
+    width: calc(40 * var(--u));
+    height: calc(28 * var(--u));
+    align-items: center;
+    justify-content: center;
+    background: var(--panel);
+    border-radius: calc(14 * var(--u));
+    border: 0;
+    cursor: pointer;
+    padding: 0;
+}
+
+.vhero .burger span {
+    display: block;
+    width: 16px;
+    height: 1.5px;
+    background: #ededed;
+    border-radius: 2px;
+    position: relative;
+}
+
+.vhero .burger span::before,
+.vhero .burger span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 16px;
+    height: 1.5px;
+    background: #ededed;
+    border-radius: 2px;
+}
+
+.vhero .burger span::before {
+    top: -5px;
+}
+
+.vhero .burger span::after {
+    top: 5px;
+}
+
+/* ---------- 6. İçerik ---------- */
+.vhero .hero-inner {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) translate(calc(var(--dx) * var(--u)), calc(var(--dy) * var(--u)));
+    width: max-content;
+    text-align: center;
+    z-index: 2;
+}
+
+.vhero h1 {
+    margin: 0;
+    font-weight: 500;
+    font-size: calc(89 * var(--u));
+    line-height: calc(90 * var(--u));
+    letter-spacing: calc(-1 * var(--u));
+    color: var(--ink);
+}
+
+.vhero .ln,
+.vhero .ln-i {
+    display: block;
+}
+
+.vhero .sub {
+    margin: calc(16.1 * var(--u)) 0 0;
+    font-weight: 300;
+    font-size: calc(17.4 * var(--u));
+    line-height: calc(27 * var(--u));
+    letter-spacing: calc(-0.30 * var(--u));
+    color: #f6f6f6;
+}
+
+.vhero .ctas {
+    margin-top: calc(21.8 * var(--u));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateX(calc(-0.75 * var(--u)));
+    gap: calc(7 * var(--u));
+}
+
+.vhero .btn-lg {
+    height: calc(39 * var(--u));
+    border-radius: calc(19.5 * var(--u));
+    font-size: calc(13.3 * var(--u));
+    font-weight: 500;
+    letter-spacing: calc(-0.3 * var(--u));
+    gap: calc(9 * var(--u));
+}
+
+.vhero .btn-primary {
+    background: var(--white-btn);
+    color: var(--btn-ink);
+    padding-left: calc(18.2 * var(--u));
+    padding-right: calc(19.2 * var(--u));
+    transition: background .18s ease, transform .18s ease;
+}
+
+.vhero .btn-primary:hover {
+    background: #fff;
+}
+
+.vhero .btn-ghost {
+    background: var(--glass-fill);
+    color: #d9d9d9;
+    padding: 0 calc(17.4 * var(--u));
+    border: 1px solid var(--glass-line);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+    transition: background .18s ease, border-color .18s ease;
+}
+
+.vhero .btn-ghost:hover {
+    background: rgba(0, 0, 0, .66);
+    border-color: rgba(255, 255, 255, .16);
+}
+
+.vhero .btn-lg .arw {
+    width: calc(13 * var(--u));
+    height: calc(10.8 * var(--u));
+}
+
+.vhero a:focus-visible,
+.vhero button:focus-visible {
+    outline: 2px solid #a78bfa;
+    outline-offset: 3px;
+    border-radius: 99px;
+}
+
+/* ---------- 7. Mobil menü ---------- */
+.vhero .menu {
+    display: none;
+}
+
+@keyframes vh-menuIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px) scale(.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ---------- 8. Kırılım noktaları ---------- */
+@media (max-width: 1160px) {
+    .vhero {
+        --u: min(max(0.9px, min(calc(100vw / 1280), calc(100dvh / 760))),
+                calc((100vw - 72px) / 575),
+                calc(100dvh / 620));
+    }
+
+    .vhero .nav {
+        height: max(58px, calc(67 * var(--u)));
+        padding-left: max(24px, calc(28 * var(--u)));
+        padding-right: max(24px, calc(28 * var(--u)));
+    }
+
+    .vhero .nav-links,
+    .vhero .nav-actions {
+        display: none;
+    }
+
+    .vhero .burger {
+        display: flex;
+        width: max(46px, calc(48 * var(--u)));
+        height: max(38px, calc(34 * var(--u)));
+        border-radius: 999px;
+    }
+
+    .vhero .hero-inner {
+        max-width: calc(100vw - 48px);
+    }
+
+    .vhero .sub {
+        font-size: max(16px, calc(17.4 * var(--u)));
+        line-height: max(25px, calc(27 * var(--u)));
+    }
+
+    .vhero .ctas {
+        margin-top: max(26px, calc(21.8 * var(--u)));
+        gap: max(10px, calc(7 * var(--u)));
+    }
+
+    .vhero .btn-lg {
+        height: max(44px, calc(39 * var(--u)));
+        border-radius: max(22px, calc(19.5 * var(--u)));
+        font-size: max(15px, calc(13.3 * var(--u)));
+        gap: max(10px, calc(9 * var(--u)));
+    }
+
+    .vhero .btn-primary {
+        padding-left: max(21px, calc(18.2 * var(--u)));
+        padding-right: max(22px, calc(19.2 * var(--u)));
+    }
+
+    .vhero .btn-ghost {
+        padding-left: max(20px, calc(17.4 * var(--u)));
+        padding-right: max(21px, calc(18.4 * var(--u)));
+    }
+
+    .vhero .btn-lg .arw {
+        width: max(14px, calc(13 * var(--u)));
+        height: max(11.6px, calc(10.8 * var(--u)));
+    }
+
+    .vhero .menu {
+        position: absolute;
+        top: calc(max(58px, calc(67 * var(--u))) - 6px);
+        right: max(24px, calc(28 * var(--u)));
+        width: min(320px, calc(100vw - 48px));
+        background: rgba(10, 10, 12, .86);
+        -webkit-backdrop-filter: blur(22px);
+        backdrop-filter: blur(22px);
+        border: 1px solid rgba(255, 255, 255, .09);
+        border-radius: 20px;
+        padding: 10px 8px 12px;
+        flex-direction: column;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+        transform-origin: top right;
+        z-index: 5;
+    }
+
+    .vhero .menu.open {
+        display: flex;
+        animation: vh-menuIn .18s ease both;
+    }
+
+    .vhero .menu a {
+        color: var(--ink-muted);
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: calc(-0.15 * var(--u));
+        padding: 12px 14px;
+        border-radius: 12px;
+        transition: background .18s ease, color .18s ease;
+    }
+
+    .vhero .menu a:hover {
+        background: rgba(255, 255, 255, .06);
+        color: #fff;
+    }
+
+    .vhero .menu .divider {
+        height: 1px;
+        background: rgba(255, 255, 255, .08);
+        margin: 8px 14px;
+    }
+
+    .vhero .menu .m-start {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: var(--white-btn);
+        color: var(--btn-ink);
+        margin: 6px 8px 0;
+        padding: 13px 16px;
+        border-radius: 14px;
+        font-weight: 600;
+    }
+
+    .vhero .menu .m-start:hover {
+        background: #fff;
+        color: var(--btn-ink);
+    }
+
+    .vhero .menu .m-start .arw {
+        width: 13px;
+        height: 11px;
+    }
+}
+
+@media (max-width: 552px) {
+    .vhero {
+        --u: 1px;
+    }
+
+    .vhero .nav {
+        height: 56px;
+        padding: 0 20px;
+    }
+
+    .vhero .logo {
+        font-size: 22px;
+        letter-spacing: -.4px;
+    }
+
+    .vhero .burger {
+        width: 42px;
+        height: 36px;
+    }
+
+    .vhero .hero-inner {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        width: auto;
+        max-width: none;
+        padding: 0 20px;
+        transform: translateY(-47%);
+    }
+
+    /* "İşini emin ellere" mürekkebi yazı boyutunun 6.75 katı; 7.2 her genişlikte pay bırakır */
+    .vhero h1 {
+        font-size: min(74px, calc((100vw - 44px) / 7.2));
+        line-height: 1.04;
+        letter-spacing: -.02em;
+    }
+
+    .vhero .sub {
+        margin-top: 16px;
+        font-size: clamp(15.5px, 4vw, 16.5px);
+        line-height: 1.6;
+        letter-spacing: 0;
+        max-width: 42ch;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .vhero .sub br {
+        display: none;
+    }
+
+    .vhero .ctas {
+        margin-top: 24px;
+        gap: 10px;
+        transform: none;
+        flex-wrap: wrap;
+    }
+
+    .vhero .btn-lg {
+        height: 46px;
+        border-radius: 23px;
+        font-size: 15px;
+        gap: 9px;
+    }
+
+    .vhero .btn-primary {
+        padding-left: 20px;
+        padding-right: 21px;
+    }
+
+    .vhero .btn-ghost {
+        padding-left: 19px;
+        padding-right: 20px;
+    }
+
+    .vhero .btn-lg .arw {
+        width: 13px;
+        height: 11px;
+    }
+
+    .vhero .menu {
+        top: 50px;
+        left: 16px;
+        right: 16px;
+        width: auto;
+    }
+
+    .vhero .menu a {
+        font-size: 15.5px;
+        padding: 13px 14px;
+    }
+
+    .vhero .menu .m-start {
+        padding: 14px 16px;
+    }
+}
+
+/* Düğme çifti yan yana sığmayınca alt alta, aynı genişlikte */
+@media (max-width: 480px) {
+    .vhero .ctas {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .vhero .btn-lg {
+        width: min(100%, 300px);
+    }
+}
+
+@media (max-width: 552px) and (max-height: 460px) {
+    .vhero h1 {
+        font-size: min(44px, calc((100vw - 44px) / 7.2));
+    }
+
+    .vhero .sub {
+        margin-top: 12px;
+        font-size: 15px;
+        line-height: 1.5;
+    }
+
+    .vhero .ctas {
+        margin-top: 18px;
+    }
+
+    .vhero .hero-inner {
+        transform: translateY(-44%);
+    }
+}
+
+/* ---------- 9. Giriş sahnesi ---------- */
+.vhero.anim .ln {
+    overflow: hidden;
+    padding-top: .26em;
+    margin-top: -.26em;
+}
+
+.vhero.anim .ln-i {
+    transform: translateY(100%);
+}
+
+.vhero.anim .logo,
+.vhero.anim .nav-links a,
+.vhero.anim .nav-actions .btn,
+.vhero.anim .burger,
+.vhero.anim .sub,
+.vhero.anim .ctas .btn {
+    opacity: 0;
+}
+
+.vhero.anim .ln-i,
+.vhero.anim .logo,
+.vhero.anim .nav-links a,
+.vhero.anim .nav-actions .btn,
+.vhero.anim .sub,
+.vhero.anim .ctas .btn {
+    will-change: transform, opacity;
+}
+
+@keyframes vh-lineRise {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes vh-subIn {
+    from {
+        opacity: 0;
+        transform: translateY(calc(14 * var(--u)));
+        filter: blur(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+        filter: blur(0);
+    }
+}
+
+@keyframes vh-subInFlat {
+    from {
+        opacity: 0;
+        transform: translateY(calc(12 * var(--u)));
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes vh-pillIn {
+    from {
+        opacity: 0;
+        transform: translateY(calc(8 * var(--u))) scale(.972);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes vh-liftIn {
+    from {
+        opacity: 0;
+        transform: translateY(calc(9 * var(--u)));
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes vh-logoIn {
+    from {
+        opacity: 0;
+        transform: translateY(calc(-2.4 * var(--u))) translateY(calc(9 * var(--u)));
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(calc(-2.4 * var(--u)));
+    }
+}
+
+.vhero.anim.go .ln-i {
+    animation: vh-lineRise 1.05s var(--e-reveal) both;
+}
+
+.vhero.anim.go .ln:nth-child(1) .ln-i {
+    animation-delay: .12s;
+}
+
+.vhero.anim.go .ln:nth-child(2) .ln-i {
+    animation-delay: .22s;
+}
+
+.vhero.anim.go .logo {
+    animation: vh-logoIn .62s var(--e-soft) .46s both;
+}
+
+.vhero.anim.go .nav-links a {
+    animation: vh-liftIn .55s var(--e-soft) both;
+}
+
+.vhero.anim.go .nav-links a:nth-child(1) {
+    animation-delay: .540s;
+}
+
+.vhero.anim.go .nav-links a:nth-child(2) {
+    animation-delay: .585s;
+}
+
+.vhero.anim.go .nav-links a:nth-child(3) {
+    animation-delay: .630s;
+}
+
+.vhero.anim.go .nav-links a:nth-child(4) {
+    animation-delay: .675s;
+}
+
+.vhero.anim.go .nav-links a:nth-child(5) {
+    animation-delay: .720s;
+}
+
+.vhero.anim.go .sub {
+    animation: vh-subIn .85s var(--e-reveal) .58s both;
+}
+
+.vhero.anim.go .btn-login,
+.vhero.anim.go .burger {
+    animation: vh-pillIn .55s var(--e-soft) .68s both;
+}
+
+.vhero.anim.go .btn-nav-start {
+    animation: vh-pillIn .55s var(--e-soft) .73s both;
+}
+
+.vhero.anim.go .ctas .btn-primary {
+    animation: vh-pillIn .70s var(--e-reveal) .90s both;
+}
+
+.vhero.anim.go .ctas .btn-ghost {
+    animation: vh-pillIn .70s var(--e-reveal) .97s both;
+}
+
+@media (max-width: 552px) {
+    .vhero.anim.go .sub {
+        animation-name: vh-subInFlat;
+    }
+
+    .vhero.anim.go .ln-i {
+        animation-duration: .92s;
+    }
+
+    .vhero.anim.go .ctas .btn-primary {
+        animation-delay: .84s;
+    }
+
+    .vhero.anim.go .ctas .btn-ghost {
+        animation-delay: .90s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .vhero.anim .ln {
+        overflow: visible;
+        padding-top: 0;
+        margin-top: 0;
+    }
+
+    .vhero.anim .ln-i {
+        transform: none;
+    }
+
+    .vhero.anim .logo,
+    .vhero.anim .nav-links a,
+    .vhero.anim .nav-actions .btn,
+    .vhero.anim .burger,
+    .vhero.anim .sub,
+    .vhero.anim .ctas .btn {
+        opacity: 1;
+    }
+
+    .vhero * {
+        transition: none !important;
+        animation: none !important;
+    }
+}

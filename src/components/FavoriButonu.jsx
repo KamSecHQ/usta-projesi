@@ -52,16 +52,16 @@ function FavoriButonu({ ustaId, boyut = "normal" }) {
         <button
             onClick={tikla}
             disabled={yukleniyor}
-            className={`${boyutSinifi} flex items-center justify-center rounded-full bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.1] hover:border-[#C97D3C]/40 transition-all duration-300 shrink-0`}
+            className={`${boyutSinifi} flex items-center justify-center rounded-full bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300 shrink-0`}
             aria-label={favoriMi ? "Favorilerden çıkar" : "Favorilere ekle"}
             title={favoriMi ? "Favorilerden çıkar" : "Favorilere ekle"}
         >
             <svg
                 viewBox="0 0 24 24"
-                fill={favoriMi ? "#C97D3C" : "none"}
-                stroke={favoriMi ? "#C97D3C" : "currentColor"}
+                fill={favoriMi ? "#A78BFA" : "none"}
+                stroke={favoriMi ? "#A78BFA" : "currentColor"}
                 strokeWidth="1.5"
-                className={`w-4.5 h-4.5 transition-colors duration-300 ${favoriMi ? "" : "text-[#9FC2BC]"}`}
+                className={`w-4.5 h-4.5 transition-colors duration-300 ${favoriMi ? "" : "text-[#A1A1AA]"}`}
             >
                 <path d="M12 21s-7-4.35-9.5-8.5C.5 8.5 2.5 5 6 5c2 0 3.5 1 4 2.5C10.5 6 12 5 14 5c3.5 0 5.5 3.5 3.5 7.5C15 16.65 12 21 12 21z" strokeLinecap="round" strokeLinejoin="round" />
             </svg>

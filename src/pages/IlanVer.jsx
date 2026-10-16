@@ -58,39 +58,39 @@ function IlanVer() {
     }
 
     if (authYukleniyor || rolYukleniyor) {
-        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
     }
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-                <p className="text-[#9FC2BC] mb-4">İlan verebilmek için giriş yapmalısın.</p>
-                <Link to="/giris" className="text-[#C97D3C] hover:underline">Giriş yap</Link>
+            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
+                <p className="text-[#A1A1AA] mb-4">İlan verebilmek için giriş yapmalısın.</p>
+                <Link to="/giris" className="text-[#A78BFA] hover:underline">Giriş yap</Link>
             </div>
         )
     }
 
     if (rol !== 'is-veren') {
         return (
-            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-                <h1 className="text-[#F3ECE1] text-2xl font-bold mb-3">İlan vermek için iş veren hesabı gerekiyor</h1>
-                <p className="text-[#9FC2BC] mb-6 max-w-sm">Bu hesap yazılımcı olarak kayıtlı. İlan vermek için ayrı bir iş veren hesabıyla giriş yapman gerekiyor.</p>
-                <Link to="/ustalar" className="text-[#C97D3C] hover:underline">← Ustalara göz at</Link>
+            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
+                <h1 className="text-[#FFFFFF] text-2xl font-bold mb-3">İlan vermek için iş veren hesabı gerekiyor</h1>
+                <p className="text-[#A1A1AA] mb-6 max-w-sm">Bu hesap yazılımcı olarak kayıtlı. İlan vermek için ayrı bir iş veren hesabıyla giriş yapman gerekiyor.</p>
+                <Link to="/ustalar" className="text-[#A78BFA] hover:underline">← Ustalara göz at</Link>
             </div>
         )
     }
 
-    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#F3ECE1] outline-none focus:border-[#C97D3C]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#9FC2BC]/40"
-    const labelClass = "text-[#9FC2BC] text-xs uppercase tracking-wider font-mono block mb-2"
+    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#A1A1AA]/40"
+    const labelClass = "text-[#A1A1AA] text-xs uppercase tracking-wider font-mono block mb-2"
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+        <div className="min-h-screen bg-[#000000] px-6 py-16">
             <div className="max-w-xl mx-auto">
-                <Link to="/is-ilanlari" className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">
+                <Link to="/is-ilanlari" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
                     ← İlanlara dön
                 </Link>
-                <h1 className="text-[#F3ECE1] text-3xl font-bold mt-6 mb-2">İş İlanı Ver</h1>
-                <p className="text-[#9FC2BC] text-sm mb-8">İhtiyacını anlat, doğrulanmış yazılımcılar sana teklif göndersin.</p>
+                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-2">İş İlanı Ver</h1>
+                <p className="text-[#A1A1AA] text-sm mb-8">İhtiyacını anlat, doğrulanmış yazılımcılar sana teklif göndersin.</p>
 
                 <form onSubmit={ilanOlustur} className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 flex flex-col gap-4">
                     <div>
@@ -121,7 +121,7 @@ function IlanVer() {
                     <button
                         type="submit"
                         disabled={gonderiliyor || !baslik.trim()}
-                        className="bg-[#C97D3C] text-[#0D2626] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#E3B776] transition-all duration-300 self-start"
+                        className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
                     >
                         {gonderiliyor ? "Yayınlanıyor..." : "İlanı Yayınla"}
                     </button>

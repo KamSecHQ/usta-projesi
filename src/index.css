@@ -1,6 +1,250 @@
 @import "tailwindcss";
+@import "@fontsource-variable/bricolage-grotesque";
+@import "@fontsource-variable/onest";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/jetbrains-mono";
+
+@theme {
+    --font-sans: "Plus Jakarta Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+    --font-display: "Bricolage Grotesque Variable", "Onest Variable", ui-sans-serif, sans-serif;
+    --font-kod: "JetBrains Mono Variable", ui-monospace, monospace;
+
+    /* Bakırcı atölyesi */
+    --color-isli: #0B1717;
+    --color-atolye: #0E1A1A;
+    --color-ocak: #132424;
+    --color-bakir: #C97D3C;
+    --color-kizgin: #E8A25E;
+    --color-kalay: #D9DCD6;
+    --color-pas: #5E9C8F;
+    --color-icazet: #EFE3CC;
+    --color-murekkep: #1F1A14;
+    --color-muhur: #8E2B1C;
+    --color-krem: #F3ECE1;
+    --color-sis: #A9C4BF;
+
+    /* Stüdyo (açık) teması: anasayfa */
+    --color-zemin: #EEEFF2;
+    --color-zemin2: #E4E6EA;
+    --color-yuzey: #FFFFFF;
+    --color-kara: #0F1114;
+    --color-kara2: #16191E;
+    --color-ikincil: #555B65;
+    --color-kor: #FF5A1F;
+    --color-kor-koyu: #C2410C;
+
+    /* Uzay teması: videolu hero'nun dili (anasayfa) */
+    --font-pjs: "Plus Jakarta Sans Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --color-gece: #000000;
+    --color-gece2: #06060A;
+    --color-cam: #0D0D13;
+    --color-mor: #8B5CF6;
+    --color-mor-acik: #A78BFA;
+    --color-mor-soluk: #C4B5FD;
+    --color-gri: #A1A1AA;
+    --color-gri-koyu: #8A8A94;
+
+    --ease-cekic: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-akis: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-darbe: cubic-bezier(0.7, 0, 0.84, 0);
+}
 
 html,
 body {
-    background-color: #0D2626;
+    background-color: #000;
+    color: #fff;
 }
+
+body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+::selection {
+    background: #8B5CF6;
+    color: #fff;
+}
+
+:focus-visible {
+    outline: 2px solid #A78BFA;
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+html {
+    scrollbar-color: #2A2A33 #000;
+    scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #26262E;
+    border: 2px solid #000;
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #8B5CF6;
+}
+
+/* Lenis ataletli kaydırma */
+html.lenis,
+html.lenis body {
+    height: auto;
+}
+
+.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+    overflow: hidden;
+}
+
+a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+}
+
+.rakam {
+    font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* Metale çizilmiş ince işaret çizgisi */
+.cizik {
+    background-image: linear-gradient(90deg, rgba(243, 236, 225, 0.16), rgba(243, 236, 225, 0.04));
+    height: 1px;
+}
+
+/* Görünür varsayılandan başlayan giriş hareketi */
+@keyframes dovul {
+    from {
+        transform: translateY(18px);
+        opacity: 0.001;
+    }
+}
+
+.dovul {
+    animation: dovul 900ms var(--ease-cekic) both;
+}
+
+@keyframes muhur-bas {
+    0% {
+        transform: scale(1.6) rotate(-18deg);
+        opacity: 0;
+    }
+
+    55% {
+        transform: scale(0.94) rotate(-9deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1) rotate(-10deg);
+        opacity: 1;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dovul,
+    .muhur-bas {
+        animation: none !important;
+    }
+
+
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* Devre yolunda akan sinyal */
+@keyframes sinyal {
+    from {
+        stroke-dashoffset: 28px;
+    }
+
+    to {
+        stroke-dashoffset: calc(var(--uz) * -1px);
+    }
+}
+
+/* Terminal imleci */
+@keyframes imlec {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Konveyör üstünde akan şerit */
+@keyframes serit {
+    to {
+        background-position: -64px 0;
+    }
+}
+
+/* Videolu hero varken sitenin menü çubuğu gizli bekler; hero geçilince yukarıdan iner */
+html.video-hero .duyuru {
+    display: none;
+}
+
+html.video-hero .ust-cubuk {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    transform: translateY(-110%);
+    transition: transform 600ms var(--ease-cekic);
+}
+
+html.video-hero.hero-gecildi .ust-cubuk {
+    transform: none;
+}
+
+/* Anasayfa uzay teması: siyah zemin; hero geçilince inen menü çubuğu koyu cam olur */
+html.uzay-tema,
+html.uzay-tema body {
+    background-color: #000;
+    color: #fff;
+}
+
+html.uzay-tema ::selection {
+    background: #8B5CF6;
+    color: #fff;
+}
+
+html.uzay-tema {
+    scrollbar-color: #2A2A33 #000;
+}
+
+html.uzay-tema ::-webkit-scrollbar-track {
+    background: #000;
+}
+
+html.uzay-tema ::-webkit-scrollbar-thumb {
+    background: #26262E;
+    border-color: #000;
+}
+
+html.uzay-tema ::-webkit-scrollbar-thumb:hover {
+    background: #8B5CF6;
+}
+
+html.uzay-tema .ust-cubuk {
+    background: rgba(0, 0, 0, 0.82);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+    font-family: var(--font-pjs);
+}
+
+

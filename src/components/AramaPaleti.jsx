@@ -78,9 +78,9 @@ function AramaPaleti({ acik, kapat }) {
     return (
         <div className="fixed inset-0 z-[100] flex items-start justify-center pt-24 px-6">
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={kapat} />
-            <div className="relative w-full max-w-lg bg-[#123434] border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
+            <div className="relative w-full max-w-lg bg-[#0D0D13] border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
                 <div className="flex items-center gap-3 px-4 border-b border-white/[0.08]">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-[#9FC2BC] shrink-0">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5 text-[#A1A1AA] shrink-0">
                         <circle cx="11" cy="11" r="7" />
                         <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
                     </svg>
@@ -91,16 +91,16 @@ function AramaPaleti({ acik, kapat }) {
                         onChange={(e) => { setSorgu(e.target.value); setSeciliIndex(0) }}
                         onKeyDown={klavyeYonet}
                         placeholder="Usta ara: isim, unvan ya da teknoloji..."
-                        className="flex-1 bg-transparent py-4 text-[#F3ECE1] outline-none placeholder:text-[#9FC2BC]/40"
+                        className="flex-1 bg-transparent py-4 text-[#FFFFFF] outline-none placeholder:text-[#A1A1AA]/40"
                     />
-                    <kbd className="text-[#9FC2BC]/50 text-xs font-mono border border-white/[0.1] rounded px-1.5 py-0.5">ESC</kbd>
+                    <kbd className="text-[#A1A1AA]/50 text-xs font-mono border border-white/[0.1] rounded px-1.5 py-0.5">ESC</kbd>
                 </div>
 
                 <div className="max-h-80 overflow-y-auto">
                     {yukleniyor ? (
-                        <p className="text-[#9FC2BC] text-sm px-4 py-6 text-center">Yükleniyor...</p>
+                        <p className="text-[#A1A1AA] text-sm px-4 py-6 text-center">Yükleniyor...</p>
                     ) : sonuclar.length === 0 ? (
-                        <p className="text-[#9FC2BC] text-sm px-4 py-6 text-center">Eşleşen usta bulunamadı.</p>
+                        <p className="text-[#A1A1AA] text-sm px-4 py-6 text-center">Eşleşen usta bulunamadı.</p>
                     ) : (
                         sonuclar.map((usta, i) => (
                             <button
@@ -109,19 +109,19 @@ function AramaPaleti({ acik, kapat }) {
                                 onMouseEnter={() => setSeciliIndex(i)}
                                 className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors duration-150 ${i === seciliIndex ? "bg-white/[0.06]" : ""}`}
                             >
-                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] text-xs font-semibold shrink-0">
+                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] text-xs font-semibold shrink-0">
                                     {baslangicHarfleri(usta.ad_soyad)}
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[#F3ECE1] text-sm font-medium truncate">{usta.ad_soyad || "İsimsiz Usta"}</div>
-                                    <div className="text-[#9FC2BC] text-xs truncate">{usta.unvan}</div>
+                                    <div className="text-[#FFFFFF] text-sm font-medium truncate">{usta.ad_soyad || "İsimsiz Usta"}</div>
+                                    <div className="text-[#A1A1AA] text-xs truncate">{usta.unvan}</div>
                                 </div>
                             </button>
                         ))
                     )}
                 </div>
 
-                <div className="flex items-center gap-4 px-4 py-2.5 border-t border-white/[0.08] text-[#9FC2BC]/50 text-xs">
+                <div className="flex items-center gap-4 px-4 py-2.5 border-t border-white/[0.08] text-[#A1A1AA]/50 text-xs">
                     <span className="flex items-center gap-1"><kbd className="border border-white/[0.1] rounded px-1">↑↓</kbd> gezin</span>
                     <span className="flex items-center gap-1"><kbd className="border border-white/[0.1] rounded px-1">↵</kbd> seç</span>
                 </div>

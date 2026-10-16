@@ -13,8 +13,8 @@ function Bolum({ baslik, children }) {
     if (!children) return null
     return (
         <div className="mb-8">
-            <h2 className="text-[#C97D3C] text-xs uppercase tracking-wider font-mono mb-2">{baslik}</h2>
-            <p className="text-[#F3ECE1] leading-relaxed whitespace-pre-line">{children}</p>
+            <h2 className="text-[#A78BFA] text-xs uppercase tracking-wider font-mono mb-2">{baslik}</h2>
+            <p className="text-[#FFFFFF] leading-relaxed whitespace-pre-line">{children}</p>
         </div>
     )
 }
@@ -56,14 +56,14 @@ function ProjeDetay() {
     }, [id])
 
     if (yukleniyor) {
-        return <div className="min-h-screen bg-[#0D2626] flex items-center justify-center text-[#9FC2BC]">Yükleniyor...</div>
+        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
     }
 
     if (bulunamadi) {
         return (
-            <div className="min-h-screen bg-[#0D2626] flex flex-col items-center justify-center text-center px-6">
-                <h1 className="text-[#F3ECE1] text-2xl font-bold mb-3">Proje bulunamadı</h1>
-                <Link to="/ustalar" className="text-[#C97D3C] hover:underline">← Ustalara dön</Link>
+            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
+                <h1 className="text-[#FFFFFF] text-2xl font-bold mb-3">Proje bulunamadı</h1>
+                <Link to="/ustalar" className="text-[#A78BFA] hover:underline">← Ustalara dön</Link>
             </div>
         )
     }
@@ -73,10 +73,10 @@ function ProjeDetay() {
     const zenginIcerikVar = proje.problem || proje.cozum || proje.sonuc
 
     return (
-        <div className="min-h-screen bg-[#0D2626] px-6 py-16">
+        <div className="min-h-screen bg-[#000000] px-6 py-16">
             <div className="max-w-2xl mx-auto">
                 {sahip && (
-                    <Link to={`/ustalar/${sahip.id}`} className="text-[#9FC2BC] text-sm hover:text-[#F3ECE1] transition-colors">
+                    <Link to={`/ustalar/${sahip.id}`} className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
                         ← {sahip.ad_soyad || "Usta"}'nın portföyüne dön
                     </Link>
                 )}
@@ -93,9 +93,9 @@ function ProjeDetay() {
                 )}
 
                 <div className="flex items-start justify-between gap-3 flex-wrap mt-6 mb-2">
-                    <h1 className="text-[#F3ECE1] text-3xl font-bold">
+                    <h1 className="text-[#FFFFFF] text-3xl font-bold">
                         {proje.one_cikan && (
-                            <span className="text-[#C97D3C] mr-2" title="Öne çıkan proje">★</span>
+                            <span className="text-[#A78BFA] mr-2" title="Öne çıkan proje">★</span>
                         )}
                         {proje.baslik}
                     </h1>
@@ -104,14 +104,14 @@ function ProjeDetay() {
                             href={proje.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="bg-[#C97D3C] text-[#0D2626] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#E3B776] transition-all duration-300 whitespace-nowrap"
+                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300 whitespace-nowrap"
                         >
                             Canlı Projeyi Gör ↗
                         </a>
                     )}
                 </div>
 
-                <div className="flex items-center gap-4 text-[#9FC2BC]/70 text-sm mb-2">
+                <div className="flex items-center gap-4 text-[#A1A1AA]/70 text-sm mb-2">
                     {anaTeknoloji && (
                         <span className="flex items-center gap-1.5">
                             <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ backgroundColor: dilRengi(anaTeknoloji) }} />
@@ -121,7 +121,7 @@ function ProjeDetay() {
                     {proje.created_at && <span>Güncellendi: {zamanFarki(proje.created_at)}</span>}
                     {sahip && (
                         <span className="flex items-center gap-1.5">
-                            <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#C97D3C] to-[#E3B776] flex items-center justify-center text-[#0D2626] text-[9px] font-bold">
+                            <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] text-[9px] font-bold">
                                 {baslangicHarfleri(sahip.ad_soyad)}
                             </span>
                             {sahip.ad_soyad}
@@ -130,15 +130,15 @@ function ProjeDetay() {
                 </div>
 
                 {proje.rol && (
-                    <p className="text-[#9FC2BC] text-sm mb-6">
-                        <span className="text-[#9FC2BC]/60">Rolüm: </span>{proje.rol}
+                    <p className="text-[#A1A1AA] text-sm mb-6">
+                        <span className="text-[#A1A1AA]/60">Rolüm: </span>{proje.rol}
                     </p>
                 )}
 
                 {teknolojiler.length > 0 && (
                     <div className="flex gap-2 flex-wrap mb-8">
                         {teknolojiler.map((t) => (
-                            <span key={t} className="text-[#9FC2BC] text-xs border border-white/[0.1] px-3 py-1 rounded-full font-mono">
+                            <span key={t} className="text-[#A1A1AA] text-xs border border-white/[0.1] px-3 py-1 rounded-full font-mono">
                                 {t}
                             </span>
                         ))}
@@ -154,9 +154,9 @@ function ProjeDetay() {
                         <Bolum baslik="Sonuç">{proje.sonuc}</Bolum>
                     </>
                 ) : proje.aciklama ? (
-                    <p className="text-[#9FC2BC] leading-relaxed whitespace-pre-line">{proje.aciklama}</p>
+                    <p className="text-[#A1A1AA] leading-relaxed whitespace-pre-line">{proje.aciklama}</p>
                 ) : (
-                    <p className="text-[#9FC2BC]/50 text-sm">Bu proje için henüz detaylı bir açıklama eklenmemiş.</p>
+                    <p className="text-[#A1A1AA]/50 text-sm">Bu proje için henüz detaylı bir açıklama eklenmemiş.</p>
                 )}
             </div>
         </div>
