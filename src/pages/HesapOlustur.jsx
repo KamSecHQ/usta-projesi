@@ -42,8 +42,11 @@ function HesapOlustur() {
         if (data.user) {
             await supabase
                 .from('profiller')
-                .update({ ad_soyad: adSoyad || null, telefon: telefon || null })
+                .update({ ad_soyad: adSoyad || null })
                 .eq('id', data.user.id)
+            if (telefon.trim()) {
+                await supabase.from('profil_iletisim').upsert({ id: data.user.id, telefon: telefon.trim() })
+            }
         }
 
         setGonderiliyor(false)

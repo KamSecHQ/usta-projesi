@@ -81,6 +81,26 @@
     opacity: 1;
 }
 
+/* Video kaynağına ulaşılamazsa: mor ufuk ışığı ve seyrek yıldızlar */
+.vhero .bg.video-yok {
+    background:
+        radial-gradient(1.5px 1.5px at 12% 22%, rgba(255, 255, 255, .8), transparent 60%),
+        radial-gradient(1px 1px at 28% 64%, rgba(255, 255, 255, .55), transparent 60%),
+        radial-gradient(1.5px 1.5px at 46% 14%, rgba(255, 255, 255, .7), transparent 60%),
+        radial-gradient(1px 1px at 63% 38%, rgba(255, 255, 255, .5), transparent 60%),
+        radial-gradient(1.5px 1.5px at 79% 18%, rgba(255, 255, 255, .75), transparent 60%),
+        radial-gradient(1px 1px at 88% 56%, rgba(255, 255, 255, .5), transparent 60%),
+        radial-gradient(1px 1px at 36% 42%, rgba(255, 255, 255, .45), transparent 60%),
+        radial-gradient(1px 1px at 70% 72%, rgba(255, 255, 255, .4), transparent 60%),
+        radial-gradient(70% 55% at 50% 118%, rgba(139, 92, 246, .62), rgba(91, 33, 182, .28) 42%, transparent 72%),
+        radial-gradient(40% 30% at 50% 100%, rgba(196, 181, 253, .35), transparent 70%),
+        #000;
+}
+
+.vhero .bg.video-yok .bg-video {
+    display: none;
+}
+
 /* ---------- 5. Nav (masaüstü) ---------- */
 .vhero .nav {
     position: absolute;

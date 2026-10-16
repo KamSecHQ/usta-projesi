@@ -17,7 +17,7 @@ Vite + React 19 + React Router 7 + Tailwind CSS 4 (`@theme` tokenları `src/inde
 - `prefers-reduced-motion` her animasyonda desteklenir.
 
 ## Tasarım
-- Ürün gerçekleri: `PRODUCT.md`. `DESIGN.md` eski "bakırcı" temasını anlatıyor ve güncel değil.
+- Ürün gerçekleri: `PRODUCT.md`. Tasarım sistemi: `DESIGN.md` (uzay teması). `src/index.css` içindeki bakırcı ve stüdyo tokenları eski, yeni işte kullanılmaz.
 - Güncel dil "uzay teması": siyah zemin, Plus Jakarta Sans, mor vurgu (#8B5CF6 / #A78BFA), beyaz ve koyu cam hap düğmeler. Kaynağı anasayfanın videolu hero'su (`src/components/VideoHero.jsx`, `videoHero.css`).
 - Ortak hareket ve yüzey dili: `src/components/uzay/` (`Sahne`, `SatirBaslik`, `HapLink`, `uz-*` sınıfları). Yeni bölümler bunları kullanır.
 - 3D: Anasayfadaki tüm `<View>`'lar tek tuvali paylaşır (`atolye/AtolyeTuvali.jsx`); fizik sahnesi (`atolye/FizikSahnesi.jsx`) kendi tuvalinde çalışır. Kod yazan robot: `atolye/KodYazanRobot.jsx`.
@@ -28,6 +28,7 @@ Vite + React 19 + React Router 7 + Tailwind CSS 4 (`@theme` tokenları `src/inde
 - Şema ve RPC'ler: `supabase/migrations/20261016_mesajlasma.sql` (konusmalar, mesajlar, konusma_durumu, mesaj_tepkileri). Sistem mesajlarını yalnızca veritabanı yazar; istemci yalnızca `metin` ve `iletisim` türünde mesaj ekleyebilir.
 - Teklif kabul/ret edilince `teklif_durumu_degisti` tetikleyicisi konuşmayı açar ve sistem mesajı düşer. Konuşma açmak için istemci `konusma_baslat` / `teklif_konusmasi_ac` RPC'lerini çağırır (`src/mesajlasma.js`, `MesajlasDugmesi`).
 - Realtime kanalları `kanalAc()` ile açılır (aynı adlı kanal kapanırken yeniden açılma sorununu çözer); aynı kanal adını iki bileşende kullanma.
+- Telefon numarası herkese açık `profiller` tablosunda tutulmaz; `profil_iletisim` tablosundadır (yalnızca sahibi ve yönetici okur). Kişiler numaralarını mesajlaşmadaki iletişim kartıyla kendileri paylaşır.
 - Arayüz: `src/pages/Mesajlar.jsx` + `src/components/mesaj/`. Giriş yapmadan denemek için geliştirmede `/mesajlar?onizleme=yazilimci` (veya `is-veren`).
 
 ## Doğruluk kuralları

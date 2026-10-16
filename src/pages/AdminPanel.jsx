@@ -93,8 +93,14 @@ function AdminPanel() {
             .order('created_at', { ascending: false })
 
         if (!error && data) {
-            setBekleyenler(data.filter((p) => !p.onayli))
-            setOnayliUstalar(data.filter((p) => p.onayli))
+            const { data: iletisimler } = await supabase
+                .from('profil_iletisim')
+                .select('id, telefon')
+                .in('id', data.map((p) => p.id))
+            const telefonlar = Object.fromEntries((iletisimler || []).map((i) => [i.id, i.telefon]))
+            const liste = data.map((p) => ({ ...p, telefon: telefonlar[p.id] || null }))
+            setBekleyenler(liste.filter((p) => !p.onayli))
+            setOnayliUstalar(liste.filter((p) => p.onayli))
         }
         setProfillerYukleniyor(false)
     }

@@ -268,8 +268,12 @@ function Mesajlar() {
             setBenimProfil(ornekRef.current.profil)
             return
         }
-        supabase.from('profiller').select('id, ad_soyad, rol, telefon').eq('id', benId).single()
-            .then(({ data }) => setBenimProfil(data))
+        Promise.all([
+            supabase.from('profiller').select('id, ad_soyad, rol').eq('id', benId).single(),
+            supabase.from('profil_iletisim').select('telefon').eq('id', benId).maybeSingle(),
+        ]).then(([profil, iletisim]) => {
+            if (profil.data) setBenimProfil({ ...profil.data, telefon: iletisim.data?.telefon || null })
+        })
     }, [benId, listeyiGetir])
 
     // Listede olmayan konuşma (yeni açılmış ya da arşiv sınırı dışında)

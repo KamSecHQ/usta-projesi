@@ -118,7 +118,7 @@ function Ayarlar() {
                         Hesabını ve tüm profil verilerini kalıcı olarak silmemizi istersen, bize e-posta ile ulaş — talebini 48 saat içinde işleme alırız.
                     </p>
                     <a
-                        href={`mailto:merhaba@usta.app?subject=Hesap Silme Talebi&body=Merhaba, ${user.email} adresli hesabımı silmenizi rica ediyorum.`}
+                        href={`mailto:merhaba@kalfahane.com?subject=Hesap Silme Talebi&body=Merhaba, ${user.email} adresli hesabımı silmenizi rica ediyorum.`}
                         className="isik isik-tehlike inline-block border border-red-400/40 text-red-300 text-sm px-5 py-2.5 rounded-full hover:bg-red-400/10 transition-all duration-300"
                     >
                         Hesabımı Sil

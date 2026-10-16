@@ -42,7 +42,7 @@ function Footer() {
                     <div className="md:col-span-3">
                         <div className="mb-4 text-[13px] font-medium text-white">İletişim</div>
                         <ul className="flex flex-col gap-2.5 text-[15px]">
-                            <li><a href="mailto:merhaba@usta.app" className="font-light text-gri transition-colors hover:text-white">merhaba@usta.app</a></li>
+                            <li><a href="mailto:merhaba@kalfahane.com" className="font-light text-gri transition-colors hover:text-white">merhaba@kalfahane.com</a></li>
                             <li className="font-light text-gri-koyu">İstanbul, Türkiye</li>
                             <li><Link to="/gizlilik" className="font-light text-gri transition-colors hover:text-white">Gizlilik Politikası</Link></li>
                         </ul>

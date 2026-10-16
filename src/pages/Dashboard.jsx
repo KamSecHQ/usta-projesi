@@ -212,12 +212,15 @@ function Dashboard() {
             if (data) setOkunmamisMesaj(data.reduce((t, r) => t + r.sayi, 0))
         })
 
-        const { data: profilData } = await supabase.from('profiller').select('*').eq('id', user.id).single()
+        const [{ data: profilData }, { data: iletisim }] = await Promise.all([
+            supabase.from('profiller').select('*').eq('id', user.id).single(),
+            supabase.from('profil_iletisim').select('telefon').eq('id', user.id).maybeSingle(),
+        ])
         if (!profilData) {
             setYukleniyor(false)
             return
         }
-        setProfil(profilData)
+        setProfil({ ...profilData, telefon: iletisim?.telefon || null })
         setMusaitlik(profilData.musaitlik || 'musait')
 
         const sayi = await tamamlananIsSayisiGetir(supabase, user.id, profilData.rol)

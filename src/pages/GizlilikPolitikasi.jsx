@@ -35,7 +35,7 @@ function GizlilikPolitikasi() {
                 </Bolum>
 
                 <Bolum baslik="4. Verilerini Silme Hakkın">
-                    <p>Dilediğin zaman hesabını ve profilindeki tüm bilgileri silmemizi talep edebilirsin. Bunun için <a href="mailto:merhaba@usta.app" className="text-[#A78BFA] hover:underline">merhaba@usta.app</a> adresine yazman yeterli.</p>
+                    <p>Dilediğin zaman hesabını ve profilindeki tüm bilgileri silmemizi talep edebilirsin. Bunun için <a href="mailto:merhaba@kalfahane.com" className="text-[#A78BFA] hover:underline">merhaba@kalfahane.com</a> adresine yazman yeterli.</p>
                 </Bolum>
 
                 <Bolum baslik="5. Çerezler">
@@ -43,7 +43,7 @@ function GizlilikPolitikasi() {
                 </Bolum>
 
                 <Bolum baslik="6. İletişim">
-                    <p>Verilerinle ilgili herhangi bir soru için <a href="mailto:merhaba@usta.app" className="text-[#A78BFA] hover:underline">merhaba@usta.app</a> üzerinden bize ulaşabilirsin.</p>
+                    <p>Verilerinle ilgili herhangi bir soru için <a href="mailto:merhaba@kalfahane.com" className="text-[#A78BFA] hover:underline">merhaba@kalfahane.com</a> üzerinden bize ulaşabilirsin.</p>
                 </Bolum>
             </div>
         </div>

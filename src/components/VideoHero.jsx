@@ -63,11 +63,18 @@ export default function VideoHero({ onHazir }) {
     const burger = useRef(null)
     const menu = useRef(null)
     const hazirBildirildi = useRef(false)
+    // Video dış kaynaktan geliyor; ulaşılamazsa kendi arka planımıza düşeriz
+    const [videoYok, setVideoYok] = useState(false)
 
     function hazir() {
         if (hazirBildirildi.current) return
         hazirBildirildi.current = true
         onHazir?.()
+    }
+
+    function videoHatasi() {
+        setVideoYok(true)
+        hazir()
     }
 
     // ---- A) Giriş sahnesi: yükleme perdesi kalkınca ve yazı tipleri hazırken başlar ----
@@ -202,7 +209,7 @@ export default function VideoHero({ onHazir }) {
     return (
         <main className={`vhero ${anim ? 'anim' : ''} ${go ? 'go' : ''}`} onAnimationEnd={animasyonBitti} id="giris">
             <div
-                className="bg"
+                className={`bg ${videoYok ? 'video-yok' : ''}`}
                 role="img"
                 aria-label="Yıldızlı bir gökyüzünde, mor nokta matrisiyle çizilmiş, yavaşça dönen Dünya küresi"
             >
@@ -218,9 +225,9 @@ export default function VideoHero({ onHazir }) {
                     aria-hidden="true"
                     poster={POSTER}
                     onLoadedData={hazir}
-                    onError={hazir}
+                    onError={videoHatasi}
                 >
-                    <source src={VIDEO} type="video/mp4" />
+                    <source src={VIDEO} type="video/mp4" onError={videoHatasi} />
                 </video>
                 {/* İkinci kopya yalnızca döngü noktasında gerekir; o ana kadar ilki dosyayı önbelleğe almış olur */}
                 <video

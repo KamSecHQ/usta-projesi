@@ -198,6 +198,14 @@ function ProfilDuzenle() {
                 .eq('id', user.id)
                 .single()
 
+            // Telefon herkese açık profilde değil; yalnızca sahibinin okuyabildiği tabloda
+            const { data: iletisim } = await supabase
+                .from('profil_iletisim')
+                .select('telefon')
+                .eq('id', user.id)
+                .maybeSingle()
+            setTelefon(iletisim?.telefon || "")
+
             if (!error && data) {
                 setAdSoyad(data.ad_soyad || "")
                 setUnvan(data.unvan || "")
@@ -205,7 +213,6 @@ function ProfilDuzenle() {
                 setGithubUrl(data.github_url || "")
                 setKonum(data.konum || "")
                 setTeknolojiler(data.teknolojiler || [])
-                setTelefon(data.telefon || "")
                 setTelefonDogrulandi(!!data.telefon_dogrulandi)
                 setMusaitlik(data.musaitlik || "musait")
                 setMusaitlikNotu(data.musaitlik_notu || "")
@@ -266,7 +273,6 @@ function ProfilDuzenle() {
                 github_url: githubUrl,
                 konum,
                 teknolojiler,
-                telefon: telefon || null,
                 musaitlik,
                 musaitlik_notu: musaitlik === 'kismi_musait' ? musaitlikNotu : null,
                 saatlik_ucret_min: ucretMin === "" ? null : Number(ucretMin),
@@ -275,9 +281,13 @@ function ProfilDuzenle() {
             })
             .eq('id', user.id)
 
+        const { error: telefonHatasi } = await supabase
+            .from('profil_iletisim')
+            .upsert({ id: user.id, telefon: telefon.trim() || null, updated_at: new Date().toISOString() })
+
         setKaydediliyor(false)
-        if (error) {
-            setHata(error.message)
+        if (error || telefonHatasi) {
+            setHata((error || telefonHatasi).message)
         } else {
             setKaydedildi(true)
             setTimeout(() => setKaydedildi(false), 3000)
