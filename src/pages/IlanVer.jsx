@@ -121,7 +121,7 @@ function IlanVer() {
                     <button
                         type="submit"
                         disabled={gonderiliyor || !baslik.trim()}
-                        className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
+                        className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
                     >
                         {gonderiliyor ? "Yayınlanıyor..." : "İlanı Yayınla"}
                     </button>

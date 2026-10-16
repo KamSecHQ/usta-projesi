@@ -24,6 +24,12 @@ Vite + React 19 + React Router 7 + Tailwind CSS 4 (`@theme` tokenları `src/inde
 - Bir bölümdeki metin tam ekran 3D'nin üstünde duracaksa o bölüme `z-index: 6` verilir; paylaşılan tuval `z-index: 5`'tedir.
 - Tasarım işinde `impeccable` becerisini kullan.
 
+## Mesajlaşma
+- Şema ve RPC'ler: `supabase/migrations/20261016_mesajlasma.sql` (konusmalar, mesajlar, konusma_durumu, mesaj_tepkileri). Sistem mesajlarını yalnızca veritabanı yazar; istemci yalnızca `metin` ve `iletisim` türünde mesaj ekleyebilir.
+- Teklif kabul/ret edilince `teklif_durumu_degisti` tetikleyicisi konuşmayı açar ve sistem mesajı düşer. Konuşma açmak için istemci `konusma_baslat` / `teklif_konusmasi_ac` RPC'lerini çağırır (`src/mesajlasma.js`, `MesajlasDugmesi`).
+- Realtime kanalları `kanalAc()` ile açılır (aynı adlı kanal kapanırken yeniden açılma sorununu çözer); aynı kanal adını iki bileşende kullanma.
+- Arayüz: `src/pages/Mesajlar.jsx` + `src/components/mesaj/`. Giriş yapmadan denemek için geliştirmede `/mesajlar?onizleme=yazilimci` (veya `is-veren`).
+
 ## Doğruluk kuralları
 - Emanet (escrow) ödeme sistemi **yok**: "yakında" olarak sunulur.
 - Müşteri yorumu, logo duvarı, sahte sayı uydurulmaz; sayılar Supabase'den canlı gelir, ulaşılamazsa "—" gösterilir.

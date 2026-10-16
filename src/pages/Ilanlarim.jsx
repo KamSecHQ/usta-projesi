@@ -4,6 +4,7 @@ import { supabase } from '../supabaseClient'
 import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import { ucretAraligiGoster, zamanFarki } from '../ustaYardimcilari'
+import MesajlasDugmesi from '../components/MesajlasDugmesi'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
@@ -25,13 +26,13 @@ function TeklifSatiri({ teklif, onKabulEt, onReddet }) {
                     {teklif.mesaj && <p className="text-[#A1A1AA] text-sm mt-1">{teklif.mesaj}</p>}
                 </div>
             </div>
-            <div className="shrink-0">
+            <div className="shrink-0 flex flex-col items-end gap-2">
                 {teklif.durum === 'beklemede' ? (
                     <div className="flex gap-2">
-                        <button onClick={() => onKabulEt(teklif.id)} className="bg-[#FDFDFD] text-[#050505] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#FFFFFF] transition-all duration-300">
+                        <button onClick={() => onKabulEt(teklif.id)} className="isik isik-birincil bg-[#FDFDFD] text-[#050505] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#FFFFFF] transition-all duration-300">
                             Kabul Et
                         </button>
-                        <button onClick={() => onReddet(teklif.id)} className="border border-white/[0.1] text-[#A1A1AA] text-xs px-3 py-1.5 rounded-full hover:text-red-300 hover:border-red-300/40 transition-all duration-300">
+                        <button onClick={() => onReddet(teklif.id)} className="isik isik-tehlike border border-white/[0.1] text-[#A1A1AA] text-xs px-3 py-1.5 rounded-full hover:text-red-300 hover:border-red-300/40 transition-all duration-300">
                             Reddet
                         </button>
                     </div>
@@ -40,6 +41,9 @@ function TeklifSatiri({ teklif, onKabulEt, onReddet }) {
                         {teklif.durum === 'kabul_edildi' ? '✓ Kabul edildi' : 'Reddedildi'}
                     </span>
                 )}
+                <MesajlasDugmesi teklifId={teklif.id} className="isik isik-cam text-xs font-medium px-3 py-1.5 rounded-full">
+                    Mesajlaş
+                </MesajlasDugmesi>
             </div>
         </div>
     )
@@ -111,7 +115,7 @@ function Ilanlarim() {
                 </Link>
                 <div className="flex items-center justify-between flex-wrap gap-4 mt-6 mb-10">
                     <h1 className="text-[#FFFFFF] text-3xl font-bold">İlanlarım</h1>
-                    <Link to="/ilan-ver" className="bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300">
+                    <Link to="/ilan-ver" className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300">
                         + Yeni İlan
                     </Link>
                 </div>
@@ -124,7 +128,7 @@ function Ilanlarim() {
                             const butce = ucretAraligiGoster(ilan.butce_min, ilan.butce_max)
                             const ilanTeklifleri = teklifler[ilan.id] || []
                             return (
-                                <div key={ilan.id} className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                                <div key={ilan.id} className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                                     <div className="flex items-start justify-between gap-3 flex-wrap">
                                         <div>
                                             <Link to={`/is-ilanlari/${ilan.id}`} className="text-[#FFFFFF] font-semibold hover:text-[#A78BFA] transition-colors">

@@ -104,7 +104,7 @@ function ProjeDetay() {
                             href={proje.link}
                             target="_blank"
                             rel="noreferrer"
-                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300 whitespace-nowrap"
+                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300 whitespace-nowrap"
                         >
                             Canlı Projeyi Gör ↗
                         </a>

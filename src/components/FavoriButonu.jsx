@@ -52,7 +52,7 @@ function FavoriButonu({ ustaId, boyut = "normal" }) {
         <button
             onClick={tikla}
             disabled={yukleniyor}
-            className={`${boyutSinifi} flex items-center justify-center rounded-full bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300 shrink-0`}
+            className={`isik isik-cam ${boyutSinifi} flex items-center justify-center rounded-full bg-white/[0.05] border border-white/[0.1] hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300 shrink-0`}
             aria-label={favoriMi ? "Favorilerden çıkar" : "Favorilere ekle"}
             title={favoriMi ? "Favorilerden çıkar" : "Favorilere ekle"}
         >

@@ -13,13 +13,13 @@ function SayfaBulunamadi() {
             <div className="flex gap-3 flex-wrap justify-center">
                 <Link
                     to="/"
-                    className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full hover:bg-[#FFFFFF] transition-all duration-300"
+                    className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full hover:bg-[#FFFFFF] transition-all duration-300"
                 >
                     Anasayfaya Dön
                 </Link>
                 <Link
                     to="/ustalar"
-                    className="bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-6 py-3 rounded-full hover:bg-white/[0.1] transition-all duration-300"
+                    className="isik isik-cam bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-6 py-3 rounded-full hover:bg-white/[0.1] transition-all duration-300"
                 >
                     Ustalara Göz At
                 </Link>

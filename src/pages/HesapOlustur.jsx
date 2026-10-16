@@ -83,7 +83,7 @@ function HesapOlustur() {
                                 <button
                                     type="button"
                                     onClick={() => setRol("yazilimci")}
-                                    className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "yazilimci"
+                                    className={`isik isik-birincil px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "yazilimci"
                                         ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
                                         : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
                                         }`}
@@ -93,7 +93,7 @@ function HesapOlustur() {
                                 <button
                                     type="button"
                                     onClick={() => setRol("is-veren")}
-                                    className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "is-veren"
+                                    className={`isik isik-birincil px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "is-veren"
                                         ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
                                         : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
                                         }`}
@@ -154,7 +154,7 @@ function HesapOlustur() {
                         <button
                             type="submit"
                             disabled={gonderiliyor}
-                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 mt-2"
+                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 mt-2"
                         >
                             {gonderiliyor ? "Kaydediliyor..." : "Kayıt Ol"}
                         </button>

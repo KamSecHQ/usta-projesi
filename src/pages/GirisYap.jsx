@@ -57,7 +57,7 @@ function GirisYap() {
                     {hata && <p className="text-red-400 text-sm">{hata}</p>}
                     <button
                         type="submit"
-                        className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded mt-2"
+                        className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded mt-2"
                     >
                         Giriş Yap
                     </button>

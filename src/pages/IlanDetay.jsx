@@ -4,6 +4,7 @@ import { supabase } from '../supabaseClient'
 import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import { ucretAraligiGoster, zamanFarki } from '../ustaYardimcilari'
+import MesajlasDugmesi from '../components/MesajlasDugmesi'
 
 function IlanDetay() {
     const { id } = useParams()
@@ -100,7 +101,7 @@ function IlanDetay() {
                     ← İlanlara dön
                 </Link>
 
-                <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6 mb-6">
+                <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6 mb-6">
                     <div className="flex items-start justify-between gap-3 flex-wrap">
                         <h1 className="text-[#FFFFFF] text-2xl font-bold">{ilan.baslik}</h1>
                         {ilan.durum !== 'acik' && (
@@ -111,9 +112,22 @@ function IlanDetay() {
                     </div>
 
                     {isVeren && (
-                        <p className="text-[#A1A1AA] text-sm mt-2">
-                            İlan sahibi: <span className="text-[#FFFFFF]">{isVeren.ad_soyad || "İş Veren"}</span>
-                        </p>
+                        <div className="flex items-center justify-between gap-3 flex-wrap mt-2">
+                            <p className="text-[#A1A1AA] text-sm">
+                                İlan sahibi: <span className="text-[#FFFFFF]">{isVeren.ad_soyad || "İş Veren"}</span>
+                            </p>
+                            {user && !kendiIlaniMi && (
+                                kendiTeklifim ? (
+                                    <MesajlasDugmesi teklifId={kendiTeklifim.id} className="isik isik-mor px-4 py-2 rounded-full text-xs font-semibold">
+                                        İş verenle mesajlaş
+                                    </MesajlasDugmesi>
+                                ) : (
+                                    <MesajlasDugmesi karsiId={ilan.is_veren_id} ilanId={ilan.id} className="isik isik-cam px-4 py-2 rounded-full text-xs font-medium">
+                                        Soru sor
+                                    </MesajlasDugmesi>
+                                )
+                            )}
+                        </div>
                     )}
                     <p className="text-[#A1A1AA]/50 text-xs mt-1">{zamanFarki(ilan.created_at)}</p>
 
@@ -135,23 +149,23 @@ function IlanDetay() {
                 </div>
 
                 {kendiIlaniMi ? (
-                    <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
+                    <div className="isik-kutu bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
                         <p className="text-[#A1A1AA] text-sm mb-3">Bu senin ilanın.</p>
                         <Link to="/ilanlarim" className="text-[#A78BFA] hover:underline text-sm">
                             Gelen teklifleri görmek için İlanlarım'a git →
                         </Link>
                     </div>
                 ) : !user ? (
-                    <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
+                    <div className="isik-kutu bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
                         <p className="text-[#A1A1AA] text-sm mb-3">Teklif verebilmek için giriş yapmalısın.</p>
                         <Link to="/giris" className="text-[#A78BFA] hover:underline text-sm">Giriş yap</Link>
                     </div>
                 ) : rol !== 'yazilimci' ? (
-                    <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
+                    <div className="isik-kutu bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
                         <p className="text-[#A1A1AA] text-sm">Teklif vermek için yazılımcı hesabı gerekiyor.</p>
                     </div>
                 ) : kendiTeklifim ? (
-                    <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6">
+                    <div className="isik-kutu bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6">
                         <h2 className="text-[#FFFFFF] font-semibold mb-2">Teklifin gönderildi</h2>
                         {kendiTeklifim.teklif_tutari && (
                             <p className="text-[#C4B5FD] text-sm mb-2">Teklifin: ₺{kendiTeklifim.teklif_tutari}</p>
@@ -165,11 +179,11 @@ function IlanDetay() {
                         </span>
                     </div>
                 ) : ilan.durum !== 'acik' ? (
-                    <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
+                    <div className="isik-kutu bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 text-center">
                         <p className="text-[#A1A1AA] text-sm">Bu ilan artık teklif kabul etmiyor.</p>
                     </div>
                 ) : (
-                    <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                    <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                         <h2 className="text-[#FFFFFF] font-semibold mb-4">Teklif Ver</h2>
                         <form onSubmit={teklifGonder} className="flex flex-col gap-3">
                             <textarea
@@ -190,7 +204,7 @@ function IlanDetay() {
                             <button
                                 type="submit"
                                 disabled={gonderiliyor}
-                                className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
+                                className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
                             >
                                 {gonderiliyor ? "Gönderiliyor..." : "Teklifi Gönder"}
                             </button>

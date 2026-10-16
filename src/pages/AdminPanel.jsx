@@ -177,7 +177,7 @@ function AdminPanel() {
                         <button
                             key={s.id}
                             onClick={() => setSekme(s.id)}
-                            className={`text-sm px-4 py-2 rounded-full font-mono transition-all duration-300 ${sekme === s.id
+                            className={`isik isik-birincil text-sm px-4 py-2 rounded-full font-mono transition-all duration-300 ${sekme === s.id
                                 ? 'bg-[#FDFDFD] text-[#050505]'
                                 : 'border border-white/[0.1] text-[#A1A1AA] hover:bg-white/[0.05]'
                                 }`}
@@ -202,7 +202,7 @@ function AdminPanel() {
                                     aksiyonlar={
                                         <button
                                             onClick={() => onayla(p.id)}
-                                            className="bg-[#FDFDFD] text-[#050505] text-sm font-medium px-4 py-2 rounded-full hover:bg-[#FFFFFF] transition-all duration-300 whitespace-nowrap"
+                                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] text-sm font-medium px-4 py-2 rounded-full hover:bg-[#FFFFFF] transition-all duration-300 whitespace-nowrap"
                                         >
                                             Onayla
                                         </button>
@@ -228,7 +228,7 @@ function AdminPanel() {
                                     aksiyonlar={
                                         <button
                                             onClick={() => onayiKaldir(p.id)}
-                                            className="border border-white/[0.1] text-[#A1A1AA] text-sm px-4 py-2 rounded-full hover:text-red-300 hover:border-red-300/40 transition-all duration-300 whitespace-nowrap"
+                                            className="isik isik-tehlike border border-white/[0.1] text-[#A1A1AA] text-sm px-4 py-2 rounded-full hover:text-red-300 hover:border-red-300/40 transition-all duration-300 whitespace-nowrap"
                                         >
                                             Onayı Kaldır
                                         </button>
@@ -247,7 +247,7 @@ function AdminPanel() {
                         <div className="flex gap-2 mb-6">
                             <button
                                 onClick={() => setBasvuruFiltre('tumu')}
-                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'tumu' ? 'bg-[#FDFDFD] text-[#050505]' : 'border border-[#2A2A33] text-[#A1A1AA]'}`}
+                                className={`isik isik-birincil text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'tumu' ? 'bg-[#FDFDFD] text-[#050505]' : 'border border-[#2A2A33] text-[#A1A1AA]'}`}
                             >
                                 Tümü ({basvurular.length})
                             </button>
@@ -259,7 +259,7 @@ function AdminPanel() {
                             </button>
                             <button
                                 onClick={() => setBasvuruFiltre('is-veren')}
-                                className={`text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'is-veren' ? 'bg-[#FDFDFD] text-[#050505]' : 'border border-[#2A2A33] text-[#A1A1AA]'}`}
+                                className={`isik isik-birincil text-sm px-4 py-2 rounded font-mono ${basvuruFiltre === 'is-veren' ? 'bg-[#FDFDFD] text-[#050505]' : 'border border-[#2A2A33] text-[#A1A1AA]'}`}
                             >
                                 İş Verenler ({basvurular.filter((b) => b.tip === 'is-veren').length})
                             </button>

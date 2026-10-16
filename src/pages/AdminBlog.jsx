@@ -129,7 +129,7 @@ function AdminBlog() {
                     {!formAcik && (
                         <button
                             onClick={yeniYaziAc}
-                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300"
+                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300"
                         >
                             + Yeni Yazı
                         </button>
@@ -176,7 +176,7 @@ function AdminBlog() {
                         {hata && <p className="text-red-400 text-sm">{hata}</p>}
 
                         <div className="flex gap-3">
-                            <button type="submit" disabled={kaydediliyor} className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300">
+                            <button type="submit" disabled={kaydediliyor} className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300">
                                 {kaydediliyor ? "Kaydediliyor..." : "Kaydet"}
                             </button>
                             <button type="button" onClick={() => setFormAcik(false)} className="text-[#A1A1AA] text-sm px-4 py-3 hover:text-[#FFFFFF] transition-colors">

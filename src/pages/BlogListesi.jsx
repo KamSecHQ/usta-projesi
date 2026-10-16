@@ -8,7 +8,7 @@ function YaziKarti({ yazi }) {
     return (
         <Link
             to={`/blog/${yazi.slug}`}
-            className="block bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl overflow-hidden hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300"
+            className="isik-kutu block bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl overflow-hidden hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300"
         >
             {yazi.kapak_gorseli_url && (
                 <div className="aspect-video w-full overflow-hidden bg-white/[0.03]">

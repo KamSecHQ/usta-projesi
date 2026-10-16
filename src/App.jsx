@@ -25,6 +25,7 @@ import AjansYonetimi from './pages/AjansYonetimi'
 import BlogListesi from './pages/BlogListesi'
 import BlogYazisi from './pages/BlogYazisi'
 import AdminBlog from './pages/AdminBlog'
+import Mesajlar from './pages/Mesajlar'
 
 function App() {
     return (
@@ -48,6 +49,7 @@ function App() {
                 <Route path="/ilanlarim" element={<Ilanlarim />} />
                 <Route path="/tekliflerim" element={<Tekliflerim />} />
                 <Route path="/panel" element={<Dashboard />} />
+                <Route path="/mesajlar/:id?" element={<Mesajlar />} />
                 <Route path="/ajansim" element={<AjansYonetimi />} />
                 <Route path="/blog" element={<BlogListesi />} />
                 <Route path="/blog/:slug" element={<BlogYazisi />} />

@@ -137,7 +137,7 @@ function AjansYonetimi() {
                     <Link to="/profilim" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
                         ← Profilime dön
                     </Link>
-                    <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6">
+                    <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6">
                         <h1 className="text-[#FFFFFF] text-2xl font-bold mb-3">Ajans Profiline Geç</h1>
                         <p className="text-[#A1A1AA] text-sm mb-6">
                             2-5 kişilik bir ekiple mi çalışıyorsun? Profilini ajans olarak göster, gerçek yazılımcı hesaplarını davet ederek ekibini portföyünde sergile.
@@ -145,7 +145,7 @@ function AjansYonetimi() {
                         <button
                             onClick={ajansModunaGec}
                             disabled={gecisYapiliyor}
-                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300"
+                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300"
                         >
                             {gecisYapiliyor ? "Geçiliyor..." : "Ajans Moduna Geç"}
                         </button>
@@ -172,7 +172,7 @@ function AjansYonetimi() {
                 </div>
 
                 {/* Üye Davet Et */}
-                <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
+                <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
                     <h2 className="text-[#FFFFFF] font-semibold mb-4">Üye Davet Et</h2>
                     <div className="relative">
                         <input
@@ -193,7 +193,7 @@ function AjansYonetimi() {
                                         <button
                                             onClick={() => davetGonder(u.id)}
                                             disabled={davetGonderiliyor}
-                                            className="bg-[#FDFDFD] text-[#050505] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#FFFFFF] transition-all duration-300 shrink-0 disabled:opacity-50"
+                                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#FFFFFF] transition-all duration-300 shrink-0 disabled:opacity-50"
                                         >
                                             Davet Et
                                         </button>
@@ -214,7 +214,7 @@ function AjansYonetimi() {
 
                 {/* Bekleyen Davetler */}
                 {bekleyenDavetler.length > 0 && (
-                    <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
+                    <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
                         <h2 className="text-[#FFFFFF] font-semibold mb-4">Bekleyen Davetler</h2>
                         <div className="flex flex-col gap-2">
                             {bekleyenDavetler.map((d) => (
@@ -233,7 +233,7 @@ function AjansYonetimi() {
                 )}
 
                 {/* Ekip Üyeleri */}
-                <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                     <h2 className="text-[#FFFFFF] font-semibold mb-4">Ekip Üyeleri ({uyeler.length})</h2>
                     {uyeler.length === 0 ? (
                         <p className="text-[#A1A1AA] text-sm">Henüz kabul edilmiş üye yok.</p>

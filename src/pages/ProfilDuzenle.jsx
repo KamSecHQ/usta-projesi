@@ -140,7 +140,7 @@ function ProjeFormu({ inputClass, baslangic, oneCikanSayisi, gonderiliyor, onKay
                 <button
                     type="submit"
                     disabled={gonderiliyor || !baslik.trim()}
-                    className="bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300 disabled:opacity-40"
+                    className="isik isik-cam bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300 disabled:opacity-40"
                 >
                     {gonderiliyor ? "Kaydediliyor..." : gonderMetni}
                 </button>
@@ -359,13 +359,13 @@ function ProfilDuzenle() {
                     <div className="flex gap-3 flex-wrap">
                         <Link
                             to="/ajansim"
-                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
+                            className="isik isik-cam bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
                         >
                             Ajansım
                         </Link>
                         <Link
                             to={`/ustalar/${user.id}`}
-                            className="bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
+                            className="isik isik-cam bg-white/[0.05] backdrop-blur-md border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
                         >
                             Portföyümü Görüntüle ↗
                         </Link>
@@ -378,7 +378,7 @@ function ProfilDuzenle() {
                     <div className="flex flex-col gap-6">
 
                         {/* Temel Bilgiler */}
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <h2 className="text-[#FFFFFF] font-semibold mb-5">Temel Bilgiler</h2>
                             <div className="grid sm:grid-cols-2 gap-4">
                                 <div>
@@ -414,7 +414,7 @@ function ProfilDuzenle() {
                         </div>
 
                         {/* Hakkımda */}
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <h2 className="text-[#FFFFFF] font-semibold mb-5">Hakkımda</h2>
                             <textarea
                                 value={bio}
@@ -426,7 +426,7 @@ function ProfilDuzenle() {
                         </div>
 
                         {/* Teknolojiler - chip input */}
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <h2 className="text-[#FFFFFF] font-semibold mb-5">Teknolojiler</h2>
                             <div className="flex flex-wrap gap-2 mb-3">
                                 {teknolojiler.map((t) => (
@@ -447,7 +447,7 @@ function ProfilDuzenle() {
                         </div>
 
                         {/* Müsaitlik */}
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <h2 className="text-[#FFFFFF] font-semibold mb-5">Müsaitlik Durumu</h2>
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
                                 {musaitlikSecenekleri.map((s) => (
@@ -455,7 +455,7 @@ function ProfilDuzenle() {
                                         key={s.deger}
                                         type="button"
                                         onClick={() => setMusaitlik(s.deger)}
-                                        className={`px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${musaitlik === s.deger
+                                        className={`isik isik-birincil px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${musaitlik === s.deger
                                             ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
                                             : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
                                             }`}
@@ -476,7 +476,7 @@ function ProfilDuzenle() {
                         </div>
 
                         {/* Ücret Aralığı */}
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <h2 className="text-[#FFFFFF] font-semibold mb-1">Saatlik Ücret Aralığı</h2>
                             <p className="text-[#A1A1AA] text-sm mb-5">İsteğe bağlı — beklentileri baştan netleştirir.</p>
                             <div className="grid grid-cols-2 gap-4">
@@ -492,7 +492,7 @@ function ProfilDuzenle() {
                         </div>
 
                         {/* Tanıtım Videosu */}
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <h2 className="text-[#FFFFFF] font-semibold mb-1">Tanıtım Videosu</h2>
                             <p className="text-[#A1A1AA] text-sm mb-5">YouTube ya da Loom linki — kendini kısaca tanıt.</p>
                             <input
@@ -525,13 +525,13 @@ function ProfilDuzenle() {
                         <button
                             onClick={kaydet}
                             disabled={kaydediliyor}
-                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
+                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
                         >
                             {kaydediliyor ? "Kaydediliyor..." : "Profili Kaydet"}
                         </button>
 
                         {/* Projelerim */}
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mt-4">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mt-4">
                             <div className="flex items-center justify-between mb-1">
                                 <h2 className="text-[#FFFFFF] font-semibold">Projelerim</h2>
                                 {!yeniProjeAcik && (
@@ -611,7 +611,7 @@ function ProfilDuzenle() {
                     {/* SAĞ: Canlı Önizleme */}
                     <div className="lg:sticky lg:top-24 h-fit">
                         <p className="text-[#A1A1AA] text-xs uppercase tracking-wider font-mono mb-3">Canlı Önizleme</p>
-                        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="relative shrink-0">
                                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] font-bold text-lg">

@@ -8,7 +8,7 @@ function UstaCard({ id, initials, name, role, desc, tags, onayli, musaitlik, son
     const cevrimici = cevrimiciMi(sonGorulme)
 
     return (
-        <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 relative hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300">
+        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 relative hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300">
             {onayli && (
                 <div className="absolute top-5 right-5 w-12 h-12 rounded-full border border-dashed border-[#8B5CF6]/60 flex items-center justify-center text-[#A78BFA] text-[9px] text-center -rotate-12 font-mono leading-tight">
                     ONAYLI<br />USTA

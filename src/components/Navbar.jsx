@@ -5,6 +5,8 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import AramaPaleti from './AramaPaleti'
 import DuyuruCubugu from './DuyuruCubugu'
 import { kidemRozetiHesapla, tamamlananIsSayisiGetir } from '../ustaYardimcilari'
+import { useOkunmamis } from '../mesajlasma'
+import MesajBildirimi from './MesajBildirimi'
 
 
 function baslangicHarfleri(adSoyad) {
@@ -36,6 +38,8 @@ function Navbar() {
     const { user } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
+    const { toplam: okunmamisMesaj, gelen: gelenMesaj } = useOkunmamis(user?.id)
+    const mesajRozeti = okunmamisMesaj > 9 ? "9+" : okunmamisMesaj
 
     async function cikisYap() {
         await supabase.auth.signOut()
@@ -216,7 +220,7 @@ function Navbar() {
 
                         <button
                             onClick={() => setAramaAcik(true)}
-                            className="flex items-center gap-2 text-[#A1A1AA] text-sm px-3.5 py-2 ml-1 rounded-full border border-white/[0.08] hover:border-white/[0.18] hover:bg-white/[0.04] hover:text-[#FFFFFF] transition-all duration-300"
+                            className="isik isik-cam flex items-center gap-2 text-[#A1A1AA] text-sm px-3.5 py-2 ml-1 rounded-full border border-white/[0.08] hover:border-white/[0.18] hover:bg-white/[0.04] hover:text-[#FFFFFF] transition-all duration-300"
                         >
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
                                 <circle cx="11" cy="11" r="7" />
@@ -313,6 +317,25 @@ function Navbar() {
                             )}
                         </div>
 
+                        {/* Mesajlar — okunmamış sayısıyla */}
+                        {user && (
+                            <Link
+                                to="/mesajlar"
+                                className={`relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-all duration-300 ${location.pathname.startsWith('/mesajlar') ? 'text-[#FFFFFF] bg-white/[0.06]' : 'text-[#A1A1AA]'}`}
+                                aria-label={okunmamisMesaj ? `Mesajlar, ${okunmamisMesaj} okunmamış` : "Mesajlar"}
+                                title="Mesajlar"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4.5 h-4.5">
+                                    <path d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                {okunmamisMesaj > 0 && (
+                                    <span className="msj-nav-rozet absolute -top-1 -right-1 text-[#FFFFFF] text-[10px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center">
+                                        {mesajRozeti}
+                                    </span>
+                                )}
+                            </Link>
+                        )}
+
                         {/* Bildirim zili — sadece adminler için, gerçek onay bekleyen sayısı */}
                         {adminMi && (
                             <Link
@@ -397,6 +420,18 @@ function Navbar() {
                                                 Panelim
                                             </Link>
                                             <Link
+                                                to="/mesajlar"
+                                                onClick={() => setHesapMenuAcik(false)}
+                                                className="flex items-center justify-between gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
+                                            >
+                                                Mesajlar
+                                                {okunmamisMesaj > 0 && (
+                                                    <span className="bg-[#8B5CF6]/20 text-[#C4B5FD] text-[10px] font-semibold tabular-nums rounded-full px-1.5 py-0.5">
+                                                        {okunmamisMesaj}
+                                                    </span>
+                                                )}
+                                            </Link>
+                                            <Link
                                                 to="/profilim"
                                                 onClick={() => setHesapMenuAcik(false)}
                                                 className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
@@ -473,7 +508,7 @@ function Navbar() {
                         ) : (
                             <Link
                                 to="/giris"
-                                className="giris-dugme inline-flex h-9 items-center rounded-full bg-[#FDFDFD] px-5 text-sm font-medium text-[#050505] transition-colors duration-200 hover:bg-white"
+                                className="isik isik-birincil giris-dugme inline-flex h-9 items-center rounded-full bg-[#FDFDFD] px-5 text-sm font-medium text-[#050505] transition-colors duration-200 hover:bg-white"
                             >
                                 Giriş Yap
                             </Link>
@@ -495,6 +530,22 @@ function Navbar() {
                                 <span className="absolute top-0.5 right-0.5 bg-[#FDFDFD] text-[#050505] text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
                                     {bekleyenSayisi > 9 ? "9+" : bekleyenSayisi}
                                 </span>
+                            </Link>
+                        )}
+                        {user && (
+                            <Link
+                                to="/mesajlar"
+                                className="relative w-9 h-9 flex items-center justify-center text-[#A1A1AA]"
+                                aria-label={okunmamisMesaj ? `Mesajlar, ${okunmamisMesaj} okunmamış` : "Mesajlar"}
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-5 h-5">
+                                    <path d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                {okunmamisMesaj > 0 && (
+                                    <span className="msj-nav-rozet absolute top-0 right-0 text-[#FFFFFF] text-[9px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center">
+                                        {mesajRozeti}
+                                    </span>
+                                )}
                             </Link>
                         )}
                         <button
@@ -594,6 +645,16 @@ function Navbar() {
                                     Panelim
                                 </Link>
                                 <Link
+                                    to="/mesajlar"
+                                    onClick={() => setMenuAcik(false)}
+                                    className="flex items-center justify-between text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
+                                >
+                                    Mesajlar
+                                    {okunmamisMesaj > 0 && (
+                                        <span className="bg-[#8B5CF6]/20 text-[#C4B5FD] text-[11px] font-semibold tabular-nums rounded-full px-2 py-0.5">{okunmamisMesaj}</span>
+                                    )}
+                                </Link>
+                                <Link
                                     to="/profilim"
                                     onClick={() => setMenuAcik(false)}
                                     className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
@@ -629,7 +690,7 @@ function Navbar() {
                                     <Link
                                         to="/admin"
                                         onClick={() => setMenuAcik(false)}
-                                        className="bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-4 py-3 rounded-xl text-sm font-medium text-center hover:bg-white/[0.1] transition-all duration-300"
+                                        className="isik isik-cam bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-4 py-3 rounded-xl text-sm font-medium text-center hover:bg-white/[0.1] transition-all duration-300"
                                     >
                                         Yönetim Paneli {bekleyenSayisi > 0 && `(${bekleyenSayisi})`}
                                     </Link>
@@ -661,7 +722,7 @@ function Navbar() {
                             <Link
                                 to="/giris"
                                 onClick={() => setMenuAcik(false)}
-                                className="bg-[#FDFDFD] text-[#050505] px-4 py-3 rounded-xl text-sm font-semibold text-center hover:bg-[#FFFFFF] transition-all duration-300"
+                                className="isik isik-birincil bg-[#FDFDFD] text-[#050505] px-4 py-3 rounded-xl text-sm font-semibold text-center hover:bg-[#FFFFFF] transition-all duration-300"
                             >
                                 Giriş Yap
                             </Link>
@@ -671,6 +732,7 @@ function Navbar() {
             </header>
 
             <AramaPaleti acik={aramaAcik} kapat={() => setAramaAcik(false)} />
+            <MesajBildirimi gelen={gelenMesaj} kullaniciId={user?.id} />
         </>
     )
 }

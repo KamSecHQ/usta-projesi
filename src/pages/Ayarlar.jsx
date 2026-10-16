@@ -66,7 +66,7 @@ function Ayarlar() {
                 <p className="text-[#A1A1AA] text-sm mb-10">Hesabını buradan yönetebilirsin.</p>
 
                 {/* Hesap Bilgisi */}
-                <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
+                <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
                     <h2 className="text-[#FFFFFF] font-semibold mb-4">Hesap</h2>
                     <div className="flex items-center gap-3">
                         <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] font-bold shrink-0">
@@ -82,7 +82,7 @@ function Ayarlar() {
                 </div>
 
                 {/* Şifre Değiştir */}
-                <div className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
+                <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
                     <h2 className="text-[#FFFFFF] font-semibold mb-4">Şifre Değiştir</h2>
                     <form onSubmit={sifreDegistir} className="flex flex-col gap-3">
                         <input
@@ -104,7 +104,7 @@ function Ayarlar() {
                         <button
                             type="submit"
                             disabled={kaydediliyor}
-                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
+                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
                         >
                             {kaydediliyor ? "Güncelleniyor..." : "Şifreyi Güncelle"}
                         </button>
@@ -119,7 +119,7 @@ function Ayarlar() {
                     </p>
                     <a
                         href={`mailto:merhaba@usta.app?subject=Hesap Silme Talebi&body=Merhaba, ${user.email} adresli hesabımı silmenizi rica ediyorum.`}
-                        className="inline-block border border-red-400/40 text-red-300 text-sm px-5 py-2.5 rounded-full hover:bg-red-400/10 transition-all duration-300"
+                        className="isik isik-tehlike inline-block border border-red-400/40 text-red-300 text-sm px-5 py-2.5 rounded-full hover:bg-red-400/10 transition-all duration-300"
                     >
                         Hesabımı Sil
                     </a>

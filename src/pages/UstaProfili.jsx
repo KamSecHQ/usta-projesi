@@ -6,6 +6,7 @@ import useSayfaBasligi from '../useSayfaBasligi'
 import ProjeKarti from '../components/ProjeKarti'
 import { IskeletProfilBasligi, IskeletProjeKarti } from '../components/Iskelet'
 import FavoriButonu from '../components/FavoriButonu'
+import MesajlasDugmesi from '../components/MesajlasDugmesi'
 import {
     cevrimiciMi,
     musaitlikBilgisi,
@@ -131,7 +132,7 @@ function UstaProfili() {
                 )}
 
                 {/* Header */}
-                <div className="relative bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6 mb-6 overflow-hidden">
+                <div className="isik-kutu relative bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6 mb-6 overflow-hidden">
                     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_30%_0%,rgba(201,125,60,0.08),transparent)]" />
 
                     {profil.onayli && (
@@ -236,7 +237,7 @@ function UstaProfili() {
                                     <Link
                                         key={u.davet_edilen_id}
                                         to={`/ustalar/${u.davet_edilen_id}`}
-                                        className="flex items-center gap-2.5 bg-white/[0.04] border border-white/[0.08] rounded-full pl-1.5 pr-4 py-1.5 hover:bg-white/[0.08] hover:border-[#8B5CF6]/40 transition-all duration-300"
+                                        className="isik isik-cam flex items-center gap-2.5 bg-white/[0.04] border border-white/[0.08] rounded-full pl-1.5 pr-4 py-1.5 hover:bg-white/[0.08] hover:border-[#8B5CF6]/40 transition-all duration-300"
                                     >
                                         <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] text-xs font-bold shrink-0">
                                             {baslangicHarfleri(u.profiller?.ad_soyad)}
@@ -278,17 +279,22 @@ function UstaProfili() {
                                 href={profil.github_url}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
+                                className="isik isik-cam bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-5 py-2.5 rounded-full text-sm font-medium hover:bg-white/[0.1] hover:border-[#8B5CF6]/40 transition-all duration-300"
                             >
                                 GitHub'ı Gör ↗
                             </a>
                         )}
                         <Link
                             to={user ? "/ilan-ver" : "/hesap-olustur?rol=is-veren"}
-                            className="bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300"
+                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300"
                         >
                             Bu Ustayla Çalış
                         </Link>
+                        {user?.id !== profil.id && (
+                            <MesajlasDugmesi karsiId={profil.id} className="isik isik-mor px-5 py-2.5 rounded-full text-sm font-semibold">
+                                Mesaj gönder
+                            </MesajlasDugmesi>
+                        )}
                         <FavoriButonu ustaId={profil.id} />
                     </div>
                 </div>

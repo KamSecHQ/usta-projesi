@@ -11,7 +11,7 @@ function IlanKarti({ ilan }) {
     return (
         <Link
             to={`/is-ilanlari/${ilan.id}`}
-            className="block bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300"
+            className="isik-kutu block bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300"
         >
             <div className="flex items-start justify-between gap-3">
                 <h3 className="text-[#FFFFFF] font-semibold">{ilan.baslik}</h3>
@@ -66,7 +66,7 @@ function IsIlanlari() {
                     </div>
                     <Link
                         to="/ilan-ver"
-                        className="bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300"
+                        className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-5 py-2.5 rounded-full text-sm hover:bg-[#FFFFFF] transition-all duration-300"
                     >
                         + İlan Ver
                     </Link>
