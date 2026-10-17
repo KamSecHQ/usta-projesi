@@ -8,6 +8,7 @@ const SUTUNLAR = [
             { ad: 'Ustalar', to: '/ustalar' },
             { ad: 'İş ilanları', to: '/is-ilanlari' },
             { ad: 'İlan ver', to: '/ilan-ver' },
+            { ad: 'Örnek vitrin', to: '/ornek' },
             { ad: 'Blog', to: '/blog' },
         ],
     },

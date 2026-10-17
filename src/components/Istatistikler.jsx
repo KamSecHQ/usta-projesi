@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../supabaseClient'
+import { HapLink } from './uzay/Hareket'
 
 function useSayac(hedef, basla, sureMs = 1400) {
     const [deger, setDeger] = useState(0)
@@ -87,6 +88,11 @@ function Istatistikler() {
                         <p className="uz-sub mx-auto mt-5 max-w-[46ch] text-balance text-[17px] font-light leading-[1.6] text-gri" style={{ '--d': '0.2s' }}>
                             İlk ustalar kıdemlerini burada, ilk işleriyle kuruyor. Tezgâhını erken aç, çarşıyla birlikte büyü.
                         </p>
+                        <div className="mt-8 flex justify-center">
+                            <HapLink to="/ornek" tur="cam" className="uz-otur" gecikme={0.3}>
+                                Bir işin akışını örnekle gör
+                            </HapLink>
+                        </div>
                     </>
                 ) : (
                     <p className="uz-sub mx-auto max-w-[24ch] font-pjs text-[clamp(2rem,4.8vw,3.9rem)] font-medium leading-[1.12] tracking-[-0.025em] text-white text-balance">

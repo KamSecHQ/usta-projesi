@@ -42,7 +42,8 @@ function Vitrin({ usta, vitrin }) {
 
 // Usta kartı ("icazet"): vitrin, kimlik, uzmanlık ve gerçek portföy sayısı. İmleçle eğilir,
 // kenarı imlecin olduğu yerde yanar.
-export default function UstaIcazeti({ usta, projeler = [], sira = 0, favori }) {
+// to / rozet: örnek vitrin (/ornek) kartı kendi adresine götürür ve "Örnek" etiketi taşır
+export default function UstaIcazeti({ usta, projeler = [], sira = 0, favori, to, rozet }) {
     const mus = musaitlikBilgisi(usta.musaitlik)
     const ucret = ucretAraligiGoster(usta.saatlik_ucret_min, usta.saatlik_ucret_max)
     const teknolojiler = usta.teknolojiler || []
@@ -54,12 +55,12 @@ export default function UstaIcazeti({ usta, projeler = [], sira = 0, favori }) {
     const kidem = usta.tamamlanan > 0 ? kidemRozetiHesapla('yazilimci', usta.tamamlanan) : null
 
     return (
-        <Link to={`/ustalar/${usta.id}`} className="uz-otur group block h-full rounded-[20px]" style={{ '--d': `${0.3 + sira * 0.1}s` }}>
+        <Link to={to || `/ustalar/${usta.id}`} preventScrollReset={Boolean(to)} className="uz-otur group block h-full rounded-[20px]" style={{ '--d': `${0.3 + sira * 0.1}s` }}>
             <article className="isik-kart flex h-full flex-col">
                 <div className="vitrin relative aspect-[16/8] overflow-hidden rounded-t-[19px]">
                     <Vitrin usta={usta} vitrin={vitrin} />
                     <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-[#0A0A0F]/30 to-transparent" />
-                    {favori && <span className="absolute left-4 top-4">{favori}</span>}
+                    {(favori || rozet) && <span className="absolute left-4 top-4">{favori || rozet}</span>}
                     {(usta.onayli || kidem) && (
                         <span className="absolute right-4 top-4 flex flex-col items-end gap-1.5">
                             {usta.onayli && (

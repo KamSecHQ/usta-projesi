@@ -6,7 +6,8 @@ import { Ok } from '../uzay/Hareket'
 const YENI_GUN = 3
 
 // onizleme: sihirbazdaki canlı önizleme; bağlantı yerine düz kart çizilir
-export default function IlanKarti({ ilan, isVeren, sira = 0, onizleme = false }) {
+// to / rozet / eylemMetni: örnek vitrin (/ornek) kartı kendi adresine götürür ve "Örnek" etiketi taşır
+export default function IlanKarti({ ilan, isVeren, sira = 0, onizleme = false, to, rozet, eylemMetni = 'İncele, teklif ver' }) {
     const teknolojiler = ilan.gerekli_teknolojiler || []
     const butce = butceGoster(ilan.butce_min, ilan.butce_max)
     // Kartta yalnızca ilk paragraf (özet): sihirbazın soru-cevap bölümleri ilan sayfasında okunur
@@ -14,12 +15,13 @@ export default function IlanKarti({ ilan, isVeren, sira = 0, onizleme = false })
     const yeni = Date.now() - new Date(ilan.created_at).getTime() < YENI_GUN * 864e5
 
     const Kap = onizleme ? 'div' : Link
-    const kapOzellik = onizleme ? { className: 'group block h-full rounded-[20px]' } : { to: `/is-ilanlari/${ilan.id}`, className: 'uz-otur group block h-full rounded-[20px]', style: { '--d': `${0.1 + sira * 0.06}s` } }
+    const kapOzellik = onizleme ? { className: 'group block h-full rounded-[20px]' } : { to: to || `/is-ilanlari/${ilan.id}`, preventScrollReset: Boolean(to), className: 'uz-otur group block h-full rounded-[20px]', style: { '--d': `${0.1 + sira * 0.06}s` } }
     return (
         <Kap {...kapOzellik}>
             <article className="isik-kart flex h-full flex-col p-6 sm:p-7">
                 <div className="flex items-center justify-between gap-3 text-[13px] text-gri-koyu">
                     <span className="flex items-center gap-2">
+                        {rozet}
                         {yeni && <span className="uz-etiket bg-mor/20 text-mor-soluk">Yeni</span>}
                         <time dateTime={ilan.created_at}>{onizleme ? 'şimdi' : zamanFarki(ilan.created_at)}</time>
                     </span>
@@ -47,7 +49,7 @@ export default function IlanKarti({ ilan, isVeren, sira = 0, onizleme = false })
                         <p className="rakam mt-0.5 text-[18px] font-medium tracking-[-0.01em] text-mor-soluk">{butce || 'Teklife açık'}</p>
                     </div>
                     <span className="inline-flex items-center gap-2 text-[14px] font-medium text-white">
-                        İncele, teklif ver
+                        {eylemMetni}
                         <span className="transition-transform duration-300 group-hover:translate-x-1">
                             <Ok />
                         </span>

@@ -92,7 +92,7 @@ function Navbar() {
 
     // Bulunulan bölüm: üst düzey sayfa ve altındaki ayrıntı sayfaları
     const etkinMi = (kok) => yol === kok || yol.startsWith(`${kok}/`)
-    const kesfetEtkin = etkinMi("/blog")
+    const kesfetEtkin = etkinMi("/blog") || etkinMi("/ornek")
     // Yönetim paneli yalnızca kendi sayfasında yanar; blog yönetimi onun alt yolu
     const linkEtkinMi = (to) => (to === "/admin" ? yol === to : etkinMi(to))
 
@@ -294,7 +294,14 @@ function Navbar() {
                                             </button>
                                         ))}
                                         <div className="menu-ayrac" />
-                                        <Link to="/blog" onClick={() => setKesfetMenuAcik(false)} className={`menu-satir ${kesfetEtkin ? "etkin" : ""}`}>
+                                        <Link to="/ornek" onClick={() => setKesfetMenuAcik(false)} className={`menu-satir ${etkinMi("/ornek") ? "etkin" : ""}`}>
+                                            <span className="menu-ikon"><Ikon ad="vitrin" /></span>
+                                            <span className="menu-metin">
+                                                <span>Örnek vitrin</span>
+                                                <span className="menu-aciklama">Bir işin baştan sona akışı</span>
+                                            </span>
+                                        </Link>
+                                        <Link to="/blog" onClick={() => setKesfetMenuAcik(false)} className={`menu-satir ${etkinMi("/blog") ? "etkin" : ""}`}>
                                             <span className="menu-ikon"><Ikon ad="blog" /></span>
                                             <span className="menu-metin">
                                                 <span>Blog</span>
@@ -486,7 +493,12 @@ function Navbar() {
                             İş ilanları
                             <Ikon ad="sag" className="mobil-ok" />
                         </Link>
-                        <Link to="/blog" onClick={menuleriKapat} className={`mobil-satir ${kesfetEtkin ? "etkin" : ""}`}>
+                        <Link to="/ornek" onClick={menuleriKapat} className={`mobil-satir ${etkinMi("/ornek") ? "etkin" : ""}`}>
+                            <span className="menu-ikon"><Ikon ad="vitrin" /></span>
+                            Örnek vitrin
+                            <Ikon ad="sag" className="mobil-ok" />
+                        </Link>
+                        <Link to="/blog" onClick={menuleriKapat} className={`mobil-satir ${etkinMi("/blog") ? "etkin" : ""}`}>
                             <span className="menu-ikon"><Ikon ad="blog" /></span>
                             Blog
                             <Ikon ad="sag" className="mobil-ok" />

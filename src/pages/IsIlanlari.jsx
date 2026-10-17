@@ -7,6 +7,7 @@ import { AramaKutusu, FiltreCipi, Anahtar, SiralamaSecici, SonucYok } from '../c
 import { Sahne, HapLink } from '../components/uzay/Hareket'
 import IlanKarti, { IskeletIlan } from '../components/ilan/IlanKarti'
 import { BosTezgah } from '../components/usta/UstaIcazeti'
+import OrnekVitrinDaveti from '../components/ornek/OrnekVitrinDaveti'
 
 const SIRALAMALAR = [
     ['yeni', 'En yeni'],
@@ -15,6 +16,9 @@ const SIRALAMALAR = [
 ]
 // Sıralama için ilanın bütçe değeri: üst sınır yoksa alt sınır
 const butceDegeri = (ilan) => ilan.butce_max ?? ilan.butce_min ?? null
+
+// Bu sayıdan az kayıt varken örnek vitrin daveti görünür
+const ORNEK_DAVET_ESIGI = 10
 
 function IsIlanlari() {
     useSayfaBasligi('İş ilanları', 'İşletmelerin açtığı güncel yazılım işleri: web sitesi, mobil uygulama, entegrasyon. Bütçeyi gör, teklifini ver.')
@@ -103,6 +107,9 @@ function IsIlanlari() {
                             <HapLink to="/ilan-ver">İlan ver</HapLink>
                         </div>
                     </header>
+
+                    {/* Çarşı küçükken: işleyişi örnek vitrinde göster */}
+                    {!yukleniyor && ilanlar.length < ORNEK_DAVET_ESIGI && <OrnekVitrinDaveti className="mt-8 max-w-[760px]" />}
 
                     {ilanlar.length > 0 && (
                         <div className="liste-cubuk mt-10 flex flex-col gap-3 p-3 lg:flex-row lg:items-center">

@@ -1,0 +1,287 @@
+/* ===================================================================
+   Örnek vitrin (/ornek): örnek verilerle bir işin baştan sona akışı.
+   Her örnek öğe kesik kenarlı "Örnek" etiketi taşır; gerçek içerikle karışmaz.
+   =================================================================== */
+
+.ornek-cip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 22px;
+    padding: 0 9px;
+    border-radius: 999px;
+    border: 1px dashed rgb(167 139 250 / 0.6);
+    background: rgb(12 10 22 / 0.78);
+    color: #ddd6fe;
+    font-family: var(--font-pjs);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+/* Sayfanın başındaki açıklama: buradaki her şey örnek */
+.ornek-serit {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 16px;
+    border: 1px dashed rgb(167 139 250 / 0.35);
+    background: linear-gradient(90deg, rgb(139 92 246 / 0.1), rgb(139 92 246 / 0.03));
+    color: #d4d4d8;
+    font-size: 13.5px;
+    line-height: 1.55;
+}
+
+.ornek-serit .ornek-cip {
+    margin-top: 1px;
+    flex: none;
+}
+
+/* ---------- Adım rayı: yapışkan, bulunulan adım yanar ---------- */
+.ornek-ray {
+    position: sticky;
+    top: 74px;
+    z-index: 30;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+}
+
+.ornek-ray::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -30px;
+    bottom: -36px;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(180deg, #000 0%, rgb(0 0 0 / 0.92) 62%, transparent 100%);
+}
+
+.ornek-ray-ic {
+    position: relative;
+    pointer-events: auto;
+    display: flex;
+    gap: 2px;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.06), rgb(255 255 255 / 0.015)), rgb(8 7 14 / 0.86);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), inset 0 0 0 1px rgb(255 255 255 / 0.06), 0 16px 40px -18px rgb(0 0 0 / 0.95);
+}
+
+.ornek-ray-ic::-webkit-scrollbar {
+    display: none;
+}
+
+.ornek-ray-hap {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 34px;
+    padding: 0 14px 0 6px;
+    border-radius: 999px;
+    color: #a1a1aa;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: color 200ms ease, background-color 250ms ease, box-shadow 250ms ease;
+}
+
+.ornek-ray-hap:hover {
+    color: #fff;
+}
+
+.ornek-ray-no {
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: #d4d4d8;
+    background: rgb(255 255 255 / 0.07);
+    transition: background-color 250ms ease, color 250ms ease, box-shadow 250ms ease;
+}
+
+.ornek-ray-hap.etkin {
+    color: #fff;
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.12), rgb(255 255 255 / 0.04));
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 8px 22px -10px rgb(139 92 246 / 0.95);
+}
+
+.ornek-ray-hap.etkin .ornek-ray-no {
+    color: #050505;
+    background: #c4b5fd;
+    box-shadow: 0 0 12px rgb(167 139 250 / 0.9);
+}
+
+/* ---------- Adım bölümleri ---------- */
+.ornek-adim {
+    scroll-margin-top: 140px;
+}
+
+.ornek-adim-no {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    color: #ede9fe;
+    font-size: 17px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(180deg, rgb(139 92 246 / 0.32), rgb(139 92 246 / 0.08));
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), inset 0 0 0 1px rgb(167 139 250 / 0.4), 0 14px 32px -12px rgb(139 92 246 / 0.95);
+}
+
+/* Örnek ekranların taşıyıcısı: koyu cam, üstte mor ışık */
+.ornek-ekran {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid rgb(255 255 255 / 0.09);
+    background: radial-gradient(ellipse 80% 50% at 50% 0%, rgb(139 92 246 / 0.12), transparent 70%), #07070C;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.07), 0 40px 100px -44px rgb(139 92 246 / 0.55);
+}
+
+.ornek-ekran-ust {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgb(255 255 255 / 0.07);
+    color: #8a8a94;
+    font-size: 12px;
+}
+
+.ornek-ekran-nokta {
+    display: inline-flex;
+    gap: 6px;
+}
+
+.ornek-ekran-nokta span {
+    width: 9px;
+    height: 9px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+}
+
+/* Teklif kartı: seçilen teklif mor ışıkla ayrışır */
+.ornek-teklif {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    background: rgb(255 255 255 / 0.025);
+    padding: 16px;
+}
+
+.ornek-teklif.secildi {
+    border-color: rgb(167 139 250 / 0.5);
+    background: linear-gradient(180deg, rgb(139 92 246 / 0.12), rgb(139 92 246 / 0.03));
+    box-shadow: 0 18px 44px -20px rgb(139 92 246 / 0.9);
+}
+
+.ornek-teklif.soluk {
+    opacity: 0.62;
+}
+
+/* Kıdem cetveli: dört rütbe, ilerleme çizgisi */
+.ornek-kidem-yol {
+    position: relative;
+    height: 6px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.08);
+}
+
+.ornek-kidem-dolu {
+    position: absolute;
+    inset: 0 auto 0 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #8b5cf6, #c4b5fd);
+    box-shadow: 0 0 14px rgb(167 139 250 / 0.85);
+}
+
+/* ---------- Ayrıntı penceresi ---------- */
+html:has(.ornek-diyalog[open]) {
+    overflow: hidden;
+}
+
+.ornek-diyalog {
+    width: min(94vw, 660px);
+    max-height: min(88dvh, 860px);
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 26px;
+    background: radial-gradient(ellipse 80% 40% at 50% 0%, rgb(139 92 246 / 0.14), transparent 70%), #09090F;
+    color: #fff;
+    font-family: var(--font-pjs);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 50px 120px -30px rgb(0 0 0 / 0.95), 0 0 0 1px rgb(0 0 0 / 0.6);
+}
+
+.ornek-diyalog[open] {
+    display: flex;
+    flex-direction: column;
+    animation: onay-gir 380ms var(--ease-cekic) both;
+}
+
+.ornek-diyalog::backdrop {
+    background: rgb(0 0 0 / 0.66);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+}
+
+.ornek-diyalog-govde {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 24px;
+}
+
+@media (min-width: 640px) {
+    .ornek-diyalog-govde {
+        padding: 30px 32px;
+    }
+}
+
+.ornek-kapat {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex: none;
+    border-radius: 999px;
+    color: #a1a1aa;
+    background: rgb(255 255 255 / 0.05);
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.08);
+    transition: color 180ms ease, background-color 180ms ease;
+}
+
+.ornek-kapat:hover {
+    color: #fff;
+    background: rgb(255 255 255 / 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ornek-diyalog[open] {
+        animation: none;
+    }
+
+    .ornek-ray-hap,
+    .ornek-ray-no {
+        transition: none;
+    }
+}

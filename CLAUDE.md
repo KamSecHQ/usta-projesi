@@ -58,6 +58,7 @@ Vite + React 19 + React Router 7 + Tailwind CSS 4 (`@theme` tokenları `src/inde
 ## Doğruluk kuralları
 - Emanet (escrow) ödeme sistemi **yok**: "yakında" olarak sunulur.
 - Müşteri yorumu, logo duvarı, sahte sayı uydurulmaz; sayılar Supabase'den canlı gelir, ulaşılamazsa "—" gösterilir.
+- Sahte hesap ya da sahte ilan açılmaz. İşleyişi göstermek için tek yer örnek vitrindir (`/ornek`, `pages/OrnekVitrin.jsx`, veri `pages/ornekVitrinVerisi.js`): her öğe "Örnek" etiketi taşır, sayfanın başında örnek olduğu yazar; veritabanına, sayaçlara ve aramaya girmez. Eylemleri gerçek çarşıya yönlendirir.
 - Kıdem eşikleri `src/ustaYardimcilari.js` (`KIDEM_ROZETLERI_*`) ile aynı kalmalı: Çırak 0, Kalfa 1, Usta 3, Kıdemli Usta 10 tamamlanan iş.
 
 ## Supabase istemcisi

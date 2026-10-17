@@ -9,7 +9,8 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 
 ## ŞU ANKİ DURUM (ilk önce bunu oku)
 
-- **Her şey commitlendi ve yayında.** 17 Ekim 2026: son yayın `9ba6d74` (faz 50, hero küresi); öncesi `165f0fe`. Vercel ve GitHub Actions başarılı, canlı site doğrulandı (CloudFront izi yok, poster sunuluyor ve ilk karede sönüyor, küre çiziliyor, konsol temiz). Çalışılan dal `main`; eski `perf/kasma-ve-yol-haritasi` dalı aynı commit'te kaldı, silinebilir.
+- **Son yayınlar (17 Ekim 2026):** `780c585` (atölye yazısı okunur; üyeye kayıt daveti yerine role göre sıradaki adım), `f071012` (site geneli premium cila: cam ışık rayı menü, giriş kapıları, iç sayfa atmosferi ve altbilgi, metinler cümle düzeninde), `9ba6d74` (faz 50, hero küresi).
+- **Önceki not:** 17 Ekim 2026: faz 50 yayını `9ba6d74`; öncesi `165f0fe`. Vercel ve GitHub Actions başarılı, canlı site doğrulandı (CloudFront izi yok, poster sunuluyor ve ilk karede sönüyor, küre çiziliyor, konsol temiz). Çalışılan dal `main`; eski `perf/kasma-ve-yol-haritasi` dalı aynı commit'te kaldı, silinebilir.
 - **GitHub Actions** (`Kontrol`) ilk kez çalıştı ve geçti: lint 0 uyarı, 33/33 test, derleme, ilk yük 164 KB.
 - **Yayın akışı:** kullanıcı "commitle ve siteye yükle" deyince: `npx oxlint --deny-warnings`, `npm test`, `npm run build`, `npm run butce`; Türkçe mesajla commit; `git push origin main`; Vercel durumu (`gh api repos/KamSecHQ/usta-projesi/commits/<sha>/status`) ve Actions (`gh run list --repo KamSecHQ/usta-projesi`) izlenir; canlı site doğrulanır. Bu Mac'te GitHub kimlik bilgisi var; diğer Mac'te `gh auth login` gerekebilir (kullanıcı adını ve token'ı kullanıcı kendisi girer).
 - **Commitlenmeyenler bilerek:** `.claude/launch.json` (yerel sunucu ayarı) ve `.impeccable/` (tasarım becerisinin bağlamı). `.claude/skills/` `.gitignore`'da.
@@ -43,7 +44,10 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 - Blog: `/blog?onizleme=1` ve `/blog/yazilim-butcesi-nasil-belirlenir?onizleme=1` (örnek yazılar; canlıda henüz yayınlanmış yazı yok)
 - Yönetim: `/admin?onizleme=1` (örnek usta başvuruları; onay, onay kaldırma ve telefon doğrulama yerelde denenir) · `/admin/blog?onizleme=1` (editör ve canlı önizleme)
 - Bildirim ve onay diyaloğu konsoldan: `__bildirim('Deneme')`
-- Profil düzenleme, ayarlar (girişli hâli) ve ajans yönetimi için önizleme yok; görmek için gerçek hesapla giriş gerekir.
+- Örnek vitrin canlıda da açık (önizleme değil): `/ornek` (ayrıntı penceresi `?ilan=ornek-ilan-4`, `?usta=ornek-usta-3`). Örnek veri `src/pages/ornekVitrinVerisi.js`; tutarlılığı `testler/ornekVitrin.test.js` denetler.
+- Profil düzenleme: `/profilim?onizleme=yazilimci` ya da `?onizleme=is-veren` (kaydetme veritabanına gitmez)
+- Üye hâli (kayıt davetlerinin yerine gelen role göre eylemler): herhangi bir sayfaya `?rol-onizleme=yazilimci`, `is-veren` ya da `uye`
+- Ayarlar (girişli hâli) ve ajans yönetimi için önizleme yok; görmek için gerçek hesapla giriş gerekir.
 
 ## Mimari özeti
 
@@ -54,7 +58,10 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
   - `components/hesap/`: `HesapCercevesi` (giriş/kayıt/şifre sayfalarının çerçevesi), `hesapHatalari.js` (`hesapHatasi()`: Supabase hataları Türkçe).
   - `components/bildirim/`: `useBildirim()` (toast), `useOnay()` (yerel `<dialog>` ile onay). `alert()` ve `confirm()` kullanılmaz.
   - `components/usta/UstaIcazeti.jsx`: tek usta kartı (anasayfa, /ustalar, Favorilerim) + boş tezgâh davet kartları + iskelet.
-  - `components/liste/ListeAraclari.jsx`: arama kutusu, filtre çipi, anahtar, sıralama, `SonucYok` (boş/giriş gerektiren durumlar).
+  - `components/liste/ListeAraclari.jsx`: arama kutusu, filtre çipi, anahtar, sıralama, `SonucYok` (liste içi boş durumlar).
+  - `components/hesap/GirisKapisi.jsx`: tam sayfa durum kartı. `GirisKapisi` (ziyaretçi; `?sonra=` ile geri döner), `KapiSayfasi` (yetki, rol, bulunamadı).
+  - `components/gezinme.css` + `gezinmeIkonlari.jsx` + `navVurgu.js`: üst çubuk, ışık rayı menü, açılır paneller, mobil menü, duyuru, altbilgi.
+  - `src/profilRolu.js`: `useProfilRolu()` (giriş yapmış kullanıcının rolü, tek sorgu) ve `uyeEylemleri(rol)`.
   - `components/ilan/`: `IlanKarti`, `ilanSablonlari.js` (7 şablon, `aciklamaOlustur`), `TeknolojiSecici`.
   - `components/degerlendirme/`: yıldız seçici/gösterge, form, liste, sorgular.
   - `components/atolye/Isitici.jsx`: 3D sahnelerin shader ısıtması (her sahnede zorunlu, bkz. CLAUDE.md).

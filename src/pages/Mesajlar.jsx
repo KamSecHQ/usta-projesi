@@ -11,6 +11,7 @@ import BaglamPaneli from '../components/mesaj/BaglamPaneli'
 import Ikon from '../components/mesaj/Ikon'
 import '../components/mesaj/mesaj.css'
 import { mesajOnizlemesi } from './mesajOnizleme'
+import GirisKapisi from '../components/hesap/GirisKapisi'
 
 const PROFIL = 'id, ad_soyad, unvan, rol, avatar_url, son_gorulme, konum, musaitlik'
 const KONUSMA_SORGUSU = `id, katilimci_1, katilimci_2, ilan_id, teklif_id, son_mesaj_at, son_mesaj_onizleme, son_gonderen_id, created_at,
@@ -690,19 +691,14 @@ function Mesajlar() {
     // --- Görünüm ---------------------------------------------------------------
     const aktifMesajlar = aktif && akis.id === aktif.id ? akis.liste : []
 
+    // Ziyaretçi: mesajlaşma düzeni yerine ortak giriş kartı (giriş sonrası buraya döner)
+    if (!authYukleniyor && !user) {
+        return <GirisKapisi ikon="mesaj" baslik="Mesajların seni bekliyor" metin="Ustalarla ve iş verenlerle konuşmak, teklifleri netleştirmek için hesabına giriş yap." />
+    }
+
     let icerik
     if (authYukleniyor) {
-        icerik = <div className="flex-1 flex items-center justify-center text-sm text-[#A1A1AA]">Yükleniyor…</div>
-    } else if (!user) {
-        icerik = (
-            <div className="msj-sahne flex-1 flex items-center justify-center px-6">
-                <div className="max-w-sm text-center">
-                    <h1 className="text-[26px] font-extrabold tracking-[-0.03em]">Mesajların seni bekliyor</h1>
-                    <p className="mt-3 text-sm leading-relaxed text-[#A1A1AA]">Ustalarla ve iş verenlerle konuşmak için hesabına giriş yap.</p>
-                    <Link to="/giris" className="isik isik-birincil mt-6 inline-flex items-center rounded-full h-10 px-6 text-sm font-semibold">Giriş yap</Link>
-                </div>
-            </div>
-        )
+        icerik = <div className="msj-sahne flex-1" role="status" aria-label="Yükleniyor" />
     } else {
         const panelIcerigi = aktif && (
             <BaglamPaneli

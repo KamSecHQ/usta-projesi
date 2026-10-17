@@ -12,6 +12,7 @@ import { Alan } from '../components/form/Alan'
 import TeknolojiSecici from '../components/ilan/TeknolojiSecici'
 import { Ok } from '../components/uzay/Hareket'
 import GirisKapisi from '../components/hesap/GirisKapisi'
+import { profilOnizlemesi } from './profilOnizleme'
 
 const ONE_CIKAN_LIMIT = 3
 
@@ -119,7 +120,11 @@ function ProjeFormu({ baslangic, oneCikanSayisi, gonderiliyor, onKaydet, onIptal
 function ProfilDuzenle() {
     useSayfaBasligi('Profilimi düzenle')
 
-    const { user, yukleniyor: authYukleniyor } = useAuth()
+    const { user: gercekKullanici, yukleniyor: authYukleniyor } = useAuth()
+    // Geliştirmede ?onizleme=yazilimci|is-veren ile örnek veriyle görülür (canlıda yok)
+    const [onizleme] = useState(() => (import.meta.env.DEV ? profilOnizlemesi(new URLSearchParams(window.location.search).get('onizleme')) : null))
+    const onizlemede = !!onizleme && !gercekKullanici
+    const user = gercekKullanici || (onizlemede ? onizleme.user : null)
     const konumBilgisi = useLocation()
     const [profilRol, setProfilRol] = useState('yazilimci')
     const [yukleniyor, setYukleniyor] = useState(true)
@@ -151,6 +156,25 @@ function ProfilDuzenle() {
     useEffect(() => {
         async function profilGetir() {
             if (!user) return
+            if (onizlemede) {
+                const v = onizleme.profil
+                setProfilRol(v.rol)
+                setAdSoyad(v.ad_soyad || "")
+                setUnvan(v.unvan || "")
+                setBio(v.bio || "")
+                setGithubUrl(v.github_url || "")
+                setKonum(v.konum || "")
+                setTeknolojiler(v.teknolojiler || [])
+                setTelefonDogrulandi(!!v.telefon_dogrulandi)
+                setMusaitlik(v.musaitlik || "musait")
+                setMusaitlikNotu(v.musaitlik_notu || "")
+                setUcretMin(v.saatlik_ucret_min ?? "")
+                setUcretMax(v.saatlik_ucret_max ?? "")
+                setVideoUrl(v.video_url || "")
+                setTelefon(onizleme.telefon)
+                setYukleniyor(false)
+                return
+            }
             const { data, error } = await supabase
                 .from('profiller')
                 .select('*')
@@ -183,6 +207,7 @@ function ProfilDuzenle() {
             setYukleniyor(false)
         }
         if (user) profilGetir()
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- önizleme ilk çizimde sabitlenir
     }, [user])
 
     // Panelden ya da profil gücü listesinden gelen #bolum: o bölüme kaydırır, kısa bir ışıkla
@@ -207,6 +232,11 @@ function ProfilDuzenle() {
 
     const projeleriGetir = useCallback(async () => {
         if (!user) return
+        if (onizlemede) {
+            setProjeler(onizleme.projeler)
+            setProjelerYukleniyor(false)
+            return
+        }
         const { data, error } = await supabase
             .from('projeler')
             .select('*')
@@ -215,6 +245,7 @@ function ProfilDuzenle() {
 
         if (!error) setProjeler(data)
         setProjelerYukleniyor(false)
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- önizleme ilk çizimde sabitlenir
     }, [user])
 
     useEffect(() => {
@@ -225,6 +256,11 @@ function ProfilDuzenle() {
 
     async function kaydet(e) {
         e.preventDefault()
+        if (onizlemede) {
+            setKaydedildi(true)
+            setTimeout(() => setKaydedildi(false), 3000)
+            return
+        }
         setKaydediliyor(true)
         setHata("")
         setKaydedildi(false)
@@ -260,6 +296,7 @@ function ProfilDuzenle() {
     }
 
     async function projeEkle(veriler) {
+        if (onizlemede) return
         setProjeGonderiliyor(true)
         const { error } = await supabase
             .from('projeler')
@@ -273,6 +310,7 @@ function ProfilDuzenle() {
     }
 
     async function projeGuncelle(id, veriler) {
+        if (onizlemede) return
         setProjeGonderiliyor(true)
         const { error } = await supabase
             .from('projeler')
@@ -287,6 +325,7 @@ function ProfilDuzenle() {
     }
 
     async function projeSil(id) {
+        if (onizlemede) return
         await supabase.from('projeler').delete().eq('id', id)
         setProjeler(projeler.filter((p) => p.id !== id))
     }
@@ -319,6 +358,8 @@ function ProfilDuzenle() {
         { projeSayisi: projeler.length, telefon }
     )
     const guc = profilGucuYuzdesi(gucMaddeleri)
+    // İş verenin profili sade: portföy, teknoloji, müsaitlik, ücret ve video yalnızca ustaya ait
+    const yazilimciMi = profilRol !== 'is-veren'
 
     return (
         <div className="uzay min-h-screen px-4 pb-24 pt-14 sm:px-8 lg:pt-20">
@@ -330,10 +371,12 @@ function ProfilDuzenle() {
                         <p className="mt-3 text-[16px] font-light text-gri">Buradaki bilgiler herkese açık profil sayfanda görünür; telefonun hariç.</p>
                     </div>
                     <div className="flex flex-wrap gap-2.5">
-                        <Link to="/ajansim" className="isik isik-cam rounded-full px-5 py-2.5 text-[14px] font-medium">
-                            Ajansım
-                        </Link>
-                        <Link to={`/ustalar/${user.id}`} className="isik isik-cam inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-medium">
+                        {yazilimciMi && (
+                            <Link to="/ajansim" className="isik-hap inline-flex h-10 items-center rounded-full px-5 text-[14px] font-medium">
+                                Ajansım
+                            </Link>
+                        )}
+                        <Link to={`/ustalar/${user.id}`} className="isik-hap inline-flex h-10 items-center gap-2 rounded-full px-5 text-[14px] font-medium">
                             Profilimi gör <Ok />
                         </Link>
                     </div>
@@ -351,16 +394,24 @@ function ProfilDuzenle() {
                                 <Alan etiket="Ad soyad">
                                     {(p) => <input {...p} className="alan" autoComplete="name" value={adSoyad} onChange={(e) => setAdSoyad(e.target.value)} />}
                                 </Alan>
-                                <Alan etiket="Unvan" ipucu="Listede adının altında görünür.">
-                                    {(p) => <input {...p} className="alan" autoComplete="organization-title" value={unvan} onChange={(e) => setUnvan(e.target.value)} placeholder="örn. Frontend Geliştirici" />}
-                                </Alan>
+                                {yazilimciMi ? (
+                                    <Alan etiket="Unvan" ipucu="Listede adının altında görünür.">
+                                        {(p) => <input {...p} className="alan" autoComplete="organization-title" value={unvan} onChange={(e) => setUnvan(e.target.value)} placeholder="örn. Frontend Geliştirici" />}
+                                    </Alan>
+                                ) : (
+                                    <Alan etiket="İşletme ya da unvan" istege ipucu="Profilinde adının altında görünür.">
+                                        {(p) => <input {...p} className="alan" autoComplete="organization" value={unvan} onChange={(e) => setUnvan(e.target.value)} placeholder="örn. Lavanta Kafe, kurucu" />}
+                                    </Alan>
+                                )}
                                 <Alan etiket="Konum" istege>
                                     {(p) => <input {...p} className="alan" autoComplete="address-level2" value={konum} onChange={(e) => setKonum(e.target.value)} placeholder="örn. İstanbul" />}
                                 </Alan>
-                                <Alan etiket="GitHub bağlantısı" istege>
-                                    {(p) => <input {...p} type="url" inputMode="url" className="alan" autoComplete="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} placeholder="https://github.com/kullaniciadi" />}
-                                </Alan>
-                                <div className="sm:col-span-2">
+                                {yazilimciMi && (
+                                    <Alan etiket="GitHub bağlantısı" istege>
+                                        {(p) => <input {...p} type="url" inputMode="url" className="alan" autoComplete="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} placeholder="https://github.com/kullaniciadi" />}
+                                    </Alan>
+                                )}
+                                <div className={yazilimciMi ? 'sm:col-span-2' : ''}>
                                     <Alan
                                         etiket="Telefon"
                                         istege
@@ -375,11 +426,12 @@ function ProfilDuzenle() {
                         {/* Hakkımda */}
                         <div id="hakkimda" className="scroll-mt-24 rounded-[22px] border border-white/[0.08] bg-[#08080D] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-7">
                             <h2 className="mb-6 text-[19px] font-medium tracking-[-0.01em] text-white">Hakkımda</h2>
-                            <Alan etiket="Kendini anlat" ipucu={`Profilinin girişinde görünür. ${bio.trim().length} karakter.`}>
-                                {(p) => <textarea {...p} className="alan" rows={5} maxLength={1200} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Neyi iyi yaparsın, hangi işlerde çalıştın, nasıl çalışırsın?" />}
+                            <Alan etiket={yazilimciMi ? 'Kendini anlat' : 'İşletmeni anlat'} ipucu={`Profilinin girişinde görünür. ${bio.trim().length} karakter.`}>
+                                {(p) => <textarea {...p} className="alan" rows={5} maxLength={1200} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={yazilimciMi ? 'Neyi iyi yaparsın, hangi işlerde çalıştın, nasıl çalışırsın?' : 'Ne iş yaparsınız, ne tür yazılım işlerine ihtiyaç duyuyorsunuz?'} />}
                             </Alan>
                         </div>
 
+                        {yazilimciMi && (<>
                         {/* Teknolojiler - chip input */}
                         <div id="teknolojiler" className="scroll-mt-24 rounded-[22px] border border-white/[0.08] bg-[#08080D] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-7">
                             <h2 className="mb-6 text-[19px] font-medium tracking-[-0.01em] text-white">Teknolojiler</h2>
@@ -430,8 +482,8 @@ function ProfilDuzenle() {
                                 {(p) => <input {...p} type="url" inputMode="url" className="alan" value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=…" />}
                             </Alan>
                             {videoUrl && !gomulVideo && (
-                                <p className="text-[#A1A1AA]/60 text-xs mt-2">
-                                    Bu link doğrudan gömülemiyor, portföyünde tıklanabilir link olarak gösterilecek.
+                                <p className="mt-2 text-[12.5px] text-gri-koyu">
+                                    Bu bağlantı sayfaya gömülemiyor; profilinde tıklanabilir bağlantı olarak görünür.
                                 </p>
                             )}
                             {gomulVideo && (
@@ -445,36 +497,48 @@ function ProfilDuzenle() {
                                 </div>
                             )}
                         </div>
+                        </>)}
 
                         {hata && (
                             <p className="alan-hata" role="alert">
                                 {hata}
                             </p>
                         )}
-                        {kaydedildi && <p className="inline-flex items-center gap-1.5 text-[#C4B5FD] text-sm" role="status"><Ikon ad="tik" className="inline h-3.5 w-3.5" kalinlik={2.2} /> Profil kaydedildi</p>}
-
-                        <button
-                            onClick={kaydet}
-                            disabled={kaydediliyor}
-                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
-                        >
-                            {kaydediliyor ? "Kaydediliyor..." : "Profili kaydet"}
-                        </button>
+                        <div className="flex flex-wrap items-center gap-4">
+                            <button
+                                type="button"
+                                onClick={kaydet}
+                                disabled={kaydediliyor}
+                                className="isik-hap isik-hap-birincil inline-flex h-12 items-center gap-2.5 rounded-full px-7 text-[15px] font-semibold disabled:opacity-50"
+                            >
+                                {kaydediliyor ? 'Kaydediliyor…' : 'Profili kaydet'}
+                            </button>
+                            {kaydedildi && (
+                                <p className="inline-flex items-center gap-1.5 text-[14px] text-mor-soluk" role="status">
+                                    <Ikon ad="tik" className="inline h-3.5 w-3.5" kalinlik={2.2} /> Profil kaydedildi
+                                </p>
+                            )}
+                        </div>
 
                         {/* Projelerim */}
-                        <div id="projeler" className="scroll-mt-24 rounded-[22px] border border-white/[0.08] bg-[#08080D] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-7 mt-4">
-                            <div className="flex items-center justify-between mb-1">
-                                <h2 className="text-[#FFFFFF] font-semibold">Projelerim</h2>
+                        {yazilimciMi && (
+                        <div id="projeler" className="mt-4 scroll-mt-24 rounded-[22px] border border-white/[0.08] bg-[#08080D] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] sm:p-7">
+                            <div className="mb-1 flex flex-wrap items-center justify-between gap-3">
+                                <h2 className="text-[19px] font-medium tracking-[-0.01em] text-white">Projelerim</h2>
                                 {!yeniProjeAcik && (
                                     <button
+                                        type="button"
                                         onClick={() => setYeniProjeAcik(true)}
-                                        className="text-[#A78BFA] text-sm hover:underline"
+                                        className="isik-hap inline-flex h-9 items-center gap-2 rounded-full pl-3.5 pr-4 text-[13.5px] font-medium"
                                     >
-                                        + Proje ekle
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-3.5 w-3.5" aria-hidden="true">
+                                            <path d="M12 5v14M5 12h14" />
+                                        </svg>
+                                        Proje ekle
                                     </button>
                                 )}
                             </div>
-                            <p className="text-[#A1A1AA] text-sm mb-5">Portföyünde öne çıkacak çalışmalarını ekle.</p>
+                            <p className="mb-5 text-[14px] text-gri">Tamamladığın işleri ekle; öne çıkardığın iş, usta kartında vitrine çıkar.</p>
 
                             {yeniProjeAcik && (
                                 <div className="mb-6">
@@ -494,7 +558,7 @@ function ProfilDuzenle() {
                                     <IskeletProjeKarti />
                                 </div>
                             ) : projeler.length === 0 ? (
-                                <p className="text-[#A1A1AA] text-sm">Henüz proje eklemedin.</p>
+                                <p className="rounded-2xl border border-dashed border-white/[0.12] px-5 py-8 text-center text-[14px] text-gri">Henüz proje eklemedin. Tamamladığın bir işi ekle; iş verenin ilk baktığı yer vitrinindir.</p>
                             ) : (
                                 <div className="grid sm:grid-cols-2 gap-3">
                                     {projeler.map((p) => (
@@ -517,13 +581,13 @@ function ProfilDuzenle() {
                                                     <div className="flex gap-4">
                                                         <button
                                                             onClick={() => setDuzenlenenId(p.id)}
-                                                            className="text-[#A1A1AA] hover:text-[#FFFFFF] text-xs transition-colors"
+                                                            className="text-[12.5px] text-gri transition-colors hover:text-white"
                                                         >
                                                             Düzenle
                                                         </button>
                                                         <button
                                                             onClick={() => projeSil(p.id)}
-                                                            className="text-[#A1A1AA] hover:text-red-300 text-xs transition-colors"
+                                                            className="text-[12.5px] text-gri transition-colors hover:text-red-300"
                                                         >
                                                             Sil
                                                         </button>
@@ -535,6 +599,7 @@ function ProfilDuzenle() {
                                 </div>
                             )}
                         </div>
+                        )}
                     </div>
 
                     {/* SAĞ: Profil gücü ve canlı önizleme */}
@@ -576,44 +641,49 @@ function ProfilDuzenle() {
                                 </ul>
                             )}
                         </div>
-                        <p className="text-[#A1A1AA] text-xs uppercase tracking-wider font-mono mb-3">Canlı önizleme</p>
-                        <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
+                        <p className="mb-3 font-mono text-xs uppercase tracking-wider text-gri-koyu">Canlı önizleme</p>
+                        <div className="isik-kutu rounded-2xl p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="relative shrink-0">
                                     <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] font-bold text-lg">
                                         {baslangicHarfleri(adSoyad)}
                                     </div>
-                                    <span
-                                        className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-[#0D0D13]"
-                                        style={{ backgroundColor: onizlemeMusaitlik.renk }}
-                                        title={onizlemeMusaitlik.etiket}
-                                    />
+                                    {yazilimciMi && (
+                                        <span
+                                            className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full border-2 border-[#0D0D13]"
+                                            style={{ backgroundColor: onizlemeMusaitlik.renk }}
+                                            title={onizlemeMusaitlik.etiket}
+                                        />
+                                    )}
                                 </div>
                                 <div className="min-w-0">
                                     <div className="text-[#FFFFFF] font-semibold truncate">{adSoyad || "Ad soyad"}</div>
-                                    <div className="text-[#A1A1AA] text-sm truncate">{unvan || "Unvan"}</div>
-                                    {konum && <div className="text-[#A1A1AA]/60 text-xs mt-0.5">{konum}</div>}
+                                    <div className="truncate text-sm text-gri">{unvan || (yazilimciMi ? 'Unvan' : 'İş veren')}</div>
+                                    {konum && <div className="mt-0.5 text-xs text-gri-koyu">{konum}</div>}
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-2 mb-3">
-                                <span
-                                    className="text-xs font-medium px-2.5 py-1 rounded-full"
-                                    style={{ color: onizlemeMusaitlik.renk, backgroundColor: `${onizlemeMusaitlik.renk}1A` }}
-                                >
-                                    {onizlemeMusaitlik.etiket}
-                                </span>
+                            <div className="mb-3 flex flex-wrap items-center gap-2">
+                                {yazilimciMi && (
+                                    <span
+                                        className="text-xs font-medium px-2.5 py-1 rounded-full"
+                                        style={{ color: onizlemeMusaitlik.renk, backgroundColor: `${onizlemeMusaitlik.renk}1A` }}
+                                    >
+                                        {onizlemeMusaitlik.etiket}
+                                    </span>
+                                )}
                                 {telefon && telefonDogrulandi && (
                                     <span className="text-[#4ADE80] text-xs font-medium px-2.5 py-1 rounded-full bg-[#4ADE80]/10">
-                                        <Ikon ad="tik" className="inline h-3.5 w-3.5" kalinlik={2.2} /> Kimlik Doğrulandı
+                                        <Ikon ad="tik" className="inline h-3.5 w-3.5" kalinlik={2.2} /> Kimlik doğrulandı
                                     </span>
                                 )}
                             </div>
 
-                            <p className="text-[#A1A1AA] text-sm mb-4 line-clamp-4">
-                                {bio || "Hakkında yazın buraya yansıyacak..."}
+                            <p className="mb-4 line-clamp-4 text-sm text-gri">
+                                {bio || 'Hakkında yazdığın burada görünür.'}
                             </p>
 
+                            {yazilimciMi && (<>
                             {onizlemeUcret && (
                                 <p className="text-[#C4B5FD] text-sm font-medium mb-4">{onizlemeUcret}</p>
                             )}
@@ -622,14 +692,15 @@ function ProfilDuzenle() {
                                 {teknolojiler.length === 0 ? (
                                     <span className="text-gri-koyu text-xs">Henüz teknoloji eklenmedi</span>
                                 ) : teknolojiler.map((t) => (
-                                    <span key={t} className="text-[#A1A1AA] text-xs border border-white/[0.1] px-2 py-1 rounded-full font-mono">{t}</span>
+                                    <span key={t} className="rounded-full border border-white/[0.1] px-2 py-1 font-mono text-xs text-gri">{t}</span>
                                 ))}
                             </div>
                             <div className="h-px bg-white/[0.08] mb-4" />
-                            <div className="text-[#A1A1AA] text-xs font-mono">
+                            <div className="font-mono text-xs text-gri">
                                 {projeler.length} proje eklendi
                                 {oneCikanSayisi > 0 && ` · ${oneCikanSayisi} öne çıkan`}
                             </div>
+                            </>)}
                         </div>
                     </div>
                 </div>

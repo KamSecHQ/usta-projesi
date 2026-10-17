@@ -32,6 +32,7 @@ const BlogListesi = lazy(() => import('./pages/BlogListesi'))
 const BlogYazisi = lazy(() => import('./pages/BlogYazisi'))
 const AdminBlog = lazy(() => import('./pages/AdminBlog'))
 const Mesajlar = lazy(() => import('./pages/Mesajlar'))
+const OrnekVitrin = lazy(() => import('./pages/OrnekVitrin'))
 
 // İç sayfa yüklenirken: sayfa siyah kalır, üstte ince bir mor ışık akar
 function SayfaYukleniyor() {
@@ -79,6 +80,7 @@ function App() {
                             <Route path="/panel" element={<Dashboard />} />
                             <Route path="/mesajlar/:id?" element={<Mesajlar />} />
                             <Route path="/ajansim" element={<AjansYonetimi />} />
+                            <Route path="/ornek" element={<OrnekVitrin />} />
                             <Route path="/blog" element={<BlogListesi />} />
                             <Route path="/blog/:slug" element={<BlogYazisi />} />
                             <Route path="/" element={<Suspense fallback={<Yukleyici hedef={55} />}><Anasayfa /></Suspense>} />

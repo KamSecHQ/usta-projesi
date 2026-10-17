@@ -9,6 +9,7 @@ import { AramaKutusu, FiltreCipi, Anahtar, SiralamaSecici, SonucYok } from '../c
 import { Sahne } from '../components/uzay/Hareket'
 import { USTA_ALANLARI, kartVerisiniTamamla, favorileriGetir } from '../ustaVerisi'
 import { aramaIcinKatla, sikEtiketler } from '../ustaYardimcilari'
+import OrnekVitrinDaveti from '../components/ornek/OrnekVitrinDaveti'
 
 const SIRALAMALAR = [
     ['yeni', 'En yeni'],
@@ -16,6 +17,9 @@ const SIRALAMALAR = [
     ['kidem', 'Tamamlanan işe göre'],
     ['ucret', 'Saatlik ücret (artan)'],
 ]
+
+// Bu sayıdan az kayıt varken örnek vitrin daveti görünür
+const ORNEK_DAVET_ESIGI = 10
 
 function TumUstalar() {
     useSayfaBasligi('Ustalar', 'Doğrulanmış Türk yazılımcıların portföylerini incele: React, mobil, e-ticaret ve daha fazlası. Teknolojiye göre ara, ustanı seç.')
@@ -123,6 +127,9 @@ function TumUstalar() {
                             </p>
                         )}
                     </header>
+
+                    {/* Çarşı küçükken: işleyişi örnek vitrinde göster */}
+                    {!yukleniyor && ustalar.length < ORNEK_DAVET_ESIGI && <OrnekVitrinDaveti className="mt-8 max-w-[760px]" />}
 
                     <div className="liste-cubuk mt-10 flex flex-col gap-3 p-3 lg:flex-row lg:items-center">
                         <div className="lg:w-[340px] lg:shrink-0">
