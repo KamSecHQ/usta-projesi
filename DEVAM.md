@@ -9,7 +9,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 
 ## ŞU ANKİ DURUM (ilk önce bunu oku)
 
-- **Her şey commitlendi ve yayında.** 17 Ekim 2026: `165f0fe` `main`'e gönderildi, Vercel yayına aldı, canlı site doğrulandı (güvenlik başlıkları, yeni paket, anasayfa 3D, kıdem, gizlilik). Çalışılan dal `main`; eski `perf/kasma-ve-yol-haritasi` dalı aynı commit'te kaldı, silinebilir.
+- **Her şey commitlendi ve yayında.** 17 Ekim 2026: son yayın `9ba6d74` (faz 50, hero küresi); öncesi `165f0fe`. Vercel ve GitHub Actions başarılı, canlı site doğrulandı (CloudFront izi yok, poster sunuluyor ve ilk karede sönüyor, küre çiziliyor, konsol temiz). Çalışılan dal `main`; eski `perf/kasma-ve-yol-haritasi` dalı aynı commit'te kaldı, silinebilir.
 - **GitHub Actions** (`Kontrol`) ilk kez çalıştı ve geçti: lint 0 uyarı, 33/33 test, derleme, ilk yük 164 KB.
 - **Yayın akışı:** kullanıcı "commitle ve siteye yükle" deyince: `npx oxlint --deny-warnings`, `npm test`, `npm run build`, `npm run butce`; Türkçe mesajla commit; `git push origin main`; Vercel durumu (`gh api repos/KamSecHQ/usta-projesi/commits/<sha>/status`) ve Actions (`gh run list --repo KamSecHQ/usta-projesi`) izlenir; canlı site doğrulanır. Bu Mac'te GitHub kimlik bilgisi var; diğer Mac'te `gh auth login` gerekebilir (kullanıcı adını ve token'ı kullanıcı kendisi girer).
 - **Commitlenmeyenler bilerek:** `.claude/launch.json` (yerel sunucu ayarı) ve `.impeccable/` (tasarım becerisinin bağlamı). `.claude/skills/` `.gitignore`'da.
@@ -28,7 +28,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 ## Proje
 
 - **Ne:** Türk yazılımcıları ("usta") işletmelerle buluşturan pazaryeri. Marka **Kalfahane**; eski adı "usta-projesi".
-- **Canlı:** https://www.kalfahane.com (kalfahane.com → www'ye yönlenir). Canlıdaki sürüm `main` (`165f0fe`, 17 Ekim 2026); bu dosyada anlatılan işlerin hepsi canlıda.
+- **Canlı:** https://www.kalfahane.com (kalfahane.com → www'ye yönlenir). Canlıdaki sürüm `main` (`9ba6d74`, 17 Ekim 2026); bu dosyada anlatılan işlerin hepsi canlıda.
 - **Kod:** GitHub `KamSecHQ/usta-projesi`, dal `main`. `main`'e her push Vercel'de otomatik yayına çıkar.
 - **Veritabanı:** Supabase projesi `lalqdppmjirelxngliim` (organizasyon "usta-projesi"). Ücretsiz plan; uzun süre kullanılmazsa duraklatılır ve panelden "Resume" ile açılır.
 - **Supabase anahtarı:** `src/supabaseClient.js` içinde; yayınlanabilir (publishable) anahtar, gizli değil. `.env` dosyası yok.
