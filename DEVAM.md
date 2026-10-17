@@ -9,11 +9,11 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 
 ## ŞU ANKİ DURUM (ilk önce bunu oku)
 
-- **Bütün iş commitlenmedi.** Dal `perf/kasma-ve-yol-haritasi`; `main` = `origin/main` = `c6ef3f2`. Değişiklikler bu klasörün çalışma ağacında duruyor (57 değiştirilmiş/silinmiş dosya, ~25 yeni dosya ve klasör; `git status` ile görülür).
-- **Kullanıcı "commit atma şimdilik" dedi.** Kendisi "Commitle ve siteye yükle" diyene kadar commit ve push yapılmaz.
-- **Çalışma ağacını silecek komut çalıştırma:** `git checkout .`, `git restore`, `git stash`, `git clean`, `git reset --hard` haftalarca işi siler. Dal değiştirme de gerekmiyor.
-- "Commitle ve siteye yükle" gelince: dalda Türkçe mesajlarla commit, `main`'e birleştir, `git push origin main` (Vercel yayına alır), sonra canlı siteyi doğrula. Eski Mac'te GitHub kimlik bilgisi yoktu, push "could not read Username" ile düştü. Yeni Mac'te `gh auth login` gerekebilir; kullanıcı adını ve token'ı kullanıcı kendisi girer, Claude girmez.
-- Son kontrol (eski Mac): `npm run lint` 0 uyarı, `npm run build` başarılı.
+- **Her şey commitlendi ve yayında.** 17 Ekim 2026: `165f0fe` `main`'e gönderildi, Vercel yayına aldı, canlı site doğrulandı (güvenlik başlıkları, yeni paket, anasayfa 3D, kıdem, gizlilik). Çalışılan dal `main`; eski `perf/kasma-ve-yol-haritasi` dalı aynı commit'te kaldı, silinebilir.
+- **GitHub Actions** (`Kontrol`) ilk kez çalıştı ve geçti: lint 0 uyarı, 33/33 test, derleme, ilk yük 164 KB.
+- **Yayın akışı:** kullanıcı "commitle ve siteye yükle" deyince: `npx oxlint --deny-warnings`, `npm test`, `npm run build`, `npm run butce`; Türkçe mesajla commit; `git push origin main`; Vercel durumu (`gh api repos/KamSecHQ/usta-projesi/commits/<sha>/status`) ve Actions (`gh run list --repo KamSecHQ/usta-projesi`) izlenir; canlı site doğrulanır. Bu Mac'te GitHub kimlik bilgisi var; diğer Mac'te `gh auth login` gerekebilir (kullanıcı adını ve token'ı kullanıcı kendisi girer).
+- **Commitlenmeyenler bilerek:** `.claude/launch.json` (yerel sunucu ayarı) ve `.impeccable/` (tasarım becerisinin bağlamı). `.claude/skills/` `.gitignore`'da.
+- **Çalışma ağacını silecek komut çalıştırma** (`git checkout .`, `git restore`, `git stash`, `git clean`, `git reset --hard`) kullanıcı istemedikçe.
 
 ## Yeni Mac'te ilk adımlar
 
@@ -28,7 +28,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 ## Proje
 
 - **Ne:** Türk yazılımcıları ("usta") işletmelerle buluşturan pazaryeri. Marka **Kalfahane**; eski adı "usta-projesi".
-- **Canlı:** https://www.kalfahane.com (kalfahane.com → www'ye yönlenir). Canlıdaki sürüm `main` (`c6ef3f2`); bu dosyada anlatılan işlerin hiçbiri henüz canlıda değil.
+- **Canlı:** https://www.kalfahane.com (kalfahane.com → www'ye yönlenir). Canlıdaki sürüm `main` (`165f0fe`, 17 Ekim 2026); bu dosyada anlatılan işlerin hepsi canlıda.
 - **Kod:** GitHub `KamSecHQ/usta-projesi`, dal `main`. `main`'e her push Vercel'de otomatik yayına çıkar.
 - **Veritabanı:** Supabase projesi `lalqdppmjirelxngliim` (organizasyon "usta-projesi"). Ücretsiz plan; uzun süre kullanılmazsa duraklatılır ve panelden "Resume" ile açılır.
 - **Supabase anahtarı:** `src/supabaseClient.js` içinde; yayınlanabilir (publishable) anahtar, gizli değil. `.env` dosyası yok.
@@ -72,7 +72,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 4. Panelim yeniden tasarlandı; iç sayfalara ışıklı cam düğmeler.
 5. **Mesajlaşma sistemi** (teklif kabul edilince konuşma açılır; iletişim kartı, okundu, yazıyor, tepkiler, arama, sabitleme/arşiv).
 6. **Güvenlik:** telefonlar gizli tabloya, fonksiyonlar sertleştirildi, RLS politikaları hızlandırıldı, eksik indeksler. İletişim `merhaba@kalfahane.com`.
-7. **Bu dönem (commitlenmedi, dal `perf/kasma-ve-yol-haritasi`):** aşağıda tur tur.
+7. **Bu dönem (17 Ekim'de `165f0fe` ile yayına alındı):** aşağıda tur tur.
 
 ### 7.1 Kasma çözüldü
 - Shader ısıtma (`atolye/Isitici.jsx`): sahneler ekrana girmeden boşta derlenir, dokular GPU'ya yüklenir, tek piksele bir kez çizilir. Shader beklemesi 342 → 15 ms.
@@ -148,7 +148,6 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 ## Bekleyen işler
 
 - **Kullanıcı onayı bekleyenler:**
-  - Commit ve yayın ("Commitle ve siteye yükle" denince).
   - Faz 50: video yerine kendi yapımımız WebGL küre (tasarım onayı); video lisans sorununu (faz 90) da kapatır.
 - **Kod tarafında sıradaki (önerilen):**
   1. Faz 44 bitti (7.5, 7.7). İstenirse panel (`Dashboard.jsx`) eski `.isik-kutu` dilinden yeni `.isik-kart`/`.isik-hap` diline hizalanabilir.
@@ -168,6 +167,6 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 - Türkçe konuşur; kısa ve net Türkçe yanıt bekler.
 - Genelde "devam et" der: yol haritasından sıradaki paketi seçip kendin ilerlemen beklenir ("her şey sende").
 - Tasarımda "premium", 3D ve animasyonlu, ama akıcı (kasmayan) sonuç ister; beğenmezse açıkça söyler.
-- "Commitle ve siteye yükle" dediğinde `main`'e commit + push yapılır, Vercel yayını ve canlı paket doğrulanır. Commit mesajları Türkçe. Şu an commit istemiyor.
+- "Commitle ve siteye yükle" dediğinde `main`'e commit + push yapılır, Vercel yayını, Actions ve canlı site doğrulanır. Commit mesajları Türkçe. Bunu demeden commit ve push yapılmaz.
 - Canlı veritabanında değişiklik yapmadan önce onay istenir.
 - Uydurma sayı, yorum, logo kullanılmaz; emanet ödeme "yakında" olarak sunulur (bkz. CLAUDE.md "Doğruluk kuralları").

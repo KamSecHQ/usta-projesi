@@ -6,7 +6,7 @@ bağımlılığa göredir: önce akıcılık ve güven, sonra büyüme.
 
 **Durumlar:** ✅ tamamlandı · ⏳ sırada (kod tarafında yapılabilir) · 🔒 senin kararın, erişimin ya da canlı veritabanı onayın gerekir
 
-Son güncelleme: 17 Ekim 2026 (dal `perf/kasma-ve-yol-haritasi`)
+Son güncelleme: 17 Ekim 2026 (yayında: `main`, `165f0fe`)
 
 ---
 
