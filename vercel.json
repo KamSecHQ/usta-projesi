@@ -1,6 +1,10 @@
 {
     "rewrites": [
         {
+            "source": "/ornek",
+            "destination": "/ornek.html"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

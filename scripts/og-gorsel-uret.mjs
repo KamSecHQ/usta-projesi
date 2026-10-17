@@ -1,4 +1,5 @@
-// Paylaşım görselini (public/og-image.png, 1200×630) scripts/og-gorsel.html şablonundan üretir.
+// Paylaşım görselini (1200×630) bir HTML şablonundan üretir. Varsayılan: scripts/og-gorsel.html →
+// public/og-image.png. Sayfaya özel görsel için şablon ve çıktı verilir (npm run og-vitrin).
 // Kullanım: npm run og-gorsel   (macOS'te Google Chrome kurulu olmalı; CHROME ile yol verilebilir)
 import { execFileSync } from 'node:child_process'
 import { fileURLToPath, pathToFileURL } from 'node:url'
@@ -6,7 +7,9 @@ import { dirname, join } from 'node:path'
 
 const kok = join(dirname(fileURLToPath(import.meta.url)), '..')
 const chrome = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const cikti = join(kok, 'public', 'og-image.png')
+const [sablonArg, ciktiArg] = process.argv.slice(2)
+const sablon = join(kok, sablonArg || 'scripts/og-gorsel.html')
+const cikti = join(kok, ciktiArg || 'public/og-image.png')
 
 execFileSync(chrome, [
   '--headless=new',
@@ -16,6 +19,6 @@ execFileSync(chrome, [
   '--virtual-time-budget=3000',
   '--allow-file-access-from-files',
   `--screenshot=${cikti}`,
-  pathToFileURL(join(kok, 'scripts', 'og-gorsel.html')).href,
+  pathToFileURL(sablon).href,
 ], { stdio: 'inherit' })
 console.log('Üretildi:', cikti)

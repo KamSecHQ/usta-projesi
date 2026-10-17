@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<!-- Örnek vitrin (/ornek) paylaşım görseli şablonu (1200×630). Üretmek için: npm run og-vitrin -->
+<link rel="stylesheet" href="../node_modules/@fontsource-variable/plus-jakarta-sans/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource-variable/jetbrains-mono/index.css">
+<style>
+  html, body { margin: 0; width: 1200px; height: 630px; background: #000; overflow: hidden; }
+  body { font-family: 'Plus Jakarta Sans Variable', sans-serif; color: #fff; position: relative; -webkit-font-smoothing: antialiased; }
+  .yildizlar { position: absolute; inset: 0; opacity: .6;
+    background-image:
+      radial-gradient(1.4px 1.4px at 8% 14%, #fff, transparent 60%), radial-gradient(1px 1px at 22% 38%, rgba(255,255,255,.6), transparent 60%),
+      radial-gradient(1.2px 1.2px at 41% 9%, #fff, transparent 60%), radial-gradient(1px 1px at 57% 27%, rgba(196,181,253,.8), transparent 60%),
+      radial-gradient(1.4px 1.4px at 73% 12%, #fff, transparent 60%), radial-gradient(1px 1px at 88% 31%, rgba(255,255,255,.6), transparent 60%),
+      radial-gradient(1px 1px at 94% 8%, #fff, transparent 60%), radial-gradient(1px 1px at 33% 71%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1.2px 1.2px at 64% 84%, rgba(255,255,255,.55), transparent 60%), radial-gradient(1px 1px at 14% 92%, rgba(196,181,253,.7), transparent 60%); }
+  /* Sağ altta yükselen küre kenarı ve üstten mor ışık */
+  .isik { position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 46% 60% at 78% 40%, rgba(139,92,246,.30), transparent 70%),
+      radial-gradient(ellipse 40% 50% at 10% 0%, rgba(139,92,246,.18), transparent 70%); }
+  .ufuk { position: absolute; left: 520px; top: 470px; width: 1100px; height: 1100px; border-radius: 50%;
+    border: 2px solid rgba(196,181,253,.75);
+    background: radial-gradient(circle at 50% 0%, rgba(139,92,246,.32), rgba(6,6,10,0) 40%), #030207;
+    box-shadow: 0 -30px 110px -20px rgba(139,92,246,.75); }
+
+  .logo { position: absolute; left: 64px; top: 52px; font-size: 30px; font-weight: 800; letter-spacing: .01em; }
+  .logo b { color: #A78BFA; }
+  .cip { display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 999px;
+    border: 1.5px dashed rgba(167,139,250,.7); background: rgba(12,10,22,.8); color: #DDD6FE; font-size: 15px; font-weight: 600; letter-spacing: .02em; }
+  .sol { position: absolute; left: 64px; top: 142px; width: 560px; }
+  h1 { margin: 22px 0 0; font-size: 80px; font-weight: 500; line-height: .98; letter-spacing: -.035em; }
+  .sol p { margin: 22px 0 0; font-size: 23px; line-height: 1.45; color: #D4D4D8; max-width: 25ch; }
+  .adimlar { display: flex; gap: 8px; margin-top: 30px; }
+  .adim { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 6px; border-radius: 999px;
+    background: rgba(255,255,255,.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,.08); font-size: 15px; font-weight: 500; color: #E4E4E7; }
+  .adim i { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 999px; font-style: normal; font-size: 12px; font-weight: 700; background: #C4B5FD; color: #050505; }
+  .adres { position: absolute; left: 64px; bottom: 46px; font-size: 19px; font-weight: 600; color: #C4B5FD; letter-spacing: .01em; }
+
+  /* Örnek ekranlar */
+  .kart { position: absolute; border-radius: 22px; border: 1px solid rgba(255,255,255,.1);
+    background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.015)), #0A0A10;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 40px 80px -30px rgba(0,0,0,.95), 0 30px 70px -40px rgba(139,92,246,.8); }
+  .ilan { left: 664px; top: 92px; width: 440px; padding: 24px 26px; }
+  .ust { display: flex; align-items: center; gap: 12px; }
+  .harf { width: 40px; height: 40px; border-radius: 999px; display: grid; place-items: center; font-size: 14px; font-weight: 700; color: #050505; flex: none; }
+  .mor { background: linear-gradient(135deg, #8B5CF6, #C4B5FD); }
+  .beyaz { background: #fff; }
+  .ad { font-size: 16px; font-weight: 600; }
+  .alt { font-size: 13px; color: #8A8A94; margin-top: 2px; }
+  .ust .cip { margin-left: auto; height: 24px; font-size: 12px; padding: 0 9px; }
+  .baslik { margin-top: 16px; font-size: 25px; font-weight: 500; line-height: 1.18; letter-spacing: -.02em; }
+  .alt-satir { display: flex; align-items: flex-end; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,.08); }
+  .etiket { font-size: 12px; color: #8A8A94; }
+  .tutar { font-size: 21px; font-weight: 600; color: #C4B5FD; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .teknoloji { display: flex; gap: 6px; }
+  .teknoloji span { font-family: 'JetBrains Mono Variable', monospace; font-size: 11.5px; height: 24px; display: inline-flex; align-items: center; padding: 0 9px; border-radius: 12px; background: #181818; color: #E8E8E8; }
+
+  .teklif { left: 720px; top: 346px; width: 420px; padding: 18px 20px; border-color: rgba(167,139,250,.55);
+    background: linear-gradient(180deg, rgba(139,92,246,.2), rgba(139,92,246,.05)), #0B0A13; }
+  .teklif .tutar { color: #fff; font-size: 22px; margin: 0 0 0 auto; }
+  .kabul { display: inline-flex; align-items: center; gap: 6px; margin-top: 12px; height: 26px; padding: 0 11px; border-radius: 999px; background: rgba(74,222,128,.13); color: #86EFAC; font-size: 13px; font-weight: 600; }
+  .kidem { margin-top: 12px; display: flex; align-items: center; gap: 12px; font-size: 13.5px; color: #D4D4D8; }
+  .yol { flex: 1; height: 6px; border-radius: 999px; background: rgba(255,255,255,.1); position: relative; }
+  .yol b { position: absolute; inset: 0 33% 0 0; border-radius: inherit; background: linear-gradient(90deg, #8B5CF6, #C4B5FD); box-shadow: 0 0 14px rgba(167,139,250,.9); }
+</style>
+</head>
+<body>
+  <div class="yildizlar"></div>
+  <div class="isik"></div>
+  <div class="ufuk"></div>
+
+  <div class="logo">Kalfahane<b>.</b></div>
+
+  <div class="sol">
+    <span class="cip">Örnek vitrin</span>
+    <h1>Bir iş,<br>baştan sona.</h1>
+    <p>Kalfahane’de bir iş nasıl ilerler? Örnek bir işle adım adım gör.</p>
+    <div class="adimlar">
+      <span class="adim"><i>1</i>İlan</span>
+      <span class="adim"><i>2</i>Teklif</span>
+      <span class="adim"><i>3</i>Konuşma</span>
+      <span class="adim"><i>4</i>Kıdem</span>
+    </div>
+  </div>
+  <div class="adres">kalfahane.com/ornek</div>
+
+  <div class="kart ilan">
+    <div class="ust">
+      <span class="harf mor">LK</span>
+      <div><div class="ad">Lavanta Kafe</div><div class="alt">Yeme-içme · İstanbul</div></div>
+      <span class="cip">Örnek</span>
+    </div>
+    <div class="baslik">Kafe için QR menü ve masadan sipariş sistemi</div>
+    <div class="alt-satir">
+      <div><div class="etiket">Bütçe</div><div class="tutar">₺30.000 – ₺45.000</div></div>
+      <div class="teknoloji"><span>React</span><span>Node.js</span></div>
+    </div>
+  </div>
+
+  <div class="kart teklif">
+    <div class="ust">
+      <span class="harf beyaz">MK</span>
+      <div><div class="ad">Mert Kaya</div><div class="alt">Full Stack Geliştirici · 5 hafta</div></div>
+      <span class="tutar">₺38.000</span>
+    </div>
+    <span class="kabul"><svg width="13" height="13" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 6.2 5 8.5l4.5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Teklif kabul edildi</span>
+    <div class="kidem"><span>Kalfa</span><span class="yol"><b></b></span><span style="color:#fff;font-weight:600">Usta</span></div>
+  </div>
+</body>
+</html>
