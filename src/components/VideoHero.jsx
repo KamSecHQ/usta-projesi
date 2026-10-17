@@ -6,7 +6,16 @@ import { useAuth } from '../AuthContext'
 
 const VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104036_bd6924f6-3c8e-417e-8465-6d03c8c2e9e6.mp4'
 const POSTER = 'https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/82e7eb75-c65f-490a-99b5-f3d1cad54200.webp'
-const GECIS = 0.9 // döngü noktasındaki çapraz geçiş süresi (sn)
+
+// Telefonda ve veri tasarrufu açıkken ~38 MB'lık video indirilmez; yerine poster gösterilir
+function videoOynatilsinMi() {
+    if (typeof window === 'undefined') return false
+    const baglanti = navigator.connection
+    if (baglanti?.saveData) return false
+    // Bağlantı tahmini sayfa açılırken kötümser olabilir; yalnızca gerçekten yavaş (2g) bağlantıda vazgeçilir
+    if (/(^|-)2g$/.test(baglanti?.effectiveType || '')) return false
+    return !window.matchMedia('(max-width: 767px)').matches
+}
 
 const LINKLER = [
     { ad: 'Ustalar', to: '/ustalar' },
@@ -58,8 +67,9 @@ export default function VideoHero({ onHazir }) {
     const [anim, setAnim] = useState(!azalt)
     const [go, setGo] = useState(false)
     const [menuAcik, setMenuAcik] = useState(false)
-    const videoA = useRef(null)
-    const videoB = useRef(null)
+    const [videoAcik] = useState(videoOynatilsinMi)
+    const video = useRef(null)
+    const gecis = useRef(null)
     const burger = useRef(null)
     const menu = useRef(null)
     const hazirBildirildi = useRef(false)
@@ -137,72 +147,64 @@ export default function VideoHero({ onHazir }) {
         }
     }, [menuAcik])
 
-    // ---- C) Arka plan videosu: iki kopya döngü noktasında çapraz geçer, kıta atlaması görünmez ----
+    // ---- C) Arka plan videosu: tek video oynar. Döngü sonunda son kare bir tuvale kopyalanır,
+    // video başa sarar ve tuval yavaşça söner; döngü noktası görünmez, aynı anda tek video çözülür.
     useEffect(() => {
-        const A = videoA.current
-        const B = videoB.current
-        if (!A || !B) return
+        const v = video.current
+        const tuval = gecis.current
+        if (!v) return
 
         if (azalt) {
-            A.removeAttribute('autoplay')
-            A.pause()
-            B.pause()
+            v.removeAttribute('autoplay')
+            v.pause()
             try {
-                A.currentTime = 0
+                v.currentTime = 0
             } catch {
                 // bazı tarayıcılar meta veri gelmeden konum ayarına izin vermez
             }
             return
         }
 
-        const oynat = (v) => {
+        const oynat = () => {
             const p = v.play()
             if (p && p.catch) p.catch(() => {})
         }
-        let simdiki = A
-        let sonraki = B
-        let geciste = false
-        let zamanlayici
-        oynat(A)
-
-        const tik = () => {
-            if (geciste || !simdiki.duration) return
-            if (simdiki.duration - simdiki.currentTime > GECIS) return
-            geciste = true
-            const cikan = simdiki
-            sonraki.currentTime = 0
-            oynat(sonraki)
-            sonraki.classList.add('is-active')
-            cikan.classList.remove('is-active')
-            simdiki = sonraki
-            sonraki = cikan
-            zamanlayici = setTimeout(() => {
-                cikan.pause()
-                cikan.currentTime = 0
-                geciste = false
-            }, GECIS * 1000 + 100)
+        let kare
+        const donguSonu = () => {
+            if (tuval && v.videoWidth) {
+                if (tuval.width !== v.videoWidth) tuval.width = v.videoWidth
+                if (tuval.height !== v.videoHeight) tuval.height = v.videoHeight
+                try {
+                    tuval.getContext('2d').drawImage(v, 0, 0)
+                    tuval.classList.add('gorunur')
+                } catch {
+                    // kopyalanamazsa geçişsiz döner
+                }
+            }
+            v.currentTime = 0
+            oynat()
+            // Video yeni turun ilk karesini çizdikten sonra tuval sönmeye başlar
+            cancelAnimationFrame(kare)
+            kare = requestAnimationFrame(() => (kare = requestAnimationFrame(() => tuval?.classList.remove('gorunur'))))
         }
-        A.addEventListener('timeupdate', tik)
-        B.addEventListener('timeupdate', tik)
+        v.addEventListener('ended', donguSonu)
+        oynat()
 
         // Hero ekrandan çıkınca video duraklar: 1080p çözümleme arka planda boşuna çalışmaz
-        const kok = A.closest('.vhero')
+        const kok = v.closest('.vhero')
         const g = new IntersectionObserver(([e]) => {
-            if (e.isIntersecting) oynat(simdiki)
-            else {
-                A.pause()
-                B.pause()
-            }
+            kok?.classList.toggle('isik-durdu', !e.isIntersecting)
+            if (e.isIntersecting) oynat()
+            else v.pause()
         })
         if (kok) g.observe(kok)
 
         return () => {
-            A.removeEventListener('timeupdate', tik)
-            B.removeEventListener('timeupdate', tik)
-            clearTimeout(zamanlayici)
+            v.removeEventListener('ended', donguSonu)
+            cancelAnimationFrame(kare)
             g.disconnect()
         }
-    }, [azalt])
+    }, [azalt, videoAcik])
 
     const menuKapat = () => setMenuAcik(false)
 
@@ -213,36 +215,28 @@ export default function VideoHero({ onHazir }) {
                 role="img"
                 aria-label="Yıldızlı bir gökyüzünde, mor nokta matrisiyle çizilmiş, yavaşça dönen Dünya küresi"
             >
-                <video
-                    ref={videoA}
-                    className="bg-video is-active"
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    preload="auto"
-                    disablePictureInPicture
-                    aria-hidden="true"
-                    poster={POSTER}
-                    onLoadedData={hazir}
-                    onError={videoHatasi}
-                >
-                    <source src={VIDEO} type="video/mp4" onError={videoHatasi} />
-                </video>
-                {/* İkinci kopya yalnızca döngü noktasında gerekir; o ana kadar ilki dosyayı önbelleğe almış olur */}
-                <video
-                    ref={videoB}
-                    className="bg-video"
-                    muted
-                    loop
-                    playsInline
-                    preload="metadata"
-                    disablePictureInPicture
-                    aria-hidden="true"
-                    poster={POSTER}
-                >
-                    <source src={VIDEO} type="video/mp4" />
-                </video>
+                {videoAcik ? (
+                    <>
+                        <video
+                            ref={video}
+                            className="bg-video"
+                            autoPlay
+                            muted
+                            playsInline
+                            preload="auto"
+                            disablePictureInPicture
+                            aria-hidden="true"
+                            poster={POSTER}
+                            onLoadedData={hazir}
+                            onError={videoHatasi}
+                        >
+                            <source src={VIDEO} type="video/mp4" onError={videoHatasi} />
+                        </video>
+                        <canvas ref={gecis} className="bg-video bg-gecis" aria-hidden="true" />
+                    </>
+                ) : (
+                    <img className="bg-video" src={POSTER} alt="" aria-hidden="true" decoding="async" fetchPriority="high" onLoad={hazir} onError={videoHatasi} />
+                )}
             </div>
 
             <header className="nav">
@@ -257,19 +251,19 @@ export default function VideoHero({ onHazir }) {
                 <div className="nav-actions">
                     {user ? (
                         <>
-                            <Link to="/profilim" className="btn btn-login">
+                            <Link to="/profilim" className="btn btn-login isik-hap">
                                 Profilim
                             </Link>
-                            <Link to="/panel" className="btn btn-nav-start">
+                            <Link to="/panel" className="btn btn-nav-start isik-hap isik-hap-birincil">
                                 Panelim <Ok />
                             </Link>
                         </>
                     ) : (
                         <>
-                            <Link to="/giris" className="btn btn-login">
+                            <Link to="/giris" className="btn btn-login isik-hap">
                                 Giriş Yap
                             </Link>
-                            <Link to="/hesap-olustur" className="btn btn-nav-start">
+                            <Link to="/hesap-olustur" className="btn btn-nav-start isik-hap isik-hap-birincil">
                                 Hesap Oluştur <Ok />
                             </Link>
                         </>
@@ -333,10 +327,11 @@ export default function VideoHero({ onHazir }) {
                     kıdem burada satın alınmaz, tamamlanan her işle kazanılır.
                 </p>
                 <div className="ctas">
-                    <Link to="/hesap-olustur?rol=yazilimci" className="btn btn-lg btn-primary">
+                    <Link to="/hesap-olustur?rol=yazilimci" className="btn btn-lg btn-primary isik-hap isik-hap-birincil isik-hap-yorunge">
+                        <span className="isik-yorunge" aria-hidden="true" />
                         Yazılımcı olarak katıl <Ok />
                     </Link>
-                    <Link to="/hesap-olustur?rol=is-veren" className="btn btn-lg btn-ghost">
+                    <Link to="/hesap-olustur?rol=is-veren" className="btn btn-lg btn-ghost isik-hap">
                         İş vermek istiyorum <Ok />
                     </Link>
                 </div>

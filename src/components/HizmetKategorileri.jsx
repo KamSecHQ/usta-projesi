@@ -4,6 +4,7 @@ import { Sahne, SatirBaslik } from './uzay/Hareket'
 const kategoriler = [
     {
         ad: "Web Geliştirme",
+        aciklama: "Kurumsal site, panel, tanıtım sayfası",
         arama: "web",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
@@ -14,6 +15,7 @@ const kategoriler = [
     },
     {
         ad: "Mobil Uygulama",
+        aciklama: "iOS, Android, Flutter, React Native",
         arama: "mobil",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
@@ -24,6 +26,7 @@ const kategoriler = [
     },
     {
         ad: "E-Ticaret",
+        aciklama: "Mağaza, ödeme ve kargo entegrasyonu",
         arama: "e-ticaret",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
@@ -35,6 +38,7 @@ const kategoriler = [
     },
     {
         ad: "UI/UX Tasarım",
+        aciklama: "Arayüz, kullanıcı deneyimi, tasarım sistemi",
         arama: "tasarım",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
@@ -47,6 +51,7 @@ const kategoriler = [
     },
     {
         ad: "Backend & API",
+        aciklama: "Sunucu, veritabanı, servis entegrasyonları",
         arama: "backend",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
@@ -59,6 +64,7 @@ const kategoriler = [
     },
     {
         ad: "Otomasyon & Bot",
+        aciklama: "İş akışı otomasyonu, WhatsApp botları",
         arama: "otomasyon",
         icon: (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-6 h-6">
@@ -107,7 +113,10 @@ function HizmetKategorileri() {
                             />
                             <span className="relative text-gri transition-colors duration-300 group-hover:text-mor-soluk">{k.icon}</span>
                             <span className="relative flex items-end justify-between gap-3">
-                                <span className="text-[clamp(1.05rem,1.8vw,1.35rem)] font-medium leading-tight tracking-[-0.015em] text-white">{k.ad}</span>
+                                <span>
+                                    <span className="block text-[clamp(1.05rem,1.8vw,1.35rem)] font-medium leading-tight tracking-[-0.015em] text-white">{k.ad}</span>
+                                    <span className="mt-1.5 hidden text-[14px] font-light leading-snug text-gri-koyu transition-colors duration-300 group-hover:text-gri sm:block">{k.aciklama}</span>
+                                </span>
                                 <svg viewBox="0 0 12 10" fill="none" className="mb-1 h-[11px] w-[13px] shrink-0 -translate-x-1 text-white opacity-0 transition-[opacity,transform] duration-300 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden>
                                     <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>

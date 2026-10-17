@@ -1,90 +1,86 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { dilRengi, zamanFarki } from '../ustaYardimcilari'
+import './uzay/uzay.css'
+
+// Portföy işi kartı: profil sayfası ve profil düzenleme kullanır. Kapak görseli yoksa (ya da
+// yüklenemezse) başlıktan türeyen noktalı ışık deseni. Canlı bağlantı, kart bağlantısının
+// içinde değil yanında durur: iç içe bağlantı geçersizdir ve klavyede tek odak olarak kalır.
+function adOzeti(metin) {
+    let h = 0
+    for (const harf of metin || '') h = (h * 31 + harf.charCodeAt(0)) >>> 0
+    return h
+}
 
 function ProjeKarti({ proje, aksiyon }) {
+    const [gorselHatasi, setGorselHatasi] = useState(false)
     const teknolojiler = proje.teknolojiler || []
     const anaTeknoloji = teknolojiler[0]
+    const h = adOzeti(proje.baslik)
+    const kapak = proje.kapak_gorseli_url && !gorselHatasi
 
     return (
-        <div className="isik-kutu group bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl overflow-hidden hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300">
-            <Link to={`/proje/${proje.id}`} className="block">
-                {proje.kapak_gorseli_url ? (
-                    <div className="aspect-video w-full overflow-hidden bg-white/[0.03]">
-                        <img
-                            src={proje.kapak_gorseli_url}
-                            alt={proje.baslik}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            onError={(e) => { e.target.style.display = 'none' }}
-                        />
-                    </div>
-                ) : null}
-
-                <div className="p-5">
-                    <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2 min-w-0">
-                                {proje.one_cikan && (
-                                    <svg viewBox="0 0 24 24" fill="#A78BFA" className="w-3.5 h-3.5 shrink-0" title="Öne çıkan proje">
-                                        <path d="M12 2l2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6l-6.3 4.4L8 13.8l-6-4.4h7.6z" />
-                                    </svg>
-                                )}
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 text-[#A1A1AA] shrink-0">
-                                    <path d="M4 4h6l2 2h8v12a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                <h3 className="text-[#FFFFFF] font-semibold truncate group-hover:text-[#A78BFA] transition-colors duration-300">
-                                    {proje.baslik}
-                                </h3>
-                            </div>
-                            {proje.aciklama && (
-                                <p className="text-[#A1A1AA] text-sm mt-1.5 line-clamp-2">{proje.aciklama}</p>
-                            )}
-                        </div>
-                        {proje.link && (
-                            <a
-                                href={proje.link}
-                                target="_blank"
-                                rel="noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="shrink-0 text-[#A1A1AA] hover:text-[#A78BFA] transition-colors duration-300"
-                                aria-label="Canlı projeyi görüntüle"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
-                                    <path d="M14 4h6v6M20 4l-9 9M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h14a1 1 0 001-1v-4" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </a>
+        <div className="group h-full">
+            <article className="isik-kart flex h-full flex-col overflow-hidden">
+                <Link to={`/proje/${proje.id}`} className="flex flex-1 flex-col rounded-[20px] focus-visible:outline-offset-[-2px]">
+                    <div className="relative aspect-[16/9] overflow-hidden rounded-t-[19px]">
+                        {kapak ? (
+                            <img src={proje.kapak_gorseli_url} alt="" loading="lazy" decoding="async" onError={() => setGorselHatasi(true)} className="vitrin-gorsel h-full w-full object-cover" />
+                        ) : (
+                            <span aria-hidden className="vitrin-desen" style={{ '--vx': `${20 + (h % 60)}%`, '--vy': `${30 + ((h >> 6) % 40)}%` }} />
                         )}
-                    </div>
-
-                    {teknolojiler.length > 0 && (
-                        <div className="flex gap-1.5 flex-wrap mt-3">
-                            {teknolojiler.map((t) => (
-                                <span key={t} className="text-[#A1A1AA] text-xs bg-white/[0.05] px-2 py-0.5 rounded-full font-mono">
-                                    {t}
-                                </span>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="flex items-center gap-4 mt-4 text-[#A1A1AA]/70 text-xs">
-                        {anaTeknoloji && (
-                            <span className="flex items-center gap-1.5">
-                                <span
-                                    className="w-2.5 h-2.5 rounded-full inline-block"
-                                    style={{ backgroundColor: dilRengi(anaTeknoloji) }}
-                                />
-                                {anaTeknoloji}
+                        <span aria-hidden className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent" />
+                        {proje.one_cikan && (
+                            <span className="uz-etiket absolute left-4 top-4 bg-black/60">
+                                <svg viewBox="0 0 24 24" className="h-3 w-3 text-mor-acik" fill="currentColor" aria-hidden>
+                                    <path d="M12 2.8l2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.6l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" />
+                                </svg>
+                                Öne çıkan
                             </span>
                         )}
-                        {proje.created_at && <span>Güncellendi: {zamanFarki(proje.created_at)}</span>}
                     </div>
-                </div>
-            </Link>
+                    <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+                        <h3 className="text-[17px] font-medium leading-snug tracking-[-0.01em] text-white transition-colors group-hover:text-mor-soluk">{proje.baslik}</h3>
+                        {proje.aciklama && <p className="mt-1.5 line-clamp-2 text-[14px] leading-relaxed text-gri">{proje.aciklama}</p>}
+                        {teknolojiler.length > 0 && (
+                            <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Teknolojiler">
+                                {teknolojiler.slice(0, 5).map((t) => (
+                                    <li key={t} className="uz-etiket font-kod text-[11px]">
+                                        {t}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        <span aria-hidden className="min-h-4 flex-1" />
+                        <div className="flex items-center gap-4 text-[12.5px] text-gri-koyu">
+                            {anaTeknoloji && (
+                                <span className="flex items-center gap-1.5">
+                                    <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ backgroundColor: dilRengi(anaTeknoloji) }} aria-hidden />
+                                    {anaTeknoloji}
+                                </span>
+                            )}
+                            {proje.created_at && <span>{zamanFarki(proje.created_at)} eklendi</span>}
+                        </div>
+                    </div>
+                </Link>
 
-            {aksiyon && (
-                <div className="px-5 pb-4 pt-3 border-t border-white/[0.06]">
-                    {aksiyon}
-                </div>
-            )}
+                {(proje.link || aksiyon) && (
+                    <div className="flex items-center justify-between gap-3 border-t border-white/[0.07] px-5 py-3">
+                        {proje.link ? (
+                            <a href={proje.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-[13px] font-medium text-mor-soluk hover:text-white">
+                                Canlı gör
+                                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" aria-hidden>
+                                    <path d="M14 4h6v6M20 4l-9 9M9 4H5a1 1 0 00-1 1v14a1 1 0 001 1h14a1 1 0 001-1v-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                <span className="sr-only">(yeni sekmede açılır)</span>
+                            </a>
+                        ) : (
+                            <span />
+                        )}
+                        {aksiyon}
+                    </div>
+                )}
+            </article>
         </div>
     )
 }

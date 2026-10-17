@@ -1,6 +1,8 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { profilGucuMaddeleri, profilGucuYuzdesi } from '../profilGucu'
+import { useBildirim } from '../components/bildirim/bildirimBaglami'
 import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import {
@@ -178,15 +180,8 @@ function Dashboard() {
     const [hareketler, setHareketler] = useState([])
     const [musaitlik, setMusaitlik] = useState('musait')
     const [musaitlikKaydi, setMusaitlikKaydi] = useState('')
-    const [bildirim, setBildirim] = useState('')
-    const bildirimZamani = useRef(null)
+    const bildir = useBildirim()
     const [yukleniyor, setYukleniyor] = useState(true)
-
-    function bildir(metin) {
-        setBildirim(metin)
-        clearTimeout(bildirimZamani.current)
-        bildirimZamani.current = setTimeout(() => setBildirim(''), 2400)
-    }
 
     async function veriGetir() {
         if (!user) return
@@ -223,7 +218,7 @@ function Dashboard() {
         setProfil({ ...profilData, telefon: iletisim?.telefon || null })
         setMusaitlik(profilData.musaitlik || 'musait')
 
-        const sayi = await tamamlananIsSayisiGetir(supabase, user.id, profilData.rol)
+        const sayi = await tamamlananIsSayisiGetir(supabase, user.id)
         setTamamlanan(sayi)
         setKidem(kidemRozetiHesapla(profilData.rol, sayi))
         setSonrakiKidem(sonrakiKidemHesapla(profilData.rol, sayi))
@@ -356,24 +351,9 @@ function Dashboard() {
 
     const yazilimci = profil.rol === 'yazilimci'
 
-    // Profil gücü: gerçek alan doluluğuna dayalı
-    const alanlar = yazilimci
-        ? [
-              { etiket: 'Unvan', dolu: !!profil.unvan },
-              { etiket: 'Hakkımda yazısı', dolu: !!profil.bio },
-              { etiket: 'En az 1 teknoloji', dolu: (profil.teknolojiler || []).length > 0 },
-              { etiket: 'GitHub linki', dolu: !!profil.github_url },
-              { etiket: 'Konum', dolu: !!profil.konum },
-              { etiket: 'Telefon', dolu: !!profil.telefon },
-              { etiket: 'Saatlik ücret aralığı', dolu: !!(profil.saatlik_ucret_min || profil.saatlik_ucret_max) },
-              { etiket: 'En az 1 proje', dolu: projeSayisi > 0 },
-          ]
-        : [
-              { etiket: 'Ad soyad', dolu: !!profil.ad_soyad },
-              { etiket: 'Telefon', dolu: !!profil.telefon },
-          ]
-    const dolu = alanlar.filter((a) => a.dolu).length
-    const guc = Math.round((dolu / alanlar.length) * 100)
+    // Profil gücü: gerçek alan doluluğuna dayalı (profilGucu.js; profil düzenlemede de aynı maddeler)
+    const alanlar = profilGucuMaddeleri(profil, { projeSayisi, telefon: profil.telefon })
+    const guc = profilGucuYuzdesi(alanlar)
     const eksikler = alanlar.filter((a) => !a.dolu)
 
     // Kıdem halkası: mevcut rütbeden bir sonrakine ilerleme
@@ -549,16 +529,18 @@ function Dashboard() {
                                 <span className="text-[20px] font-medium tabular-nums text-white">%{guc}</span>
                             </Halka>
                             <p className="text-[13px] leading-relaxed text-[#A1A1AA]">
-                                {guc === 100 ? 'Profilin eksiksiz. İş verenler en çok bu profillere teklif gönderiyor.' : 'Eksik alanları doldurdukça ustalar listesinde daha güçlü görünürsün.'}
+                                {guc === 100 ? 'Profilin eksiksiz. İş verenler seni ustalar listesinde ve profilinde tüm bilgilerinle görür.' : 'Eksik alanları doldurdukça iş verenler seni daha iyi tanır.'}
                             </p>
                         </div>
                         {eksikler.length > 0 && (
                             <ul className="mt-5 space-y-1.5">
                                 {eksikler.slice(0, 4).map((a) => (
                                     <li key={a.etiket}>
-                                        <Link to="/profilim" className="group flex items-center justify-between rounded-lg px-2 py-1.5 text-[13px] text-[#A1A1AA] transition-colors hover:bg-white/[0.04] hover:text-white">
-                                            <span>+ {a.etiket}</span>
-                                            <span className="text-[#71717A] transition-transform group-hover:translate-x-0.5">→</span>
+                                        <Link to={`/profilim#${a.bolum}`} className="group flex items-center justify-between rounded-lg px-2 py-1.5 text-[13px] text-[#A1A1AA] transition-colors hover:bg-white/[0.04] hover:text-white">
+                                            <span>{a.etiket} ekle</span>
+                                            <svg viewBox="0 0 12 10" className="h-[10px] w-3 text-[#8A8A94] transition-transform group-hover:translate-x-0.5" fill="none" aria-hidden>
+                                                <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
                                         </Link>
                                     </li>
                                 ))}
@@ -648,14 +630,6 @@ function Dashboard() {
                 )}
             </div>
 
-            {/* Kısa bildirim */}
-            <div
-                role="status"
-                aria-live="polite"
-                className={`fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/[0.12] bg-black/80 px-5 py-2.5 text-[13px] text-white shadow-[0_10px_40px_-10px_rgba(139,92,246,0.7)] backdrop-blur-xl transition-all duration-300 ${bildirim ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-3 opacity-0'}`}
-            >
-                {bildirim}
-            </div>
         </div>
     )
 }

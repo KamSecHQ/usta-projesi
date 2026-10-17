@@ -1,10 +1,11 @@
 import { Suspense, useMemo, useRef, useState, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Environment, Lightformer } from '@react-three/drei'
+import { Environment, Lightformer, PerformanceMonitor } from '@react-three/drei'
 import { Physics, RigidBody, BallCollider, CuboidCollider } from '@react-three/rapier'
 import { EffectComposer, N8AO, Bloom, Noise, Vignette, ToneMapping } from '@react-three/postprocessing'
 import { ToneMappingMode } from 'postprocessing'
 import * as THREE from 'three'
+import Isitici from './Isitici'
 
 // Lusion tarzı fizik sahnesi: atölye parçaları (somun, cıvata) ve kod sembolleri
 // ({ } < / >) yerçekimsiz bir alanda merkeze çekilir, birbirine çarpar, imleç onları iter.
@@ -192,7 +193,7 @@ function HazirSinyali({ onHazir }) {
     return null
 }
 
-function Sahne({ adet, dagit, azalt, onHazir }) {
+function Sahne({ adet, dagit, azalt, hafif, onHazir }) {
     const geo = useMemo(geometrileriUret, [])
     const parcalar = useMemo(
         () =>
@@ -215,6 +216,7 @@ function Sahne({ adet, dagit, azalt, onHazir }) {
                 {parcalar.map((p, i) => (
                     <Parca key={i} geometri={geo[p.tur]} malzeme={p.renk} dagit={dagit} olcek={p.olcek} />
                 ))}
+                <Isitici sonIslem ilkKare />
             </Physics>
             {!azalt && <KameraSuzulmesi />}
             <HazirSinyali onHazir={onHazir} />
@@ -231,7 +233,8 @@ function Sahne({ adet, dagit, azalt, onHazir }) {
             </Environment>
 
             <EffectComposer multisampling={0} enableNormalPass={false}>
-                <N8AO halfRes color="black" aoRadius={2} intensity={1.15} aoSamples={4} denoiseSamples={3} />
+                {/* Ortam gölgelemesi en pahalı geçiş: zayıf cihazlarda kapalı */}
+                {hafif ? null : <N8AO halfRes color="black" aoRadius={2} intensity={1.15} aoSamples={4} denoiseSamples={3} />}
                 <Bloom mipmapBlur luminanceThreshold={0.85} intensity={0.55} radius={0.7} />
                 <Noise opacity={0.045} premultiply />
                 <Vignette eskil={false} offset={0.25} darkness={0.55} />
@@ -249,6 +252,11 @@ export default function FizikSahnesi({ olayKaynagi, onHazir, aktif = true }) {
     const dagit = useRef(0)
     const [azalt] = useState(hareketAzaltilsinMi)
     const [dar] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768)
+    // Dar ekran ya da az çekirdekli cihaz: ağır son işlem geçişleri kapatılır
+    const [hafif] = useState(() => dar || (typeof navigator !== 'undefined' && (navigator.hardwareConcurrency || 8) <= 4))
+    // Keskinlik 1.25x'te sabit; zorlanırsa 1x'e iner. Yukarı çıkmaz: her değişim tuvali ve
+    // son işlem hedeflerini yeniden kurar, bu da kaydırırken kare kaçırtır.
+    const [dpr, setDpr] = useState(() => Math.min(typeof window !== 'undefined' ? window.devicePixelRatio || 1 : 1, 1.25))
 
     useEffect(() => {
         const el = olayKaynagi?.current
@@ -261,7 +269,7 @@ export default function FizikSahnesi({ olayKaynagi, onHazir, aktif = true }) {
     return (
         <Canvas
             frameloop={aktif ? 'always' : 'never'}
-            dpr={[1, dar ? 1.25 : 1.5]}
+            dpr={dpr}
             gl={{ antialias: false, powerPreference: 'high-performance' }}
             camera={{ position: [0, 0, dar ? 20 : 17], fov: 32, near: 1, far: 70 }}
             eventSource={olayKaynagi}
@@ -270,8 +278,9 @@ export default function FizikSahnesi({ olayKaynagi, onHazir, aktif = true }) {
                 state.gl.toneMapping = THREE.NoToneMapping
             }}
         >
+            <PerformanceMonitor bounds={() => [40, 120]} onDecline={() => setDpr(1)} />
             <Suspense fallback={null}>
-                <Sahne adet={dar ? 12 : 18} dagit={dagit} azalt={azalt || !aktif} onHazir={onHazir} />
+                <Sahne adet={dar ? 12 : 18} dagit={dagit} azalt={azalt || !aktif} hafif={hafif} onHazir={onHazir} />
             </Suspense>
         </Canvas>
     )

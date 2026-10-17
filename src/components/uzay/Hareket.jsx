@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import './uzay.css'
 
 // Bir öğe ekrana girdiğinde bir kez true döner
-export function useGorunur(esik = 0.18) {
+function useGorunur(esik = 0.18) {
     const ref = useRef(null)
     const [gorunur, setGorunur] = useState(false)
     useEffect(() => {
@@ -57,12 +57,12 @@ export function Ok() {
     )
 }
 
-// Hero'daki hap düğmenin aynısı: beyaz (birincil) ya da koyu cam
+// Hero'daki hap düğmenin aynısı: beyaz (birincil) ya da saydam ışıklı cam
 export function HapLink({ to, tur = 'birincil', className = '', gecikme, children, ...kalan }) {
     return (
         <Link
             to={to}
-            className={`uz-hap ${tur === 'cam' ? 'uz-hap-cam' : 'uz-hap-birincil'} ${className}`}
+            className={`uz-hap isik-hap ${tur === 'cam' ? '' : 'isik-hap-birincil'} ${className}`}
             style={gecikme !== undefined ? { '--d': `${gecikme}s` } : undefined}
             {...kalan}
         >

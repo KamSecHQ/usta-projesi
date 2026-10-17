@@ -1,0 +1,17 @@
+# Kalfahane — arama motorları için tarama kuralları
+User-agent: *
+Allow: /
+# Giriş gerektiren ve kişisel sayfalar taranmaz
+Disallow: /admin
+Disallow: /panel
+Disallow: /mesajlar
+Disallow: /profilim
+Disallow: /ayarlar
+Disallow: /favorilerim
+Disallow: /ilanlarim
+Disallow: /tekliflerim
+Disallow: /ajansim
+Disallow: /ilan-ver
+Disallow: /sifre-yenile
+
+Sitemap: https://www.kalfahane.com/sitemap.xml

@@ -19,9 +19,35 @@ export default function AtolyeTuvali() {
     const [hazir, setHazir] = useState(false)
     const [aktif, setAktif] = useState(false)
     const gl = useRef(null)
-    // Keskinlik kare hızına göre ayarlanır: 1.25x'ten başlar, akıcıysa 1.75x'e çıkar, zorlanırsa 1x'e iner
-    const [dpr, setDpr] = useState(Math.min(window.devicePixelRatio || 1, 1.25))
-    const ust = Math.min(window.devicePixelRatio || 1, 1.75)
+    // Keskinlik kare hızına göre ayarlanır: 1.5x'ten başlar, akıcıysa ekranın kendi keskinliğine
+    // (en çok 2x) çıkar, zorlanırsa 1x'e iner. Retina ekranda robotun kod ekranı ancak 2x'te net okunur.
+    const [dpr, setDpr] = useState(Math.min(window.devicePixelRatio || 1, 1.5))
+    const ust = Math.min(window.devicePixelRatio || 1, 2)
+
+    // Keskinlik artışı tuvali ve çizim tamponunu yeniden kurar; kaydırma sırasında olursa bir kare
+    // takılır. Bu yüzden artış, kullanıcı kaydırmayı bıraktıktan sonra uygulanır. Düşüş hemen olur.
+    const bekleyenArtis = useRef(false)
+    useEffect(() => {
+        let zaman
+        const uygula = () => {
+            if (bekleyenArtis.current) {
+                bekleyenArtis.current = false
+                setDpr(ust)
+            }
+        }
+        const kaydi = () => {
+            clearTimeout(zaman)
+            zaman = setTimeout(uygula, 300)
+        }
+        window.addEventListener('scroll', kaydi, { passive: true })
+        return () => {
+            clearTimeout(zaman)
+            window.removeEventListener('scroll', kaydi)
+        }
+    }, [ust])
+    function artisIste() {
+        bekleyenArtis.current = true
+    }
 
     // Tuval, sayfa ilk kez boyandıktan sonra kurulur; böylece shader derlemesi metni bekletmez
     useEffect(() => {
@@ -70,9 +96,15 @@ export default function AtolyeTuvali() {
             <PerformanceMonitor
                 bounds={() => [45, 58]}
                 flipflops={3}
-                onIncline={() => setDpr(ust)}
-                onDecline={() => setDpr(1)}
-                onFallback={() => setDpr(1)}
+                onIncline={artisIste}
+                onDecline={() => {
+                    bekleyenArtis.current = false
+                    setDpr(1)
+                }}
+                onFallback={() => {
+                    bekleyenArtis.current = false
+                    setDpr(1)
+                }}
             />
             <View.Port />
         </Canvas>

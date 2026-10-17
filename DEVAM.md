@@ -1,64 +1,173 @@
 # Kalfahane: devir notu
 
 Bu dosya, projeyi başka bir bilgisayarda ya da yeni bir Claude oturumunda kaldığı yerden sürdürmek için yazıldı.
-Önce `CLAUDE.md` (kurallar), sonra bu dosya, gerekirse `PRODUCT.md`, `DESIGN.md` ve `supabase/SEMA.md` okunmalı.
+Önce `CLAUDE.md` (kurallar), sonra bu dosya, gerekirse `YOL_HARITASI.md`, `PRODUCT.md`, `DESIGN.md` ve `supabase/SEMA.md` okunmalı.
+
+Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruyor; kullanıcı iki Mac arasında gidip geliyor. Eski `Developer/projects/usta-projesi` klasörü eski bir kopyadır, orada çalışılmaz.
+
+---
+
+## ŞU ANKİ DURUM (ilk önce bunu oku)
+
+- **Bütün iş commitlenmedi.** Dal `perf/kasma-ve-yol-haritasi`; `main` = `origin/main` = `c6ef3f2`. Değişiklikler bu klasörün çalışma ağacında duruyor (57 değiştirilmiş/silinmiş dosya, ~25 yeni dosya ve klasör; `git status` ile görülür).
+- **Kullanıcı "commit atma şimdilik" dedi.** Kendisi "Commitle ve siteye yükle" diyene kadar commit ve push yapılmaz.
+- **Çalışma ağacını silecek komut çalıştırma:** `git checkout .`, `git restore`, `git stash`, `git clean`, `git reset --hard` haftalarca işi siler. Dal değiştirme de gerekmiyor.
+- "Commitle ve siteye yükle" gelince: dalda Türkçe mesajlarla commit, `main`'e birleştir, `git push origin main` (Vercel yayına alır), sonra canlı siteyi doğrula. Eski Mac'te GitHub kimlik bilgisi yoktu, push "could not read Username" ile düştü. Yeni Mac'te `gh auth login` gerekebilir; kullanıcı adını ve token'ı kullanıcı kendisi girer, Claude girmez.
+- Son kontrol (eski Mac): `npm run lint` 0 uyarı, `npm run build` başarılı.
+
+## Yeni Mac'te ilk adımlar
+
+1. Node.js 20.19 ya da üstü (eski Mac'te v24.21 ile çalıştı).
+2. `node_modules` SSD'de hazır ve **Apple Silicon (arm64)** için kurulu (rolldown ve oxlint yerel ikili dosya kullanır). Yeni Mac Intel ise ya da build/lint "binding" hatası verirse: `rm -rf node_modules && npm install`.
+3. `npm run dev` → http://localhost:5173 ; canlı paketin aynısı için `npm run build && npm run preview` → http://127.0.0.1:4173
+4. Kontroller: `npm run lint` (0 uyarı tutulur), `npm run build`.
+5. Veritabanı işleri için Claude'a Supabase bağlayıcısı aynı hesapla bağlanmalı (proje `lalqdppmjirelxngliim`).
+6. Tasarım becerisi `impeccable` bu klasörde `.claude/skills/impeccable` altında gelir (git'te yok). Tasarım işinde kullanılır. `.impeccable/` klasörü de o beceriye ait tasarım bağlamı (git'te yok, silinmemeli).
+7. Eski Mac'teki Claude sohbet geçmişi ve hafızası bu SSD'de değil; bilinmesi gereken her şey bu dosyada, `CLAUDE.md` ve `YOL_HARITASI.md` içinde.
 
 ## Proje
 
 - **Ne:** Türk yazılımcıları ("usta") işletmelerle buluşturan pazaryeri. Marka **Kalfahane**; eski adı "usta-projesi".
-- **Canlı:** https://www.kalfahane.com (kalfahane.com → www'ye yönlenir)
+- **Canlı:** https://www.kalfahane.com (kalfahane.com → www'ye yönlenir). Canlıdaki sürüm `main` (`c6ef3f2`); bu dosyada anlatılan işlerin hiçbiri henüz canlıda değil.
 - **Kod:** GitHub `KamSecHQ/usta-projesi`, dal `main`. `main`'e her push Vercel'de otomatik yayına çıkar.
 - **Veritabanı:** Supabase projesi `lalqdppmjirelxngliim` (organizasyon "usta-projesi"). Ücretsiz plan; uzun süre kullanılmazsa duraklatılır ve panelden "Resume" ile açılır.
 - **Supabase anahtarı:** `src/supabaseClient.js` içinde; yayınlanabilir (publishable) anahtar, gizli değil. `.env` dosyası yok.
 
-## Yeni bilgisayarda kurulum
-
-1. Node.js 22 veya üstü (bu Mac'te v26 ile çalıştı; Vite 8 en az 20.19 ister).
-2. Klasörde: `npm install`, sonra `npm run dev` → http://localhost:5173
-3. Kontroller: `npm run build`, `npm run lint` (oxlint).
-4. Push için GitHub erişimi: `gh auth login` (ya da git kimlik bilgileri).
-5. Veritabanı işleri için Claude'a Supabase bağlayıcısı aynı hesapla bağlanmalı (proje `lalqdppmjirelxngliim`).
-6. Tasarım becerisi `impeccable`, bu klasör kopyasında `.claude/skills/impeccable` altında gelir (git'te yok). Claude Code bu klasörde açıldığında proje becerisi olarak görünür.
-
-## Giriş yapmadan ekranları görmek (yalnızca geliştirmede)
+## Giriş yapmadan ekranları görmek (yalnızca geliştirmede, canlı pakete girmez)
 
 - Panel: `/panel?onizleme=yazilimci` ya da `?onizleme=is-veren`
-- Mesajlar: `/mesajlar?onizleme=yazilimci` ya da `?onizleme=is-veren` (karşı taraf yazıyor/yanıtlıyor gibi davranır)
-- Bu önizlemeler canlı pakete girmez (`import.meta.env.DEV`).
-- Masaüstü ekran görüntüsü için Chrome başsız (headless) kullanılabilir:
-  `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --window-size=1440,900 --virtual-time-budget=6000 --screenshot=cikti.png "http://127.0.0.1:5173/..."`
+- Mesajlar: `/mesajlar?onizleme=yazilimci` ya da `?onizleme=is-veren`
+- İlan sihirbazı: `/ilan-ver?onizleme=is-veren` · İlanlarım: `/ilanlarim?onizleme=is-veren`
+- Tekliflerim: `/tekliflerim?onizleme=yazilimci` · İlan detayı teklif formu: `/is-ilanlari/:id?onizleme=yazilimci`
+- Usta profilinde değerlendirmeler: `/ustalar/:id?onizleme=degerlendirme`
+- Blog: `/blog?onizleme=1` ve `/blog/yazilim-butcesi-nasil-belirlenir?onizleme=1` (örnek yazılar; canlıda henüz yayınlanmış yazı yok)
+- Yönetim: `/admin?onizleme=1` (örnek usta başvuruları; onay, onay kaldırma ve telefon doğrulama yerelde denenir) · `/admin/blog?onizleme=1` (editör ve canlı önizleme)
+- Bildirim ve onay diyaloğu konsoldan: `__bildirim('Deneme')`
+- Profil düzenleme, ayarlar (girişli hâli) ve ajans yönetimi için önizleme yok; görmek için gerçek hesapla giriş gerekir.
 
 ## Mimari özeti
 
-- **Anasayfa** (`src/pages/Anasayfa.jsx`, lazy): videolu hero (`components/VideoHero.jsx`), tam ekran 3D atölye (`components/atolye/`), fizik paneli, süreç bölümü ve kod yazan robot (`atolye/KodYazanRobot.jsx`), kıdem cetveli, teknoloji bandı. Tüm drei `<View>`'lar tek tuvali paylaşır (`atolye/AtolyeTuvali.jsx`). Lenis yalnızca anasayfada.
-- **Uzay teması:** siyah zemin, Plus Jakarta Sans, mor ışık. Hareket ve yüzey dili `components/uzay/`. Ürün içindeki ışıklı cam düğmeler `.isik` / `.isik-kutu` (`src/index.css`, imleç takibi `src/isikTakip.js`).
-- **Panelim** (`pages/Dashboard.jsx`): kıdem halkası, müsaitlik, istatistikler, hızlı eylemler (Mesajlar dahil), kıdem yolu, profil gücü, son hareketler.
+- **Anasayfa** (`src/pages/Anasayfa.jsx`, lazy): videolu hero (`components/VideoHero.jsx`), tam ekran 3D atölye (`components/atolye/`), fizik paneli (`atolye/FizikSahnesi.jsx`, kendi tuvali), süreç bölümü ve kod yazan robot (`atolye/KodYazanRobot.jsx`), kıdem cetveli ve sikke, teknoloji bandı, Ustalar bölümü. Tüm drei `<View>`'lar tek tuvali paylaşır (`atolye/AtolyeTuvali.jsx`). Lenis yalnızca anasayfada.
+- **Uzay teması:** siyah zemin, Plus Jakarta Sans, mor ışık. Hareket ve yüzey dili `components/uzay/` (`Sahne`, `SatirBaslik`, `HapLink`, `Ok`, `uzay.css`). Işıklı düğmeler: `.isik-hap` (anasayfa ve yeni sayfalar), eski `.isik` / `.isik-kutu` (iç sayfalarda hâlâ var). İmleç takibi `src/isikTakip.js`.
+- **Ortak bileşenler (bu dönemde eklendi):**
+  - `components/form/Alan.jsx`: `Alan` (etiket, ipucu, hata alana bağlı) ve `SifreAlani` (göster/gizle).
+  - `components/hesap/`: `HesapCercevesi` (giriş/kayıt/şifre sayfalarının çerçevesi), `hesapHatalari.js` (`hesapHatasi()`: Supabase hataları Türkçe).
+  - `components/bildirim/`: `useBildirim()` (toast), `useOnay()` (yerel `<dialog>` ile onay). `alert()` ve `confirm()` kullanılmaz.
+  - `components/usta/UstaIcazeti.jsx`: tek usta kartı (anasayfa, /ustalar, Favorilerim) + boş tezgâh davet kartları + iskelet.
+  - `components/liste/ListeAraclari.jsx`: arama kutusu, filtre çipi, anahtar, sıralama, `SonucYok` (boş/giriş gerektiren durumlar).
+  - `components/ilan/`: `IlanKarti`, `ilanSablonlari.js` (7 şablon, `aciklamaOlustur`), `TeknolojiSecici`.
+  - `components/degerlendirme/`: yıldız seçici/gösterge, form, liste, sorgular.
+  - `components/atolye/Isitici.jsx`: 3D sahnelerin shader ısıtması (her sahnede zorunlu, bkz. CLAUDE.md).
+  - `BasaDon.jsx`, `UygulamaHatasi.jsx` (hata sınırı), `ProjeKarti.jsx` (portföy kartı).
+- **Yardımcılar:** `ustaYardimcilari.js` (`tl`, `ucretAraligiGoster`, `butceGoster`, `aramaIcinKatla`, `teknolojiUyumu`, `butceyeGore`, kıdem eşikleri), `ustaVerisi.js` (usta sorguları, favoriler, portföyler tek sorguda), `profilGucu.js` (panel ve profil düzenleme ortak), `useSayfaBasligi.js` (başlık, açıklama, og etiketleri, kanonik adres).
 - **Mesajlaşma** (`pages/Mesajlar.jsx`, `components/mesaj/`, `src/mesajlasma.js`): ayrıntılar `CLAUDE.md` ve `supabase/SEMA.md`.
-- **Navbar** okunmamış mesaj rozeti ve sağ altta anlık mesaj bildirimi (`components/MesajBildirimi.jsx`) içerir.
 - **Telefon numaraları** `profil_iletisim` tablosunda; herkese açık `profiller`'de değil.
+- **Oturum:** `AuthContext.jsx` son görülme nabzı (4 dk) ve `PASSWORD_RECOVERY` olayında `/sifre-yenile`'ye yönlendirme.
 
 ## Yapılanların kronolojisi (Ekim 2026)
 
-1. Bakırcı teması → Lusion tarzı açık tema → videolu hero → site geneli **uzay teması** (bütün sayfalar taşındı).
-2. Demir döven robot kaldırıldı; yerine 3D **kod yazan robot**. Sahneler tam ekran ve yüksek çözünürlüklü.
-3. Performans: ekran dışı sahneler durur, uyarlanabilir piksel oranı, video ekran dışında duraklar, fizik yalnızca görünürken çalışır.
-4. Panelim yeniden tasarlandı; tüm iç sayfalara ışıklı cam düğmeler.
-5. **Mesajlaşma sistemi:** teklif kabul edilince konuşma açılır, ödeme sitede yok; iletişim kartı, okundu, yazıyor, tepkiler, arama, sabitleme/arşiv, anlaşma rehberi.
-6. **Güvenlik:** telefonlar gizli tabloya taşındı, eski fonksiyonlar sertleştirildi, 25 RLS politikası hızlandırıldı, eksik indeksler eklendi. İletişim adresi `merhaba@kalfahane.com`. Hero videosu yüklenemezse kendi arka planına düşer.
+1. Bakırcı teması → Lusion tarzı açık tema → videolu hero → site geneli **uzay teması**.
+2. Demir döven robot kaldırıldı; yerine 3D **kod yazan robot**.
+3. Performans (ilk dönem): ekran dışı sahneler durur, uyarlanabilir piksel oranı, video ekran dışında duraklar.
+4. Panelim yeniden tasarlandı; iç sayfalara ışıklı cam düğmeler.
+5. **Mesajlaşma sistemi** (teklif kabul edilince konuşma açılır; iletişim kartı, okundu, yazıyor, tepkiler, arama, sabitleme/arşiv).
+6. **Güvenlik:** telefonlar gizli tabloya, fonksiyonlar sertleştirildi, RLS politikaları hızlandırıldı, eksik indeksler. İletişim `merhaba@kalfahane.com`.
+7. **Bu dönem (commitlenmedi, dal `perf/kasma-ve-yol-haritasi`):** aşağıda tur tur.
+
+### 7.1 Kasma çözüldü
+- Shader ısıtma (`atolye/Isitici.jsx`): sahneler ekrana girmeden boşta derlenir, dokular GPU'ya yüklenir, tek piksele bir kez çizilir. Shader beklemesi 342 → 15 ms.
+- Hero videosu: tek `<video>` + son kareyi tuvale kopyalayıp söndüren döngü. Her 10 sn'deki 0,8 sn'lik 30 kare düşüşü kalktı. Telefonda (<768 px), veri tasarrufunda ve 2g'de video yerine poster.
+- Fizik sahnesi keskinliği 1.25x sabit, zorlanınca 1x; zayıf cihazda N8AO kapalı. Paylaşılan tuvalin keskinlik artışı kaydırma bitince uygulanır.
+- Ölçüm aracı `npm run olc` (`scripts/akicilik-olc.mjs`). Prizde, görünür pencerede: en uzun kare 183 → 19 ms, takılan kare 8 → 0, 60 FPS.
+- Kod bölme: bütün sayfalar lazy (iç sayfa ilk kodu 681 → 53 KB), react/supabase/three ayrı parçalar (`vite.config.js`), eski sekmede eksik parça olursa tek yenileme (`main.jsx`).
+
+### 7.2 Robot ekranı ve anasayfa
+- Robotun kod ekranı net: doku 2x, kod yazısı 24 px, en yüksek yönlü süzme, tarama çizgileri kalktı; satırlar ekrana sığacak biçimde bölündü.
+- Anasayfa düğmeleri saydam ışık hapları (`.isik-hap`): kenar imleçte yanar, ana düğmede dönen yörünge ışığı.
+- Ustalar bölümü: portföy vitrinli, imlece eğilen ışıklı kartlar (`.isik-kart`), gerçek portföy sayısı, boş yerlerde uydurma profil yerine davet kartları.
+- Hizmet kategorilerine açıklamalar. Teknoloji bandında doku sızıntısı giderildi.
+
+### 7.3 Sayfalar (uzay temasına taşınanlar ve yenilikler)
+- `/ustalar` (TumUstalar): Türkçe harf duyarsız arama, teknoloji çipleri, müsaitlik anahtarı, sıralama, süzme adres çubuğunda; favoriler tek sorgu.
+- `/is-ilanlari`: ışıklı ilan kartları, teknoloji ve bütçe süzgeci, bütçeye göre sıralama.
+- `/ilan-ver`: 4 adımlı sihirbaz, 7 şablon, canlı kart önizlemesi, "ilan netliği" göstergesi, tarayıcıda otomatik taslak.
+- `/is-ilanlari/:id` (IlanDetay): açıklama bölümlere ayrılır, yapışık bütçe kutusu, ustanın teknoloji uyumu ve bütçeye göre konumunu gösteren teklif formu.
+- `/ilanlarim`: teklif karşılaştırma tablosu, kabul/ret/kapatma/tamamlama onay diyaloğuyla, değerlendirme yazma.
+- `/tekliflerim`: duruma göre süzme, bütçeye göre konum, sıradaki adım, değerlendirme.
+- `/ustalar/:id` (UstaProfili): baştan tasarım (vitrin şeridi, kimlik alanı, yapışık çalışma paneli, portföy kartları, değerlendirme ortalaması ve dağılımı).
+- `/favorilerim`, `/panel` (profil gücü ortak hesap, yanlış bir iddia cümlesi kaldırıldı, eksik maddeye tıklayınca `/profilim#bolum`).
+- `/profilim` (ProfilDuzenle): uzay teması, yazdıkça güncellenen profil gücü paneli, eksik bölüme kaydırıp vurgulama, erişilebilir alanlar.
+- **Hesap sayfaları:** `/giris` ve `/hesap-olustur` baştan yazıldı (rol seçimi kartlarla, alan düzeyinde doğrulama, Türkçe hata). **Şifremi unuttum** akışı yeni: `resetPasswordForEmail` → `/sifre-yenile` (yeni sayfa). Yanıt, hesabın var olup olmadığını belli etmez. Gerçek bir hesapla e-posta üzerinden henüz denenmedi.
+- `/ayarlar`: uzay teması, şifre değiştirme, son giriş tarihi, **tüm cihazlarda oturumu kapat** (`signOut({ scope: 'global' })`), hesap silme talebi (e-posta).
+- `/ajansim`: uzay teması; oturum kapalıyken sonsuz "Yükleniyor" hatası giderildi; reddedilen davet kaldırılıp yeniden gönderilebilir; yazarken eski arama yanıtları yenisini ezmez.
+- `/admin/blog`: alanlar `Alan` ile etiketli; `confirm()` yerine `useOnay()`.
+
+### 7.4 Doğruluk, erişilebilirlik ve hata düzeltmeleri
+- Son görülme nabzı hiç gönderilmiyordu (Supabase sorgusu `then` olmadan çalışmaz), düzeltildi.
+- N+1 sorgular (İlanlarım teklifleri, liste sayfalarındaki favori düğmeleri) tek sorguya indi.
+- Mesajlar yan panelinde bütçe yanlışlıkla "/ saat" ile gösteriliyordu; para biçimi binlik ayraçlı (`tl()`).
+- Kıdem rozeti: teklifleri yalnızca taraflar okuyabildiği için ziyaretçiler herkesi "Çırak" görüyordu; faz 69 ile çözüldü (7.6).
+- Portföy kartında bağlantı içinde bağlantı vardı, düzeltildi. Ok ikonları boyutsuz olduğu için görünmüyordu, düzeltildi.
+- Erişilebilirlik: "İçeriğe geç", sayfa geçişinde başa dönme, odak halkası, kontrast (yarı saydam gri metinler kalktı), emoji/karakter ikonlar çizgi ikonlara, tüm formlarda bağlı etiketler ve duyurulan hatalar, `autoComplete`.
+- SEO: `og-image.png`, `robots.txt`, `sitemap.xml`, JSON-LD, sayfa başına açıklama ve kanonik adres, 404 `noindex`.
+- `vercel.json`: güvenlik başlıkları ve hash'li dosyalara kalıcı önbellek.
+- Temizlik: `KayitOl.jsx`, `IsVer.jsx`, `UstaCard.jsx` silindi; eski bakırcı/stüdyo renk tokenları silindi; Onest ve Bricolage yazı tipleri yalnızca anasayfa parçasında; lint uyarıları 0.
+
+### 7.8 Faz 93 ve 95: testler, CI, paket bütçesi
+- `npm test`: Node'un yerleşik test çalıştırıcısı, yeni bağımlılık yok. 33 test: para/bütçe biçimleri, Türkçe arama katlama, teknoloji uyumu, bütçeye göre konum, kıdem eşikleri (CLAUDE.md ile aynı olduğunu da denetler), toplu kıdem sorgusunun ayıklaması, slug, YouTube çerezsiz gömme, iletişim kartı bağlantı/e-posta güvenliği, mesaj zaman biçimleri, ilan açıklamasının gidiş-dönüşü (`aciklamaOlustur` → `aciklamayiAyir`), blog metin biçimi, profil gücü.
+- Testlenebilsin diye: mesajlaşmanın saf yardımcıları `src/mesajBicimi.js`'e ayrıldı (`mesajlasma.js` aynen dışa aktarır); `aciklamayiAyir` ilan sayfasından `ilanSablonlari.js`'e taşındı.
+- `npm run butce`: ilk yükün gzip toplamı (şu an 164 KB, sınır 200 KB).
+- `.github/workflows/kontrol.yml`: push ve PR'da lint (uyarı da hata), test, derleme, bütçe. Henüz push edilmediği için GitHub'da hiç çalışmadı; ilk push'ta kontrol edilmeli.
+- Faz 94 (Playwright uçtan uca) yapılmadı: yeni paket ve tarayıcı indirmesi gerektiriyor, kullanıcı onayı istenmeli.
+
+### 7.7 Faz 44'ün kalanı: yönetim sayfaları
+- `/admin`: iş ekranı olarak yeniden kuruldu. Sekmeler (onay bekleyen, onaylı, eski başvurular), isim/unvan/teknoloji araması, her profilde profil gücü ve eksik maddeler, portföy sayısı, telefon (yönetici görür) ve "doğrulandı işaretle" (onay diyaloğuyla), "Ustaya yaz". Onaylama bildirim verir, onay kaldırma onay ister, hata sessiz kalmaz. Giriş yoksa zorla yönlendirme yerine giriş daveti.
+- `/admin/blog`: editör ile yanında canlı önizleme (sitedeki okuma düzeniyle aynı `YaziGovdesi`), kaydedilmemiş değişiklik uyarısı, yayın anahtarı, Türkçe hata mesajları, listede yayında/taslak durumu, okuma süresi ve "görüntüle". Adres (slug) kaydederken biçimlenir.
+- Böylece eski görünümde sayfa kalmadı; panel (`Dashboard.jsx`) uzay temasında ama eski `.isik-kutu` dilinde.
+
+### 7.6 Faz 69: herkese açık kıdem (kullanıcı onayıyla canlı veritabanına uygulandı)
+- `tamamlanan_is_sayilari(uuid[])` RPC'si canlıda (`supabase/migrations/20261017c_tamamlanan_is_sayilari.sql`), anonim ziyaretçi dahil çağrılabilir, yalnızca sayı döndürür. Geri alınan testle doğrulandı: ilan tamamlanınca iki tarafın sayısı 1 oldu, teklifsiz "tamamlanmış" ilan saymadı.
+- Kıdem profilde artık herkese görünür; çalışma panelinde "Tamamlanan" sayısı. Usta kartlarında en az bir iş varsa kıdem etiketi (`kartVerisiniTamamla`). `/ustalar`'da "Tamamlanan işe göre" sıralama. İlan sayfasında ilan sahibinin kıdemi (en az bir iş varsa).
+- Kural değişikliği: iş verenin sayısı artık kabul edilmiş teklifli tamamlanmış ilanlardır (önceden teklifsiz tamamlanmış ilan da sayılıyordu).
+
+### 7.5 Eski görünümde kalan sayfalar (ilk Mac'e dönüş turu)
+- `/blog`: öne çıkan ilk yazı, ışıklı kartlar, kategori süzgeci (adres çubuğunda), okuma süresi, dürüst boş durum. Kartlar `components/yazi/YaziKartlari.jsx`.
+- `/blog/:slug`: okuma düzeni (68 karakter), yapışık içindekiler ve okunan bölüm vurgusu, makale yapılandırılmış verisi (JSON-LD `Article`, faz 27'nin blog kısmı), ilan çağrısı ve diğer yazılar. İçerik düz metin; `## ara başlık`, `- madde`, `1. madde`, `> alıntı`, `**kalın**` ve bağlantılar biçimlenir (`components/yazi/YaziGovdesi.jsx`, kurallar `yaziBicimi.js`). Blog yönetimindeki içerik alanında bu işaretler ipucu olarak yazılı.
+- `/gizlilik`: baştan yazıldı ve sistemin gerçek davranışına göre güncellendi (mesajlaşma, gizli telefon, son görülme, tarayıcı kayıtları, Supabase Frankfurt/AB, Vercel, YouTube/Loom, KVKK m.11 hakları). Yapışık bölüm listesi. Veri akışı değişirse bu sayfa da güncellenmeli (dosyanın başındaki not).
+- `/proje/:id`: vaka çalışması düzeni (Problem, Çözüm, Sonuç), yapışık usta kartı ("Ustaya yaz", profil, canlı proje), aynı ustanın diğer işleri; sahibine "Bu işi düzenle".
+- 404: büyük çizgi "404", yörünge ışığı, kısayol kartları; "HATA 404" üst etiketi kaldırıldı.
+- YouTube tanıtım videoları çerezsiz modda gömülüyor (`youtube-nocookie.com`).
+- `MesajlasDugmesi` `w-full` verildiğinde artık gerçekten tam genişlik (usta profili ve proje kenar çubuğunda daralıyordu).
+
+## Ölçüm notu
+
+- `npm run olc` görünür bir Chrome penceresi açar ve sayfayı kaydırır. Pencere görünmüyorsa (kapak kapalı, başka masaüstü, küçültülmüş) tarayıcı kare çizmez; araç artık bu durumda zaman aşımıyla çıkar. Eski Mac'teki son turda bu yüzden videolu ölçüm yapılamadı.
+- Son ölçüm başsız ve videosuz yapıldı (`BASSIZ=1 VIDEOSUZ=1 npm run olc`): 60 FPS, en uzun kare 17 ms, takılan kare 0. **Yeni Mac'te prizde, ekran açıkken videolu ölçüm tekrarlanmalı** (`npm run build && npm run preview`, sonra `npm run olc`; hedef `uzunKare25: 0`).
+- Pil %20'nin altındayken kare hızı 30'a sabitlenir; ölçüm prizde yapılır.
 
 ## Bekleyen işler
 
-- **E-posta:** `kalfahane.com` için MX kaydı yok; `merhaba@kalfahane.com` şu an posta almıyor. Alan adının DNS panelinde (ad sunucuları `dnsenable.com`) yönlendirme kurulmalı. Hesap silme (KVKK) talepleri bu adrese gidiyor.
-- **Hero videosu:** başka birinin CloudFront hesabından çekiliyor (`VideoHero.jsx` içinde `VIDEO`, `POSTER`), lisansı belirsiz, ~38 MB. Ya hak doğrulanıp sıkıştırılarak kendi barındırmamıza alınmalı ya da kendi yapımımız bir arka planla değiştirilmeli.
-- **Sızdırılmış şifre koruması:** Supabase paneli → Authentication → Attack Protection (SQL ile açılamıyor; plan gerektirebilir).
-- **Gerçek iki hesapla mesajlaşma testi** henüz yapılmadı (veritabanı senaryoları ve önizleme modu test edildi).
-- **Temizlik:** `src/pages/KayitOl.jsx` ve `src/pages/IsVer.jsx` artık rotada değil (yönlendirme var), silinebilir. `src/index.css` içindeki bakırcı ve stüdyo tokenları eski.
-- **Paket boyutu:** `FizikSahnesi` parçası ~2.5 MB (rapier). Zaten lazy; gerekirse daha da bölünebilir.
+- **Kullanıcı onayı bekleyenler:**
+  - Commit ve yayın ("Commitle ve siteye yükle" denince).
+  - Faz 50: video yerine kendi yapımımız WebGL küre (tasarım onayı); video lisans sorununu (faz 90) da kapatır.
+- **Kod tarafında sıradaki (önerilen):**
+  1. Faz 44 bitti (7.5, 7.7). İstenirse panel (`Dashboard.jsx`) eski `.isik-kutu` dilinden yeni `.isik-kart`/`.isik-hap` diline hizalanabilir.
+  2. Faz 93 ve 95 bitti (7.8). Faz 94 (Playwright uçtan uca) paket indirmesi gerektirdiği için onay bekliyor.
+  3. Ayrıntılı liste: `YOL_HARITASI.md` (39 ✅, 36 ⏳, 25 🔒) ve sonundaki "Sıradaki önerilen paket".
+- **E-posta:** `kalfahane.com` için MX kaydı yok; `merhaba@kalfahane.com` posta almıyor. Hesap silme (KVKK) talepleri bu adrese gidiyor; Ayarlar "48 saat içinde işleme alırız", gizlilik metni "30 gün içinde yanıtlarız" diyor. Bu söz ancak posta kutusu kurulunca tutulabilir.
+- **KVKK:** gizlilik metninde veri sorumlusunun adı/unvanı ve adresi yok (kullanıcıdan gelmeli); metnin bir hukukçuya okutulması önerilir.
+- **Hero videosu:** başka birinin CloudFront hesabından çekiliyor, lisansı belirsiz, ~38 MB (faz 50/90).
+- **Sızdırılmış şifre koruması:** Supabase paneli → Authentication → Attack Protection.
+- **Gerçek iki hesapla mesajlaşma testi** ve şifre sıfırlama e-postasının gerçek testi yapılmadı.
+- **Açık gözlem:** İstatistikler/SSS bölgesinde ölçümlerin birinde tek bir ~180 ms'lik GPU karesi; şüpheli `filter: blur` giriş geçişi.
+- **Paket boyutu:** `FizikSahnesi` parçası ~2.5 MB (rapier); kullanıcı hero'dan inmeye başlayınca yüklenmesi faz 16.
 - İstenirse GitHub deposunun adı `kalfahane` yapılabilir (Vercel bağlantısı kontrol edilmeli).
 
 ## Kullanıcıyla çalışma şekli
 
 - Türkçe konuşur; kısa ve net Türkçe yanıt bekler.
+- Genelde "devam et" der: yol haritasından sıradaki paketi seçip kendin ilerlemen beklenir ("her şey sende").
 - Tasarımda "premium", 3D ve animasyonlu, ama akıcı (kasmayan) sonuç ister; beğenmezse açıkça söyler.
-- "Commitle ve siteye yükle" dediğinde `main`'e commit + push yapılır, Vercel yayını ve canlı paket doğrulanır. Commit mesajları Türkçe.
+- "Commitle ve siteye yükle" dediğinde `main`'e commit + push yapılır, Vercel yayını ve canlı paket doğrulanır. Commit mesajları Türkçe. Şu an commit istemiyor.
 - Canlı veritabanında değişiklik yapmadan önce onay istenir.
+- Uydurma sayı, yorum, logo kullanılmaz; emanet ödeme "yakında" olarak sunulur (bkz. CLAUDE.md "Doğruluk kuralları").

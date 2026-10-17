@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom'
 import { View, PerspectiveCamera } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import AtolyeIsigi from './atolye/AtolyeIsigi'
+import Isitici from './atolye/Isitici'
 import { Sahne, SatirBaslik } from './uzay/Hareket'
-import TeknolojiBandi, { TEKNOLOJILER } from './atolye/TeknolojiBandi'
+import TeknolojiBandi from './atolye/TeknolojiBandi'
+import { TEKNOLOJILER } from './atolye/teknolojiler'
 
 function hareketAzaltilsinMi() {
     return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -47,6 +49,7 @@ function TeknolojiBolumu() {
                     <BantKamerasi />
                     <AtolyeIsigi />
                     <TeknolojiBandi git={git} azalt={azalt} />
+                    <Isitici />
                 </View>
             </div>
 
@@ -54,7 +57,7 @@ function TeknolojiBolumu() {
             <ul className="mx-auto flex max-w-[1100px] flex-wrap justify-center gap-2 px-4 pb-10 pt-8 sm:px-8">
                 {TEKNOLOJILER.map((t, i) => (
                     <li key={t.ad} className="uz-kalk" style={{ '--d': `${0.45 + i * 0.03}s` }}>
-                        <button onClick={() => git(t.arama)} className="uz-hap uz-hap-cam h-9 px-4 font-kod text-[13px]">
+                        <button onClick={() => git(t.arama)} className="uz-hap isik-hap h-9 px-4 font-kod text-[13px]">
                             {t.ad}
                         </button>
                     </li>

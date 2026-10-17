@@ -3,6 +3,7 @@ import { Sahne, SatirBaslik } from './uzay/Hareket'
 import { View, PerspectiveCamera } from '@react-three/drei'
 import Sikke from './atolye/Sikke'
 import AtolyeIsigi from './atolye/AtolyeIsigi'
+import Isitici from './atolye/Isitici'
 
 // Eşikler ustaYardimcilari.js içindeki gerçek kıdem sistemiyle birebir aynı
 const RUTBELER = [
@@ -31,6 +32,7 @@ function SikkeGorunumu({ r, gorunur, gecikme }) {
                 gecikme={gecikme}
                 azalt={azalt}
             />
+            <Isitici />
         </View>
     )
 }

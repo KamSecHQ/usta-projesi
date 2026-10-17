@@ -4,7 +4,7 @@ import Avatar from './Avatar'
 import Ikon from './Ikon'
 import { IletisimKarti } from './MesajSatiri'
 import { sonGorulmeMetni, tutarGoster } from '../../mesajlasma'
-import { musaitlikBilgisi, ucretAraligiGoster } from '../../ustaYardimcilari'
+import { musaitlikBilgisi, butceGoster } from '../../ustaYardimcilari'
 
 const REHBER = [
     { id: 'kapsam', metin: 'İşin kapsamı yazılı olarak netleşti' },
@@ -45,7 +45,7 @@ function BaglamPaneli({ konusma, mesajlar, benId, cevrimici, durumDegistir, ilet
     const karsi = konusma.karsi
     const [isaretli, setIsaretli] = useState(() => rehberOku(konusma.id))
     const musaitlik = karsi?.rol === 'yazilimci' && karsi?.musaitlik ? musaitlikBilgisi(karsi.musaitlik) : null
-    const butce = konusma.ilan ? ucretAraligiGoster(konusma.ilan.butce_min, konusma.ilan.butce_max) : null
+    const butce = konusma.ilan ? butceGoster(konusma.ilan.butce_min, konusma.ilan.butce_max) : null
     const teklifDurumu = konusma.teklif ? TEKLIF_DURUMU[konusma.teklif.durum] : null
     const paylasilanlar = mesajlar.filter((m) => m.tur === 'iletisim' && !m.silindi && !m.gecici)
     const benPaylastim = paylasilanlar.some((m) => m.gonderen_id === benId)
@@ -118,7 +118,7 @@ function BaglamPaneli({ konusma, mesajlar, benId, cevrimici, durumDegistir, ilet
                                 <span className="min-w-0">
                                     <span className="block text-[13.5px] font-semibold leading-snug group-hover:text-[#DDD6FE] transition-colors">{konusma.ilan.baslik}</span>
                                     <span className="block mt-0.5 text-[12px] text-[#A1A1AA]">
-                                        {ILAN_DURUMU[konusma.ilan.durum] || 'İlan'}{butce && ` · ${butce.replace(' / saat', ' bütçe')}`}
+                                        {ILAN_DURUMU[konusma.ilan.durum] || 'İlan'}{butce && ` · ${butce} bütçe`}
                                     </span>
                                 </span>
                             </Link>

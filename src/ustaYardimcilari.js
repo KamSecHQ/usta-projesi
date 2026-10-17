@@ -14,11 +14,24 @@ export function musaitlikBilgisi(durum) {
     return MUSAITLIK_BILGISI[durum] || MUSAITLIK_BILGISI.musait
 }
 
+// Türk lirası, binlik ayraçla: 12500 → "₺12.500"
+export function tl(tutar) {
+    return `₺${Number(tutar).toLocaleString('tr-TR', { maximumFractionDigits: 0 })}`
+}
+
 export function ucretAraligiGoster(min, max) {
     if (!min && !max) return null
-    if (min && max) return `₺${min} - ₺${max} / saat`
-    if (min) return `₺${min}+ / saat`
-    return `₺${max}'a kadar / saat`
+    if (min && max) return `${tl(min)} – ${tl(max)} / saat`
+    if (min) return `${tl(min)}+ / saat`
+    return `En çok ${tl(max)} / saat`
+}
+
+// İlan bütçesi (toplam iş bedeli)
+export function butceGoster(min, max) {
+    if (!min && !max) return null
+    if (min && max) return min === max ? tl(min) : `${tl(min)} – ${tl(max)}`
+    if (min) return `${tl(min)}+`
+    return `En çok ${tl(max)}`
 }
 
 // YouTube ya da Loom linkini iframe embed adresine çevirir.
@@ -29,11 +42,11 @@ export function videoEmbedUrl(url) {
         const u = new URL(url)
         if (u.hostname.includes('youtube.com')) {
             const id = u.searchParams.get('v')
-            return id ? `https://www.youtube.com/embed/${id}` : null
+            return id ? `https://www.youtube-nocookie.com/embed/${id}` : null
         }
         if (u.hostname === 'youtu.be') {
             const id = u.pathname.slice(1)
-            return id ? `https://www.youtube.com/embed/${id}` : null
+            return id ? `https://www.youtube-nocookie.com/embed/${id}` : null
         }
         if (u.hostname.includes('loom.com')) {
             return url.replace('/share/', '/embed/')
@@ -112,28 +125,23 @@ export function sonrakiKidemHesapla(rol, tamamlananSayisi) {
 }
 
 
-// Bir kullanıcının kaç tamamlanmış iş birliği olduğunu Supabase'den çeker.
-// yazilimci: kabul edilmiş teklifi olan VE ilanı "tamamlandı" olarak işaretlenmiş işler
-// is-veren: kendi verdiği, "tamamlandı" durumundaki ilanlar
-export async function tamamlananIsSayisiGetir(supabase, kullaniciId, rol) {
-    if (rol === 'is-veren') {
-        const { count } = await supabase
-            .from('ilanlar')
-            .select('*', { count: 'exact', head: true })
-            .eq('is_veren_id', kullaniciId)
-            .eq('durum', 'tamamlandi')
-        return count || 0
-    }
-    if (rol === 'yazilimci') {
-        const { count } = await supabase
-            .from('teklifler')
-            .select('*, ilanlar!inner(durum)', { count: 'exact', head: true })
-            .eq('yazilimci_id', kullaniciId)
-            .eq('durum', 'kabul_edildi')
-            .eq('ilanlar.durum', 'tamamlandi')
-        return count || 0
-    }
-    return 0
+// Tamamlanan iş birliği sayısı herkese açık veritabanı fonksiyonundan gelir
+// (tamamlanan_is_sayilari, faz 69). Teklifleri yalnızca taraflar okuyabildiği için
+// istemcide hesaplanınca ziyaretçi herkesi "Çırak" görüyordu.
+// Tamamlanan iş = kabul edilmiş teklifi olan ve ilanı "tamamlandı" olan iş birliği
+// (yazılımcı için kabul edilen teklifleri, iş veren için kabul ettiği teklifli ilanları).
+// Dönüş: { [kullaniciId]: sayi }. Tek çağrıda en fazla 200 kişi.
+export async function tamamlananIsSayilariGetir(supabase, idler) {
+    const benzersiz = [...new Set((idler || []).filter(Boolean))].slice(0, 200)
+    if (!benzersiz.length) return {}
+    const { data, error } = await supabase.rpc('tamamlanan_is_sayilari', { p_kullanicilar: benzersiz })
+    if (error || !data) return {}
+    return Object.fromEntries(data.map((r) => [r.kullanici_id, r.sayi]))
+}
+
+export async function tamamlananIsSayisiGetir(supabase, kullaniciId) {
+    const sayilar = await tamamlananIsSayilariGetir(supabase, [kullaniciId])
+    return sayilar[kullaniciId] || 0
 }
 // Blog başlığından URL-dostu bir slug üretir (Türkçe karakterleri de dönüştürür).
 export function slugOlustur(metin) {
@@ -146,4 +154,44 @@ export function slugOlustur(metin) {
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .replace(/^-|-$/g, '')
+}
+
+// Arama için katlama: büyük/küçük harf ve Türkçe harf farkları (İ/I/ı/i, ş/s, ğ/g, ü/u, ö/o, ç/c)
+// yok sayılır. "ios", "İOS" ve "IOS" aynı sonucu bulur.
+const KATLAMA = { ı: 'i', ş: 's', ğ: 'g', ü: 'u', ö: 'o', ç: 'c', â: 'a', î: 'i', û: 'u' }
+export function aramaIcinKatla(metin) {
+    return (metin || '').toLocaleLowerCase('tr-TR').replace(/[ışğüöçâîû]/g, (h) => KATLAMA[h])
+}
+
+// Listelerdeki en sık etiketler (teknolojiler): filtre çipleri gerçek veriden gelir.
+// Yazımı farklı aynı etiketler ("React", "react") tek çipte toplanır; en sık yazım gösterilir.
+export function sikEtiketler(diziler, adet = 10) {
+    const sayac = new Map()
+    for (const dizi of diziler) {
+        for (const ham of new Set(dizi || [])) {
+            const ad = String(ham).trim()
+            const anahtar = aramaIcinKatla(ad)
+            if (!anahtar) continue
+            const kayit = sayac.get(anahtar) || { ad, sayi: 0 }
+            kayit.sayi++
+            sayac.set(anahtar, kayit)
+        }
+    }
+    return [...sayac.values()].sort((a, b) => b.sayi - a.sayi || a.ad.localeCompare(b.ad, 'tr')).slice(0, adet)
+}
+
+// İlanın istediği teknolojilerden kaçı ustanın teknolojilerinde var (yazım farkları yok sayılır)
+export function teknolojiUyumu(istenen, bilinen) {
+    const ilan = [...new Set((istenen || []).map(aramaIcinKatla).filter(Boolean))]
+    const usta = new Set((bilinen || []).map(aramaIcinKatla))
+    const eslesen = ilan.filter((t) => usta.has(t)).length
+    return { eslesen, toplam: ilan.length }
+}
+
+// Bir tutarın ilan bütçesine göre yeri: { metin: "Aralıkta" | "%12 altında" | "%20 üstünde", yon: -1 | 0 | 1 }
+export function butceyeGore(tutar, min, max) {
+    if (!tutar || (!min && !max)) return null
+    if (min && tutar < min) return { metin: `%${Math.round(((min - tutar) / min) * 100)} altında`, yon: -1 }
+    if (max && tutar > max) return { metin: `%${Math.round(((tutar - max) / max) * 100)} üstünde`, yon: 1 }
+    return { metin: 'Aralıkta', yon: 0 }
 }

@@ -2,71 +2,97 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
+import HesapCercevesi from '../components/hesap/HesapCercevesi'
+import { hesapHatasi } from '../components/hesap/hesapHatalari'
+import { Alan, SifreAlani } from '../components/form/Alan'
+import { useBildirim } from '../components/bildirim/bildirimBaglami'
+import { Ok } from '../components/uzay/Hareket'
 
+const EPOSTA = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 function GirisYap() {
     useSayfaBasligi('Giriş Yap')
-
-    const [email, setEmail] = useState("")
-    const [sifre, setSifre] = useState("")
-    const [hata, setHata] = useState("")
     const navigate = useNavigate()
+    const bildir = useBildirim()
+    const [email, setEmail] = useState('')
+    const [sifre, setSifre] = useState('')
+    const [hatalar, setHatalar] = useState({})
+    const [gonderiliyor, setGonderiliyor] = useState(false)
+    const [sifirlama, setSifirlama] = useState(false)
+
+    // Boş ya da biçimsiz alan sunucuya gitmeden alanın altında söylenir
+    function denetle(sifreDahil) {
+        const h = {}
+        if (!email.trim()) h.email = 'E-posta adresini yaz.'
+        else if (!EPOSTA.test(email.trim())) h.email = 'E-posta adresi ornek@eposta.com biçiminde olmalı.'
+        if (sifreDahil && !sifre) h.sifre = 'Şifreni yaz.'
+        setHatalar(h)
+        return Object.keys(h).length === 0
+    }
 
     async function girisYap(e) {
         e.preventDefault()
-        setHata("")
-        const { error } = await supabase.auth.signInWithPassword({ email, password: sifre })
+        if (!denetle(true)) return
+        setGonderiliyor(true)
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password: sifre })
+        setGonderiliyor(false)
         if (error) {
-            setHata("E-posta ya da şifre hatalı.")
+            setHatalar({ genel: hesapHatasi(error) })
             return
         }
-        navigate('/')
+        navigate('/panel')
+    }
+
+    async function sifirlamaGonder(e) {
+        e.preventDefault()
+        if (!denetle(false)) return
+        setGonderiliyor(true)
+        const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: `${window.location.origin}/sifre-yenile` })
+        setGonderiliyor(false)
+        if (error && /rate limit|too many|security/i.test(error.message)) {
+            setHatalar({ genel: hesapHatasi(error) })
+            return
+        }
+        // Hesabın var olup olmadığı açığa çıkmasın diye her durumda aynı yanıt
+        bildir('Bu e-postayla bir hesap varsa, şifre sıfırlama bağlantısı gönderildi.', { tur: 'basari', sure: 6000 })
+        setSifirlama(false)
     }
 
     return (
-        <div className="min-h-screen bg-[#000000] px-6 py-20">
-            <div className="max-w-md mx-auto">
-                <Link to="/" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF]">
-                    ← Anasayfaya dön
-                </Link>
-                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-8">
-                    Giriş Yap
-                </h1>
-
-                <form onSubmit={girisYap} className="flex flex-col gap-4">
-                    <div>
-                        <label className="text-[#A1A1AA] text-sm block mb-1">E-posta</label>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            className="w-full bg-[#0D0D13] border border-[#2A2A33] rounded px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]"
-                        />
-                    </div>
-                    <div>
-                        <label className="text-[#A1A1AA] text-sm block mb-1">Şifre</label>
-                        <input
-                            type="password"
-                            value={sifre}
-                            onChange={(e) => setSifre(e.target.value)}
-                            required
-                            className="w-full bg-[#0D0D13] border border-[#2A2A33] rounded px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]"
-                        />
-                    </div>
-                    {hata && <p className="text-red-400 text-sm">{hata}</p>}
-                    <button
-                        type="submit"
-                        className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded mt-2"
-                    >
-                        Giriş Yap
-                    </button>
-                    <p className="text-[#A1A1AA] text-sm text-center mt-2">
-                        Hesabın yok mu? <Link to="/hesap-olustur" className="text-[#A78BFA] hover:underline">Hesap oluştur</Link>
+        <HesapCercevesi baslik={sifirlama ? 'Şifreni sıfırla' : 'Tekrar hoş geldin'} altBaslik={sifirlama ? 'E-postana yeni şifre belirleme bağlantısı gönderelim.' : 'Kaldığın yerden devam et.'}>
+            <form onSubmit={sifirlama ? sifirlamaGonder : girisYap} noValidate className="flex flex-col gap-5">
+                <Alan etiket="E-posta" hata={hatalar.email}>
+                    {(p) => <input {...p} type="email" inputMode="email" autoComplete="email" required className="alan" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ornek@eposta.com" />}
+                </Alan>
+                {!sifirlama && <SifreAlani deger={sifre} degisti={setSifre} otomatik="current-password" hata={hatalar.sifre} />}
+                {hatalar.genel && (
+                    <p className="alan-hata -mt-1" role="alert">
+                        {hatalar.genel}
                     </p>
-                </form>
-            </div>
-        </div>
+                )}
+                <button type="submit" disabled={gonderiliyor} className="isik-hap isik-hap-birincil inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[15px] font-semibold disabled:opacity-60">
+                    {gonderiliyor ? 'Bekle…' : sifirlama ? 'Bağlantı gönder' : 'Giriş yap'} {!gonderiliyor && <Ok />}
+                </button>
+                <div className="flex flex-wrap items-center justify-between gap-3 text-[14px]">
+                    <button
+                        type="button"
+                        onClick={() => {
+                            setSifirlama(!sifirlama)
+                            setHatalar({})
+                        }}
+                        className="font-medium text-mor-soluk hover:text-white"
+                    >
+                        {sifirlama ? 'Girişe dön' : 'Şifremi unuttum'}
+                    </button>
+                    <span className="text-gri">
+                        Hesabın yok mu?{' '}
+                        <Link to="/hesap-olustur" className="font-medium text-white hover:text-mor-soluk">
+                            Hesap oluştur
+                        </Link>
+                    </span>
+                </div>
+            </form>
+        </HesapCercevesi>
     )
 }
 

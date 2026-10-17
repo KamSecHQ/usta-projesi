@@ -1,74 +1,122 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
-import { zamanFarki } from '../ustaYardimcilari'
-
-function YaziKarti({ yazi }) {
-    return (
-        <Link
-            to={`/blog/${yazi.slug}`}
-            className="isik-kutu block bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl overflow-hidden hover:border-[#8B5CF6]/40 hover:bg-white/[0.05] transition-all duration-300"
-        >
-            {yazi.kapak_gorseli_url && (
-                <div className="aspect-video w-full overflow-hidden bg-white/[0.03]">
-                    <img
-                        src={yazi.kapak_gorseli_url}
-                        alt={yazi.baslik}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { e.target.style.display = 'none' }}
-                    />
-                </div>
-            )}
-            <div className="p-5">
-                {yazi.kategori && (
-                    <span className="text-[#A78BFA] text-xs font-mono uppercase tracking-wider">{yazi.kategori}</span>
-                )}
-                <h3 className="text-[#FFFFFF] font-semibold mt-1.5">{yazi.baslik}</h3>
-                {yazi.ozet && <p className="text-[#A1A1AA] text-sm mt-2 line-clamp-2">{yazi.ozet}</p>}
-                <p className="text-[#A1A1AA]/50 text-xs mt-4">{zamanFarki(yazi.created_at)}</p>
-            </div>
-        </Link>
-    )
-}
+import { SonucYok, FiltreCipi } from '../components/liste/ListeAraclari'
+import { Sahne, HapLink } from '../components/uzay/Hareket'
+import { OneCikanYazi, YaziKarti, IskeletKart } from '../components/yazi/YaziKartlari'
+import { blogOnizlemesi } from './blogOnizleme'
 
 function BlogListesi() {
-    useSayfaBasligi('Blog')
+    useSayfaBasligi('Blog', 'Yazılım yaptırırken ve serbest çalışırken işine yarayacak rehberler: bütçe, teklif, sözleşme ve teknoloji seçimi.')
     const [yazilar, setYazilar] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
+    const [hata, setHata] = useState(false)
+    const [parametreler, setParametreler] = useSearchParams()
+    const kategori = parametreler.get('kategori') || ''
+
+    // Geliştirmede ?onizleme=1 ile örnek yazılar (canlıda yok)
+    const [onizleme] = useState(() => (import.meta.env.DEV ? blogOnizlemesi(new URLSearchParams(window.location.search).get('onizleme')) : null))
 
     useEffect(() => {
-        async function veriGetir() {
-            const { data, error } = await supabase
-                .from('blog_yazilari')
-                .select('*')
-                .eq('yayinlandi', true)
-                .order('created_at', { ascending: false })
-
-            if (!error) setYazilar(data)
+        if (onizleme) {
+            setYazilar(onizleme)
             setYukleniyor(false)
+            return
         }
-        veriGetir()
-    }, [])
+        let iptal = false
+        supabase
+            .from('blog_yazilari')
+            .select('id, baslik, slug, kategori, ozet, icerik, kapak_gorseli_url, created_at')
+            .eq('yayinlandi', true)
+            .order('created_at', { ascending: false })
+            .then(({ data, error }) => {
+                if (iptal) return
+                if (error) setHata(true)
+                else setYazilar(data || [])
+                setYukleniyor(false)
+            })
+        return () => {
+            iptal = true
+        }
+    }, [onizleme])
+
+    const kategoriler = useMemo(() => {
+        const sayac = new Map()
+        for (const y of yazilar) if (y.kategori) sayac.set(y.kategori, (sayac.get(y.kategori) || 0) + 1)
+        return [...sayac.entries()].sort((a, b) => b[1] - a[1])
+    }, [yazilar])
+
+    const gorunen = kategori ? yazilar.filter((y) => y.kategori === kategori) : yazilar
+    const [oneCikan, ...digerleri] = gorunen
+
+    function kategoriSec(k) {
+        const yeni = new URLSearchParams(parametreler)
+        if (k) yeni.set('kategori', k)
+        else yeni.delete('kategori')
+        setParametreler(yeni, { replace: true })
+    }
 
     return (
-        <div className="min-h-screen bg-[#000000] px-6 py-16">
-            <div className="max-w-4xl mx-auto">
-                <h1 className="text-[#FFFFFF] text-3xl font-bold">Blog</h1>
-                <p className="text-[#A1A1AA] text-sm mt-1 mb-10">Yazılım pazarı, ekip yönetimi ve platformdan haberler.</p>
+        <div className="uzay min-h-screen">
+            <div className="uz-yildizlar" aria-hidden />
+            <section className="px-4 pb-28 pt-14 sm:px-8 lg:pt-20">
+                <div className="mx-auto max-w-[1240px]">
+                    <header className="max-w-[640px]">
+                        <h1 className="font-pjs text-[clamp(2.2rem,4.4vw,3.4rem)] font-medium leading-[1.04] tracking-[-0.03em] text-white">Blog</h1>
+                        <p className="mt-3 text-[16px] font-light leading-relaxed text-gri">
+                            Yazılım yaptıranlar ve yazılımcılar için rehberler: bütçe belirleme, iyi teklif, sözleşme ve teknoloji seçimi.
+                        </p>
+                    </header>
 
-                {yukleniyor ? (
-                    <p className="text-[#A1A1AA] text-sm">Yükleniyor...</p>
-                ) : yazilar.length === 0 ? (
-                    <p className="text-[#A1A1AA] text-sm">Henüz yazı yayınlanmadı.</p>
-                ) : (
-                    <div className="grid sm:grid-cols-2 gap-5">
-                        {yazilar.map((yazi) => (
-                            <YaziKarti key={yazi.id} yazi={yazi} />
-                        ))}
-                    </div>
-                )}
-            </div>
+                    {kategoriler.length > 1 && (
+                        <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Kategoriye göre süz">
+                            <FiltreCipi secili={!kategori} tikla={() => kategoriSec('')}>Tümü</FiltreCipi>
+                            {kategoriler.map(([k, sayi]) => (
+                                <FiltreCipi key={k} secili={kategori === k} tikla={() => kategoriSec(k)}>
+                                    {k} <span className="tabular-nums text-gri-koyu">{sayi}</span>
+                                </FiltreCipi>
+                            ))}
+                        </div>
+                    )}
+
+                    <Sahne className="mt-10" esik={0.01}>
+                        {yukleniyor ? (
+                            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                                <IskeletKart buyuk />
+                                <IskeletKart />
+                                <IskeletKart />
+                                <IskeletKart />
+                            </div>
+                        ) : hata ? (
+                            <SonucYok baslik="Yazılar yüklenemedi" metin="Bağlantını kontrol edip sayfayı yenile." />
+                        ) : yazilar.length === 0 ? (
+                            <SonucYok
+                                baslik="Henüz yayınlanmış yazı yok"
+                                metin="İlk rehberler hazırlanıyor. O zamana kadar açık ilanlara ya da ustaların portföylerine göz atabilirsin."
+                                eylem={<HapLink to="/is-ilanlari">İş ilanları</HapLink>}
+                            />
+                        ) : gorunen.length === 0 ? (
+                            <SonucYok baslik="Bu kategoride yazı yok" metin="Başka bir kategori seç ya da tüm yazılara dön." eylem={<button type="button" onClick={() => kategoriSec('')} className="uz-hap isik-hap">Tüm yazılar</button>} />
+                        ) : (
+                            <div className="space-y-5">
+                                <div className="uz-otur">
+                                    <OneCikanYazi yazi={oneCikan} />
+                                </div>
+                                {digerleri.length > 0 && (
+                                    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                                        {digerleri.map((y, i) => (
+                                            <div key={y.id} className="uz-otur" style={{ '--d': `${Math.min(i, 5) * 0.06}s` }}>
+                                                <YaziKarti yazi={y} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </Sahne>
+                </div>
+            </section>
         </div>
     )
 }

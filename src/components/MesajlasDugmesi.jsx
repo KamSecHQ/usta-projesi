@@ -27,8 +27,10 @@ function MesajlasDugmesi({ teklifId, karsiId, ilanId = null, children = 'Mesajla
         }
     }
 
+    // Tam genişlik istenirse sarmalayıcı da yayılır; yoksa düğme içeriği kadar kalır
+    const tamGenislik = /(^|\s)w-full(\s|$)/.test(className)
     return (
-        <span className="inline-flex flex-col items-start gap-1">
+        <span className={tamGenislik ? 'flex w-full flex-col items-stretch gap-1' : 'inline-flex flex-col items-start gap-1'}>
             <button type="button" onClick={ac} disabled={bekliyor} aria-busy={bekliyor} className={`inline-flex items-center justify-center gap-2 ${className}`}>
                 <Ikon ad="mesaj" className="w-4 h-4" />
                 {bekliyor ? 'Açılıyor…' : children}

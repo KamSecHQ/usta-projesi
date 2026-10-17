@@ -1,24 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { TEKNOLOJILER } from './teknolojiler'
+// Doku yazıları yalnızca anasayfa parçasında kullanılır; yazı tipi tanımları da burada iner
+import '@fontsource-variable/bricolage-grotesque'
+import '@fontsource-variable/onest'
 
 // Konveyör bandı: teknoloji plakaları soldan akar, ortadaki pres her birine
 // "ONAYLI" damgası basar. Plakaya tıklayınca o teknolojinin ustaları açılır.
-
-export const TEKNOLOJILER = [
-    { ad: 'React', arama: 'react' },
-    { ad: 'Next.js', arama: 'next' },
-    { ad: 'TypeScript', arama: 'typescript' },
-    { ad: 'Node.js', arama: 'node' },
-    { ad: 'Python', arama: 'python' },
-    { ad: 'Flutter', arama: 'flutter' },
-    { ad: 'Swift', arama: 'swift' },
-    { ad: 'Kotlin', arama: 'kotlin' },
-    { ad: 'Go', arama: 'go' },
-    { ad: 'PostgreSQL', arama: 'postgresql' },
-    { ad: 'Laravel', arama: 'laravel' },
-    { ad: 'Unity', arama: 'unity' },
-]
 
 const ARALIK = 2.1
 const DONGU = ARALIK * TEKNOLOJILER.length
@@ -98,6 +87,14 @@ function Plaka({ tek, indeks, zaman, secili, sec, git, presDarbesi }) {
             iptal = true
         }
     }, [])
+    // Yazı tipi gelince yeniden çizilen dokular eskilerinin yerini alır; eskiler GPU'da kalmasın
+    useEffect(
+        () => () => {
+            dokular.ham.dispose()
+            dokular.onayli.dispose()
+        },
+        [dokular]
+    )
 
     const ust = useRef()
     const durum = useRef({ damgali: false, kalkma: 0 })
@@ -114,7 +111,6 @@ function Plaka({ tek, indeks, zaman, secili, sec, git, presDarbesi }) {
         if (yeniDamga !== d.damgali) {
             d.damgali = yeniDamga
             ust.current.map = yeniDamga ? dokular.onayli : dokular.ham
-            ust.current.needsUpdate = true
             if (yeniDamga) presDarbesi()
         }
         const hedef = secili === indeks ? 0.28 : 0
@@ -130,6 +126,7 @@ function Plaka({ tek, indeks, zaman, secili, sec, git, presDarbesi }) {
     return (
         <mesh
             ref={mesh}
+            userData={{ isitilacakDokular: [dokular.ham, dokular.onayli] }}
             onPointerOver={(e) => {
                 e.stopPropagation()
                 sec(indeks)

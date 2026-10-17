@@ -1,5 +1,8 @@
-// Işıklı cam düğmeler için imleç takibi: tek bir genel dinleyici, imlecin
-// altındaki .isik / .isik-kutu öğesine yerel --x / --y değerlerini yazar.
+// Işıklı cam düğmeler için imleç takibi: tek bir genel dinleyici, imlecin altındaki
+// .isik / .isik-kutu / .isik-hap / .isik-kart öğesine yerel --x / --y (piksel) ve
+// eğilme için --nx / --ny (-1..1) değerlerini yazar.
+const SECICI = '.isik, .isik-kutu, .isik-hap, .isik-kart'
+
 let kuruldu = false
 
 export function isikTakibiniKur() {
@@ -14,11 +17,15 @@ export function isikTakibiniKur() {
             if (kare) return
             kare = requestAnimationFrame(() => {
                 kare = 0
-                const hedef = son.target instanceof Element ? son.target.closest('.isik, .isik-kutu') : null
+                const hedef = son.target instanceof Element ? son.target.closest(SECICI) : null
                 if (!hedef) return
                 const r = hedef.getBoundingClientRect()
-                hedef.style.setProperty('--x', `${son.clientX - r.left}px`)
-                hedef.style.setProperty('--y', `${son.clientY - r.top}px`)
+                const x = son.clientX - r.left
+                const y = son.clientY - r.top
+                hedef.style.setProperty('--x', `${x}px`)
+                hedef.style.setProperty('--y', `${y}px`)
+                hedef.style.setProperty('--nx', ((x / r.width) * 2 - 1).toFixed(3))
+                hedef.style.setProperty('--ny', ((y / r.height) * 2 - 1).toFixed(3))
             })
         },
         { passive: true }

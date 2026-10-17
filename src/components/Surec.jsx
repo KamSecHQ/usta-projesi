@@ -4,6 +4,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import KodYazanRobot from './atolye/KodYazanRobot'
 import AtolyeIsigi from './atolye/AtolyeIsigi'
+import Isitici from './atolye/Isitici'
 import { Sahne, SatirBaslik } from './uzay/Hareket'
 
 const ASAMALAR = [
@@ -147,6 +148,7 @@ function Surec() {
                     <AtolyeIsigi />
                     <Suspense fallback={null}>
                         <KodYazanRobot asamaRef={asamaRef} gorunurRef={gorunurRef} />
+                        <Isitici />
                     </Suspense>
                 </View>
 

@@ -171,9 +171,44 @@ Depth is light, not shadow stacks. Panels get a 1px white hairline at 7 to 12%, 
 - **Danger (`.isik-tehlike`):** red-tinted glass, only for reject/delete.
 - Cursor position (`--x`, `--y`) is written by one global listener in `src/isikTakip.js`. `.isik` sets `position: relative`; wrap it if it must be absolutely positioned.
 
+- **Light pill (`.isik-hap`, home page):** a nearly transparent glass pill (white 9% to 2.5% over a 32% night tint) whose 1px rim is white at the top and violet at the bottom; under the cursor the rim lights up at the cursor point and a violet light follows the cursor inside. `.isik-hap-birincil` is the white variant. No backdrop blur: the hero video sits underneath, and re-blurring every video frame is expensive. The lift uses `translate`, never `transform`, so entrance animations keep working.
+- **Orbit light (`.isik-hap-yorunge` + `<span class="isik-yorunge">`):** the page's single signature light. A violet comet orbits the hero's primary action every 4.8s; it pauses when the hero leaves the screen and disappears under reduced motion. Use it nowhere else.
+
 ### Cards
 - **`.isik-kutu`:** glass card with a hairline and a violet light that follows the cursor on hover. Links and buttons with this class lift 2px.
+- **`.isik-kart` (home page):** 20px night card (`#0A0A0F`); its rim lights at the cursor, a wide violet light follows inside, and the card tilts toward the cursor (max 4 to 5 degrees). Hover is driven by the parent link's `.group`. Used for usta cards: a showcase strip on top (the usta's featured portfolio cover, or a dotted globe arc derived from the name), the avatar overlapping the strip, a real portfolio count in the footer. Seniority is not shown on cards: offer data is readable only by the parties, so visitors would see everyone as Çırak.
+- **Empty stall (`.isik-kart.bos-tezgah`):** a dashed, finely hatched card that fills empty usta slots with an honest invitation (one to developers, one to employers) instead of an invented profile.
 - **`.uz-panel`:** large 28px-radius panel with a violet glow from the top, used on the home page.
+
+### Lists (`/ustalar`, `/is-ilanlari`)
+- **Toolbar (`.liste-cubuk`):** a 20px glass bar that sticks under the navbar from 1024px up (blur is earned: cards pass underneath); on phones it stays in flow. Search pill with a violet focus ring, a horizontally scrolling chip strip that fades at its edges, an availability or budget switch, and a native select for sorting.
+- **Chips (`.liste-cip`):** counts beside each technology come from live data; the selected chip is violet glass with a soft glow (`aria-pressed`).
+- **Empty results:** a dashed panel that names why the list is empty and offers the fix ("Filtreleri temizle"). A half-empty row is filled with an honest invitation card, never a placeholder profile.
+
+### Forms and the posting wizard
+- **Fields (`.alan`):** 14px-radius glass fields with a violet focus ring (4px, 14% violet); labels are 14px semibold white, hints 12.5px grey, errors pale red with `role="alert"`.
+- **Field wrapper (`Alan`):** label above, field, then error and hint; the error replaces nothing and is announced. Optional fields say "(isteğe bağlı)" in grey after the label. Password fields (`SifreAlani`) carry an inline "Göster/Gizle" text button inside the field's right edge.
+- **Account pages (`HesapCercevesi`):** headline and form card on the left; on wide screens a violet-lit night panel on the right with three true statements about the platform (no stats, no testimonials). Single column on phones.
+- **Settings sections:** stacked 22px-radius night cards (`#08080D`, 8% white border) with a 17px title and one grey sentence; the destructive section is a pale red card at the end.
+- **Choice cards (`.secim-kart`):** radio cards for templates and roles; the chosen one turns violet glass with a soft glow.
+- **Stepper (`.adimlar`):** four thin bars; done steps violet, the current one a violet-to-lavender gradient that glows; visited steps are clickable.
+- **Live preview:** the wizard's right column shows the exact listing card and an "İlan netliği" meter computed from what was typed (never a made-up score).
+- **Comparison table (`.karsilastirma`):** criteria in a sticky first column, one column per offer, the best value per row in lavender with an "en iyi" pill; budget position in green (within or below) or pale red (above).
+
+### Usta profile (`/ustalar/:id`)
+- **Showcase strip:** a 28px-radius banner from the featured portfolio cover (or the name-derived dotted globe), fading into black; a 112px avatar with a 5px black ring overlaps its bottom edge.
+- **Identity:** display name at the headline size, title in lavender, a meta row (rating, location, agency, member since), then badges (Onaylı usta in violet, Kimlik doğrulandı in green, Ajans). Bio as lead text, technology tags below.
+- **Work panel:** a sticky night card with availability (glowing dot), hourly rate in lavender tabular numerals, portfolio count and average rating, the white "İlan aç, teklif iste" pill, the violet "Mesaj gönder", GitHub and favorite; ends with the honest payment line.
+- **Portfolio cards (`ProjeKarti`):** `.isik-kart` with a 16:9 cover (or dotted globe), an "Öne çıkan" pill, title, two-line summary, tags; the live link sits in a footer row outside the card link.
+
+### Reviews (`src/components/degerlendirme/`)
+- **Stars:** one star path, lavender fill (`#A78BFA`) on a 14% white track; averages fill fractionally. The picker is real radio inputs (arrow keys work), with the rating's name ("İyi", "Mükemmel") beside it and a violet focus ring on the star.
+- **Prompt after completion:** a violet-tinted strip "İş tamamlandı. … ile çalışmak nasıldı?" opens an inline form; once given, the review shows in place instead of the button.
+- **Profile block:** a summary card (big tabular average, stars, count, 5→1 distribution bars) beside the list; an honest empty state explains that reviews only come from completed work.
+
+### Feedback
+- **Toast (`.bildirim`):** a dark glass pill at the bottom center with a check (success), an alert ring (error) or a violet dot (info); at most three, gone after ~3s; announced politely.
+- **Confirm dialog (`.onay-diyalog`):** the browser's modal `<dialog>` on a blurred backdrop, 24px radius with violet light from the top. Focus starts on the safe choice ("Vazgeç"); destructive confirmations use the red-tinted `.isik-tehlike` button and name the action ("Üyeyi çıkar", "Yazıyı sil").
 
 ### Messages (`src/components/mesaj/`)
 - **Own bubble:** violet gradient with a soft violet glow; **incoming bubble:** white 5.5% glass. 20px radius, the corner toward the sender tightens to 7px inside a group of consecutive messages.

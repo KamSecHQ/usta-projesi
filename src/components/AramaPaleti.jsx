@@ -91,9 +91,9 @@ function AramaPaleti({ acik, kapat }) {
                         onChange={(e) => { setSorgu(e.target.value); setSeciliIndex(0) }}
                         onKeyDown={klavyeYonet}
                         placeholder="Usta ara: isim, unvan ya da teknoloji..."
-                        className="flex-1 bg-transparent py-4 text-[#FFFFFF] outline-none placeholder:text-[#A1A1AA]/40"
+                        className="flex-1 bg-transparent py-4 text-[#FFFFFF] outline-none placeholder:text-gri-koyu"
                     />
-                    <kbd className="text-[#A1A1AA]/50 text-xs font-mono border border-white/[0.1] rounded px-1.5 py-0.5">ESC</kbd>
+                    <kbd className="text-gri-koyu text-xs font-mono border border-white/[0.1] rounded px-1.5 py-0.5">ESC</kbd>
                 </div>
 
                 <div className="max-h-80 overflow-y-auto">
@@ -121,7 +121,7 @@ function AramaPaleti({ acik, kapat }) {
                     )}
                 </div>
 
-                <div className="flex items-center gap-4 px-4 py-2.5 border-t border-white/[0.08] text-[#A1A1AA]/50 text-xs">
+                <div className="flex items-center gap-4 px-4 py-2.5 border-t border-white/[0.08] text-gri-koyu text-xs">
                     <span className="flex items-center gap-1"><kbd className="border border-white/[0.1] rounded px-1">↑↓</kbd> gezin</span>
                     <span className="flex items-center gap-1"><kbd className="border border-white/[0.1] rounded px-1">↵</kbd> seç</span>
                 </div>

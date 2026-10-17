@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../supabaseClient'
 import { useAuth } from '../AuthContext'
+import { useBildirim } from './bildirim/bildirimBaglami'
 
-function FavoriButonu({ ustaId, boyut = "normal" }) {
+// baslangic: liste sayfaları favorileri tek sorguda çekip buraya verir; o zaman düğme kendi sorgusunu atmaz.
+function FavoriButonu({ ustaId, boyut = "normal", baslangic }) {
     const { user } = useAuth()
-    const [favoriMi, setFavoriMi] = useState(false)
+    const bildir = useBildirim()
+    const [favoriMi, setFavoriMi] = useState(!!baslangic)
     const [yukleniyor, setYukleniyor] = useState(false)
-    const [kontrolEdildi, setKontrolEdildi] = useState(false)
+    const [kontrolEdildi, setKontrolEdildi] = useState(baslangic !== undefined)
 
     useEffect(() => {
+        if (baslangic !== undefined) {
+            setFavoriMi(baslangic)
+            setKontrolEdildi(true)
+            return
+        }
         async function kontrolEt() {
             if (!user || user.id === ustaId) {
                 setKontrolEdildi(true)
@@ -25,7 +33,7 @@ function FavoriButonu({ ustaId, boyut = "normal" }) {
             setKontrolEdildi(true)
         }
         kontrolEt()
-    }, [user, ustaId])
+    }, [user, ustaId, baslangic])
 
     async function tikla(e) {
         e.preventDefault()
@@ -33,14 +41,16 @@ function FavoriButonu({ ustaId, boyut = "normal" }) {
         if (!user || yukleniyor) return
 
         setYukleniyor(true)
-        if (favoriMi) {
-            await supabase.from('favoriler').delete().eq('kullanici_id', user.id).eq('usta_id', ustaId)
-            setFavoriMi(false)
-        } else {
-            await supabase.from('favoriler').insert({ kullanici_id: user.id, usta_id: ustaId })
-            setFavoriMi(true)
-        }
+        const { error } = favoriMi
+            ? await supabase.from('favoriler').delete().eq('kullanici_id', user.id).eq('usta_id', ustaId)
+            : await supabase.from('favoriler').insert({ kullanici_id: user.id, usta_id: ustaId })
         setYukleniyor(false)
+        if (error) {
+            bildir('Favoriler güncellenemedi. Tekrar dene.', { tur: 'hata' })
+            return
+        }
+        bildir(favoriMi ? 'Favorilerden çıkarıldı' : 'Favorilere eklendi', { tur: 'basari' })
+        setFavoriMi(!favoriMi)
     }
 
     // Kendi profilinde ya da giriş yapılmamışsa gösterme.

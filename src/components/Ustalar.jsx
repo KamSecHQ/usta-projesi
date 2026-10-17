@@ -1,101 +1,46 @@
 import { useState, useEffect } from 'react'
 import { Sahne, SatirBaslik, HapLink } from './uzay/Hareket'
-import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
-import { musaitlikBilgisi, ucretAraligiGoster } from '../ustaYardimcilari'
+import UstaIcazeti, { BosTezgah, IskeletIcazet } from './usta/UstaIcazeti'
+import { USTA_ALANLARI, kartVerisiniTamamla } from '../ustaVerisi'
 
-function baslangicHarfleri(adSoyad) {
-    if (!adSoyad) return "?"
-    return adSoyad
-        .split(" ")
-        .filter(Boolean)
-        .slice(0, 2)
-        .map((k) => k[0].toLocaleUpperCase('tr-TR'))
-        .join("")
-}
-
-// Usta kartı: koyu cam yüzey, imleçle yanan mor kenar ışığı
-function Icazet({ usta, sira }) {
-    const mus = musaitlikBilgisi(usta.musaitlik)
-    const ucret = ucretAraligiGoster(usta.saatlik_ucret_min, usta.saatlik_ucret_max)
-    const etiketler = (usta.teknolojiler || []).slice(0, 4)
-
-    return (
-        <Link
-            to={`/ustalar/${usta.id}`}
-            className="uz-otur group relative block overflow-hidden rounded-[22px] border border-white/[0.09] bg-cam p-6 transition-[border-color,transform] duration-500 ease-(--ease-cekic) hover:-translate-y-1 hover:border-mor/50 sm:p-7"
-            style={{ '--d': `${0.3 + sira * 0.1}s` }}
-        >
-            <span aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_0%,rgba(139,92,246,0.18),transparent_70%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-            <div className="relative flex items-start justify-between gap-3">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[15px] font-semibold text-black">
-                    {baslangicHarfleri(usta.ad_soyad)}
-                </div>
-                {usta.onayli && (
-                    <span className="uz-etiket">
-                        <svg viewBox="0 0 12 12" className="h-3 w-3 text-mor-acik" fill="none" aria-hidden>
-                            <path d="M2.5 6.2 5 8.5l4.5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                        Onaylı usta
-                    </span>
-                )}
-            </div>
-
-            <h3 className="relative mt-6 text-[22px] font-medium leading-tight tracking-[-0.015em] text-white">
-                {usta.ad_soyad || "İsimsiz Usta"}
-            </h3>
-            <div className="relative mt-1 text-[15px] font-light text-gri">{usta.unvan}</div>
-            {usta.bio && (
-                <p className="relative mt-3 line-clamp-2 text-[15px] font-light leading-relaxed text-gri-koyu">{usta.bio}</p>
-            )}
-
-            {etiketler.length > 0 && (
-                <div className="relative mt-5 flex flex-wrap gap-1.5">
-                    {etiketler.map((t) => (
-                        <span key={t} className="uz-etiket font-kod text-[11px]">
-                            {t}
-                        </span>
-                    ))}
-                </div>
-            )}
-
-            <div className="relative mt-6 flex items-center justify-between border-t border-white/[0.08] pt-4 text-[13.5px]">
-                <span className="flex items-center gap-2 text-gri">
-                    <span className="h-2 w-2 rounded-full" style={{ backgroundColor: mus.renk }} />
-                    {mus.etiket}
-                </span>
-                {ucret && <span className="rakam font-medium text-white">{ucret}</span>}
-            </div>
-        </Link>
-    )
-}
-
-function IskeletIcazet() {
-    return (
-        <div className="h-[300px] animate-pulse rounded-[22px] border border-white/[0.06] bg-cam" />
-    )
-}
+const KART_SAYISI = 3
 
 function Ustalar() {
     const [ustalar, setUstalar] = useState([])
+    const [projeler, setProjeler] = useState({})
     const [yukleniyor, setYukleniyor] = useState(true)
 
     useEffect(() => {
+        let iptal = false
         async function veriGetir() {
             const { data, error } = await supabase
                 .from('profiller')
-                .select('*')
+                .select(USTA_ALANLARI)
                 .eq('rol', 'yazilimci')
                 .eq('onayli', true)
                 .not('unvan', 'is', null)
                 .order('created_at', { ascending: false })
-                .limit(3)
+                .limit(KART_SAYISI)
+            if (iptal) return
+            if (error || !data) {
+                setYukleniyor(false)
+                return
+            }
 
-            if (!error) setUstalar(data)
+            const kart = await kartVerisiniTamamla(supabase, data)
+            if (iptal) return
+            setUstalar(kart.ustalar)
+            setProjeler(kart.projeler)
             setYukleniyor(false)
         }
         veriGetir()
+        return () => {
+            iptal = true
+        }
     }, [])
+
+    const bosYer = Math.max(0, KART_SAYISI - ustalar.length)
 
     return (
         <Sahne as="section" id="ustalar" className="uz-ufuk px-4 py-28 sm:px-8 lg:py-36">
@@ -111,26 +56,30 @@ function Ustalar() {
 
             <div className="mx-auto mt-14 max-w-[1240px]">
                 {yukleniyor ? (
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <div className="grid gap-5 md:grid-cols-3">
                         <IskeletIcazet />
                         <IskeletIcazet />
                         <IskeletIcazet />
                     </div>
                 ) : ustalar.length === 0 ? (
-                    <div className="uz-otur mx-auto max-w-[560px] rounded-[22px] border border-dashed border-white/15 p-10 text-center" style={{ '--d': '0.3s' }}>
-                        <p className="text-[20px] font-medium text-white">Henüz onaylı bir usta yok.</p>
-                        <p className="mt-2 text-[15px] font-light text-gri">İlk onaylı usta sen olabilirsin.</p>
-                    </div>
+                    <BosTezgah sira={0} genis />
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-3">
+                    <ul className="grid gap-5 md:grid-cols-3">
                         {ustalar.map((usta, i) => (
-                            <Icazet key={usta.id} usta={usta} sira={i} />
+                            <li key={usta.id}>
+                                <UstaIcazeti usta={usta} projeler={projeler[usta.id] || []} sira={i} />
+                            </li>
                         ))}
-                    </div>
+                        {Array.from({ length: bosYer }, (_, i) => (
+                            <li key={`bos-${i}`} className={i > 0 ? 'hidden md:block' : ''}>
+                                <BosTezgah sira={ustalar.length + i} tur={i === bosYer - 1 && bosYer > 1 ? 'isVeren' : 'usta'} />
+                            </li>
+                        ))}
+                    </ul>
                 )}
             </div>
 
-            <div className="mt-10 flex flex-wrap justify-center gap-2.5">
+            <div className="mt-12 flex flex-wrap justify-center gap-2.5">
                 <HapLink to="/ustalar" className="uz-otur" gecikme={0.45}>Tüm ustaları gör</HapLink>
                 <HapLink to="/hesap-olustur?rol=yazilimci" tur="cam" className="uz-otur" gecikme={0.52}>Usta olarak katıl</HapLink>
             </div>

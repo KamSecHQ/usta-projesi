@@ -50,11 +50,12 @@ Bu dosya 17 Ekim 2026'daki canlı şemadan çıkarıldı. Eski tabloların SQL'i
 - `mesaj_tepkileri`: `mesaj_id`, `kullanici_id`, `emoji` (👍 ❤️ 🙌 ✅ 😂 🔥)
 - Realtime yayınında: konusmalar, mesajlar, konusma_durumu, mesaj_tepkileri.
 
-## RPC'ler (giriş yapmış kullanıcı)
+## RPC'ler (aksi yazılmadıkça giriş yapmış kullanıcı)
 - `konusma_baslat(p_karsi uuid, p_ilan uuid default null) → uuid`
 - `teklif_konusmasi_ac(p_teklif uuid) → uuid` (yalnızca teklifin iki tarafı)
 - `mesaj_sil(p_mesaj uuid)` (kendi mesajı; önizleme ve alıntılar da temizlenir)
 - `okunmamis_sayilari() → (konusma_id, sayi)`
+- `tamamlanan_is_sayilari(p_kullanicilar uuid[]) → (kullanici_id, sayi)`: kıdem için tamamlanan iş sayısı; **anon dahil herkese açık**, yalnızca sayı döndürür, en fazla 200 kişi (`migrations/20261017c_tamamlanan_is_sayilari.sql`). Supabase taramasındaki "anon security definer" uyarısı bu yüzden bilinçlidir.
 - `konusma_katilimcisi_mi(k uuid) → boolean` (RLS politikalarının yardımcısı)
 
 ## Tetikleyiciler

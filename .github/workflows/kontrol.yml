@@ -1,0 +1,27 @@
+# Her push ve PR'da: lint (0 uyarı), birim testleri, üretim derlemesi.
+name: Kontrol
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  kontrol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Lint (uyarı da hata sayılır)
+        run: npx oxlint --deny-warnings
+      - name: Birim testleri
+        run: npm test
+      - name: Derleme
+        run: npm run build
+      - name: İlk yük bütçesi
+        run: npm run butce

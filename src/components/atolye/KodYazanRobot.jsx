@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { RoundedBox, ContactShadows } from '@react-three/drei'
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
 import * as THREE from 'three'
@@ -23,14 +23,16 @@ const R = {
     tamam: '#B9A4FF',
 }
 
-export const SAHNELER = [
+const SAHNELER = [
     {
         dosya: 'ilan.json',
         satirlar: [
             [['$ ', R.dolar], ['kalfahane ilan oluştur', R.komut]],
             [['{', R.noktalama]],
             [['  "baslik"', R.anahtar], [': ', R.noktalama], ['"E-ticaret sitesi"', R.dize], [',', R.noktalama]],
-            [['  "teknoloji"', R.anahtar], [': [', R.noktalama], ['"Next.js"', R.dize], [', ', R.noktalama], ['"PostgreSQL"', R.dize], ['],', R.noktalama]],
+            [['  "teknoloji"', R.anahtar], [': [', R.noktalama]],
+            [['    "Next.js"', R.dize], [', ', R.noktalama], ['"PostgreSQL"', R.dize]],
+            [['  ],', R.noktalama]],
             [['  "teslim"', R.anahtar], [': ', R.noktalama], ['"6 hafta"', R.dize]],
             [['}', R.noktalama]],
             [['✓ ', R.tamam], ['ilan yayında', R.tamam]],
@@ -39,7 +41,7 @@ export const SAHNELER = [
     {
         dosya: 'teklifler',
         satirlar: [
-            [['$ ', R.dolar], ['kalfahane teklifler --ilan e-ticaret', R.komut]],
+            [['$ ', R.dolar], ['kalfahane teklifler e-ticaret', R.komut]],
             [['  Kıdemli Usta  ', R.dize], ['12 iş  ', R.sayi], ['Next.js', R.soluk]],
             [['  Usta          ', R.dize], [' 4 iş  ', R.sayi], ['React', R.soluk]],
             [['  Kalfa         ', R.dize], [' 1 iş  ', R.sayi], ['Vue', R.soluk]],
@@ -72,11 +74,12 @@ function bitenSatir(sahne, n) {
 }
 
 // ---------------------------------------------------------------------------
-// Ekran dokusu: 2x çözünürlük; solda kod, sağda önizleme
+// Ekran dokusu: 1024×600 düzen, 2x çözünürlükte çizilir; solda kod, sağda önizleme.
+// Kod 24 px: ekran sahnede ~450 px genişlikte göründüğü için daha küçük yazı okunmuyordu.
 // ---------------------------------------------------------------------------
 const EG = 1024
 const EY = 600
-const OLCEK = 1.5
+const OLCEK = 2
 const BOLUM = 600 // kod | önizleme ayrımı
 
 function yuvarlakDikdortgen(ctx, x, y, w, h, r) {
@@ -89,15 +92,15 @@ function yuvarlakDikdortgen(ctx, x, y, w, h, r) {
     ctx.closePath()
 }
 
-function hap(ctx, metin, x, y, { zemin = 'rgba(255,255,255,0.08)', renk = '#E9E4FF', boyut = 13 } = {}) {
-    ctx.font = `500 ${boyut}px "Plus Jakarta Sans Variable", sans-serif`
-    const w = ctx.measureText(metin).width + 22
+function hap(ctx, metin, x, y, { zemin = 'rgba(255,255,255,0.08)', renk = '#E9E4FF', boyut = 15 } = {}) {
+    ctx.font = `600 ${boyut}px "Plus Jakarta Sans Variable", sans-serif`
+    const w = ctx.measureText(metin).width + 26
     ctx.fillStyle = zemin
-    yuvarlakDikdortgen(ctx, x, y, w, 26, 13)
+    yuvarlakDikdortgen(ctx, x, y, w, 30, 15)
     ctx.fill()
     ctx.fillStyle = renk
     ctx.textBaseline = 'middle'
-    ctx.fillText(metin, x + 11, y + 13.5)
+    ctx.fillText(metin, x + 13, y + 15.5)
     return w
 }
 
@@ -107,10 +110,10 @@ function onizlemeCiz(ctx, asama, sahne, n, toplam) {
     const biten = bitenSatir(sahne, n)
     const oran = toplam ? n / toplam : 0
 
-    ctx.font = '600 12px "Plus Jakarta Sans Variable", sans-serif'
-    ctx.fillStyle = '#6E6E7C'
+    ctx.font = '700 14px "Plus Jakarta Sans Variable", sans-serif'
+    ctx.fillStyle = '#7E7E8C'
     ctx.textBaseline = 'middle'
-    ctx.fillText('ÖNİZLEME', x0, 92)
+    ctx.fillText('ÖNİZLEME', x0, 90)
 
     ctx.save()
     if (asama === 0) {
@@ -122,23 +125,23 @@ function onizlemeCiz(ctx, asama, sahne, n, toplam) {
         ctx.strokeStyle = 'rgba(255,255,255,0.09)'
         ctx.stroke()
         ctx.fillStyle = '#8A8A98'
-        ctx.font = '500 13px "Plus Jakarta Sans Variable", sans-serif'
+        ctx.font = '500 15px "Plus Jakarta Sans Variable", sans-serif'
         ctx.fillText('Yeni ilan', x0 + 22, 146)
         if (biten > 2) {
             ctx.fillStyle = '#FFFFFF'
-            ctx.font = '600 24px "Plus Jakarta Sans Variable", sans-serif'
-            ctx.fillText('E-ticaret sitesi', x0 + 22, 184)
-        }
-        if (biten > 3) {
-            const a = hap(ctx, 'Next.js', x0 + 22, 214)
-            hap(ctx, 'PostgreSQL', x0 + 30 + a, 214)
+            ctx.font = '700 27px "Plus Jakarta Sans Variable", sans-serif'
+            ctx.fillText('E-ticaret sitesi', x0 + 22, 182)
         }
         if (biten > 4) {
-            ctx.fillStyle = '#A1A1AA'
-            ctx.font = '400 14px "Plus Jakarta Sans Variable", sans-serif'
-            ctx.fillText('Teslim süresi · 6 hafta', x0 + 22, 268)
+            const a = hap(ctx, 'Next.js', x0 + 22, 212)
+            hap(ctx, 'PostgreSQL', x0 + 30 + a, 212)
         }
-        if (biten > 6) hap(ctx, '● İlan yayında', x0 + 22, 310, { zemin: 'rgba(139,92,246,0.22)', renk: '#C4B5FD' })
+        if (biten > 6) {
+            ctx.fillStyle = '#A1A1AA'
+            ctx.font = '400 16px "Plus Jakarta Sans Variable", sans-serif'
+            ctx.fillText('Teslim süresi · 6 hafta', x0 + 22, 272)
+        }
+        if (biten > 8) hap(ctx, '● İlan yayında', x0 + 22, 310, { zemin: 'rgba(139,92,246,0.22)', renk: '#C4B5FD' })
     } else if (asama === 1) {
         // Teklifler satır satır gelir
         const teklifler = [
@@ -159,15 +162,15 @@ function onizlemeCiz(ctx, asama, sahne, n, toplam) {
             ctx.arc(x0 + 40, y + 39, 20, 0, Math.PI * 2)
             ctx.fill()
             ctx.fillStyle = '#050505'
-            ctx.font = '700 13px "Plus Jakarta Sans Variable", sans-serif'
+            ctx.font = '800 14px "Plus Jakarta Sans Variable", sans-serif'
             ctx.textAlign = 'center'
             ctx.fillText(bas, x0 + 40, y + 40)
             ctx.textAlign = 'left'
             ctx.fillStyle = '#FFFFFF'
-            ctx.font = '600 17px "Plus Jakarta Sans Variable", sans-serif'
-            ctx.fillText(rutbe, x0 + 74, y + 30)
-            ctx.fillStyle = '#8A8A98'
-            ctx.font = '400 13px "Plus Jakarta Sans Variable", sans-serif'
+            ctx.font = '700 19px "Plus Jakarta Sans Variable", sans-serif'
+            ctx.fillText(rutbe, x0 + 74, y + 29)
+            ctx.fillStyle = '#9A9AA8'
+            ctx.font = '500 15px "Plus Jakarta Sans Variable", sans-serif'
             ctx.fillText(alt, x0 + 74, y + 54)
         })
         if (biten > 4) hap(ctx, 'Ustanı seç →', x0, 404, { zemin: '#FDFDFD', renk: '#050505' })
@@ -182,7 +185,7 @@ function onizlemeCiz(ctx, asama, sahne, n, toplam) {
         yuvarlakDikdortgen(ctx, x0 + 14, 128, w - 28, 22, 11)
         ctx.fill()
         ctx.fillStyle = '#6E6E7C'
-        ctx.font = '400 11px "JetBrains Mono Variable", monospace'
+        ctx.font = '500 13px "JetBrains Mono Variable", monospace'
         ctx.fillText('e-ticaret.kalfahane.app', x0 + 28, 140)
         const insa = Math.min(1, oran * 1.3)
         ctx.globalAlpha = 0.25 + insa * 0.75
@@ -193,8 +196,8 @@ function onizlemeCiz(ctx, asama, sahne, n, toplam) {
         yuvarlakDikdortgen(ctx, x0 + 14, 164, w - 28, 104, 12)
         ctx.fill()
         ctx.fillStyle = '#FFFFFF'
-        ctx.font = '700 18px "Plus Jakarta Sans Variable", sans-serif'
-        ctx.fillText('Yeni sezon', x0 + 30, 200)
+        ctx.font = '800 22px "Plus Jakarta Sans Variable", sans-serif'
+        ctx.fillText('Yeni sezon', x0 + 30, 198)
         ctx.fillStyle = 'rgba(255,255,255,0.7)'
         ctx.fillRect(x0 + 30, 220, 120, 7)
         ctx.fillStyle = '#FDFDFD'
@@ -207,7 +210,7 @@ function onizlemeCiz(ctx, asama, sahne, n, toplam) {
         }
         ctx.globalAlpha = 1
         if (biten > 4) {
-            hap(ctx, '● Canlı', x0 + w - 98, 420, { zemin: 'rgba(139,92,246,0.25)', renk: '#C4B5FD' })
+            hap(ctx, '● Canlı', x0 + w - 104, 420, { zemin: 'rgba(139,92,246,0.25)', renk: '#C4B5FD' })
         }
     }
     ctx.restore()
@@ -239,11 +242,11 @@ function ekraniCiz(ctx, asama, sahne, n, imlec) {
         ctx.arc(30 + i * 22, 28, 6, 0, Math.PI * 2)
         ctx.fill()
     })
-    ctx.font = '500 15px "JetBrains Mono Variable", ui-monospace, monospace'
-    ctx.fillStyle = '#8A8A98'
+    ctx.font = '500 17px "JetBrains Mono Variable", ui-monospace, monospace'
+    ctx.fillStyle = '#9A9AA8'
     ctx.fillText(`kalfahane — ${sahne.dosya}`, 110, 29)
     ctx.textAlign = 'right'
-    ctx.fillStyle = '#55555F'
+    ctx.fillStyle = '#62626E'
     ctx.fillText('örnek veri', EG - 24, 29)
     ctx.textAlign = 'left'
 
@@ -252,20 +255,21 @@ function ekraniCiz(ctx, asama, sahne, n, imlec) {
     ctx.fillRect(BOLUM, 57, 1, EY - 57)
 
     // Kod
-    ctx.font = '500 17px "JetBrains Mono Variable", ui-monospace, monospace'
-    const satirY = 98
-    const satirAra = 34
+    const satirY = 100
+    const satirAra = 42
     let kalan = n
-    let imlecX = 62
+    let imlecX = 66
     let imlecY = satirY
     for (let i = 0; i < sahne.satirlar.length; i++) {
         const y = satirY + i * satirAra
         if (kalan <= 0 && i > 0) break
-        ctx.fillStyle = '#34343E'
+        ctx.font = '500 17px "JetBrains Mono Variable", ui-monospace, monospace'
+        ctx.fillStyle = '#3E3E4A'
         ctx.textAlign = 'right'
-        ctx.fillText(String(i + 1), 40, y)
+        ctx.fillText(String(i + 1), 42, y)
         ctx.textAlign = 'left'
-        let x = 62
+        ctx.font = '600 24px "JetBrains Mono Variable", ui-monospace, monospace'
+        let x = 66
         for (const [metin, renk] of sahne.satirlar[i]) {
             if (kalan <= 0) break
             const harfler = Array.from(metin)
@@ -281,14 +285,10 @@ function ekraniCiz(ctx, asama, sahne, n, imlec) {
     }
     if (imlec) {
         ctx.fillStyle = '#A78BFA'
-        ctx.fillRect(imlecX + 2, imlecY - 11, 9, 22)
+        ctx.fillRect(imlecX + 2, imlecY - 14, 12, 28)
     }
 
     onizlemeCiz(ctx, asama, sahne, n, toplam)
-
-    // İnce tarama çizgileri: cam ekran hissi
-    ctx.fillStyle = 'rgba(255,255,255,0.016)'
-    for (let y = 58; y < EY; y += 3) ctx.fillRect(0, y, EG, 0.6)
 }
 
 // ---------------------------------------------------------------------------
@@ -706,7 +706,7 @@ function KodEkrani({ doku }) {
         kutu.current.position.y = 1.2 + Math.sin(state.clock.elapsedTime * 0.9) * 0.02
     })
     return (
-        <group ref={kutu} position={[1.55, 1.2, 0.05]} rotation={[0, -0.6, 0]}>
+        <group ref={kutu} position={[1.55, 1.2, 0.05]} rotation={[0, -0.5, 0]}>
             <mesh position={[0, 0, -0.08]}>
                 <planeGeometry args={[3.6, 2.4]} />
                 <meshBasicMaterial map={parlalti} transparent depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} />
@@ -845,6 +845,7 @@ function hareketAzaltilsinMi() {
 export default function KodYazanRobot({ asamaRef, gorunurRef }) {
     const m = useMalzemeler()
     const azalt = useMemo(hareketAzaltilsinMi, [])
+    const gl = useThree((s) => s.gl)
 
     const tuval = useMemo(() => {
         const c = document.createElement('canvas')
@@ -855,9 +856,10 @@ export default function KodYazanRobot({ asamaRef, gorunurRef }) {
     const doku = useMemo(() => {
         const d = new THREE.CanvasTexture(tuval)
         d.colorSpace = THREE.SRGBColorSpace
-        d.anisotropy = 8
+        // Ekran eğik durduğu için en yüksek yönlü süzme: yazı yana bakınca bulanıklaşmasın
+        d.anisotropy = gl.capabilities.getMaxAnisotropy()
         return d
-    }, [tuval])
+    }, [tuval, gl])
 
     const basilan = useRef(new Float32Array(SATIR * SUTUN))
     const solHedef = useRef(new THREE.Vector3(-0.24, 0.52, 0.66))
@@ -886,7 +888,7 @@ export default function KodYazanRobot({ asamaRef, gorunurRef }) {
     // Yazı tipleri yüklenince ekranı yeniden çiz
     useEffect(() => {
         Promise.all([
-            document.fonts?.load('500 17px "JetBrains Mono Variable"'),
+            document.fonts?.load('600 24px "JetBrains Mono Variable"'),
             document.fonts?.load('600 17px "Plus Jakarta Sans Variable"'),
         ]).then(() => {
             durum.current.sonCizilen = -1

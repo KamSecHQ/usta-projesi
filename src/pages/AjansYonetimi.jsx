@@ -1,154 +1,235 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
+import { useBildirim, useOnay } from '../components/bildirim/bildirimBaglami'
 import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
+import { baslangicHarfleri } from '../mesajlasma'
+import { Alan } from '../components/form/Alan'
+import { SonucYok } from '../components/liste/ListeAraclari'
+import { HapLink, Ok } from '../components/uzay/Hareket'
 
-function baslangicHarfleri(adSoyad) {
-    if (!adSoyad) return "?"
-    return adSoyad.split(" ").filter(Boolean).slice(0, 2).map((k) => k[0].toUpperCase()).join("")
+const kart = 'rounded-[22px] border border-white/[0.08] bg-[#08080D] p-6 sm:p-7'
+
+function KisiAvatar({ profil }) {
+    return profil?.avatar_url ? (
+        <img src={profil.avatar_url} alt="" className="h-10 w-10 shrink-0 rounded-full border border-white/[0.1] object-cover" />
+    ) : (
+        <span aria-hidden className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] text-[12.5px] font-semibold text-[#050505]">
+            {baslangicHarfleri(profil?.ad_soyad)}
+        </span>
+    )
 }
 
+function KisiSatiri({ profil, alt, rozet, children }) {
+    return (
+        <li className="flex items-center justify-between gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.02] px-4 py-3">
+            <div className="flex min-w-0 items-center gap-3">
+                <KisiAvatar profil={profil} />
+                <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                        <span className="truncate text-[14.5px] text-white">{profil?.ad_soyad || 'İsimsiz yazılımcı'}</span>
+                        {rozet}
+                    </div>
+                    {alt && <p className="truncate text-[13px] text-gri-koyu">{alt}</p>}
+                </div>
+            </div>
+            <div className="flex shrink-0 items-center gap-1">{children}</div>
+        </li>
+    )
+}
+
+const AJANS_ADIMLARI = [
+    ['Ajans moduna geç', 'Profil sayfan ajans olarak görünür; istediğin an bireysel moda dönebilirsin.'],
+    ['Ekibini davet et', 'Yalnızca onaylı yazılımcı hesapları davet edilebilir.'],
+    ['Kabul edenler profilinde görünür', 'Davet edilen kişi kabul etmeden ekibinde listelenmez.'],
+]
+
+const kucukDugme = 'rounded-full px-3 py-1.5 text-[13px] font-medium text-gri transition-colors hover:bg-white/[0.06] hover:text-white'
+
 function AjansYonetimi() {
-    useSayfaBasligi('Ajansım')
+    useSayfaBasligi('Ajansım', 'Ajans profilini yönet: ekibine onaylı yazılımcıları davet et, portföyünde birlikte görünün.')
     const { user, yukleniyor: authYukleniyor } = useAuth()
+    const bildir = useBildirim()
+    const onayla = useOnay()
 
     const [profil, setProfil] = useState(null)
-    const [uyeler, setUyeler] = useState([])
-    const [bekleyenDavetler, setBekleyenDavetler] = useState([])
+    const [davetler, setDavetler] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
     const [gecisYapiliyor, setGecisYapiliyor] = useState(false)
 
-    const [aramaMetni, setAramaMetni] = useState("")
+    const [aramaMetni, setAramaMetni] = useState('')
     const [aramaSonuclari, setAramaSonuclari] = useState([])
-    const [rolAciklamasi, setRolAciklamasi] = useState("")
+    const [aramaYapildi, setAramaYapildi] = useState(false)
+    const [rolAciklamasi, setRolAciklamasi] = useState('')
     const [davetGonderiliyor, setDavetGonderiliyor] = useState(false)
-    const [hata, setHata] = useState("")
+    const [hata, setHata] = useState('')
+    // Yazarken sırayla giden aramalardan yalnızca en sonuncusunun yanıtı kullanılır
+    const sonArama = useRef(0)
 
-    async function veriGetir() {
+    const veriGetir = useCallback(async () => {
         if (!user) return
         const { data: profilData } = await supabase.from('profiller').select('*').eq('id', user.id).single()
         setProfil(profilData)
 
         if (profilData?.profil_tipi === 'ajans') {
-            const { data: davetlerData } = await supabase
+            const { data } = await supabase
                 .from('ajans_davetleri')
-                .select('*, profiller!ajans_davetleri_davet_edilen_id_fkey(ad_soyad, unvan)')
+                .select('*, profiller!ajans_davetleri_davet_edilen_id_fkey(ad_soyad, unvan, avatar_url)')
                 .eq('ajans_id', user.id)
                 .order('created_at', { ascending: false })
-
-            setUyeler((davetlerData || []).filter((d) => d.durum === 'kabul_edildi'))
-            setBekleyenDavetler((davetlerData || []).filter((d) => d.durum === 'beklemede'))
+            setDavetler(data || [])
         }
         setYukleniyor(false)
-    }
+    }, [user])
 
     useEffect(() => {
         if (user) veriGetir()
-    }, [user])
+    }, [user, veriGetir])
 
     async function ajansModunaGec() {
         setGecisYapiliyor(true)
-        await supabase.from('profiller').update({ profil_tipi: 'ajans' }).eq('id', user.id)
+        const { error } = await supabase.from('profiller').update({ profil_tipi: 'ajans' }).eq('id', user.id)
         setGecisYapiliyor(false)
+        if (error) bildir('Ajans moduna geçilemedi. Tekrar dene.', { tur: 'hata' })
+        else bildir('Ajans profilin açıldı', { tur: 'basari' })
         veriGetir()
     }
 
     async function bireyselModaDon() {
-        if (!confirm('Bireysel moda dönersen ajans profili herkese açık görünmeyecek. Emin misin?')) return
-        await supabase.from('profiller').update({ profil_tipi: 'bireysel' }).eq('id', user.id)
+        const evet = await onayla({
+            baslik: 'Bireysel moda dönülsün mü?',
+            metin: 'Ajans profilin herkese açık görünmeyecek. Üyelerin ve davetlerin silinmez; istediğinde yeniden ajans moduna geçebilirsin.',
+            onay: 'Bireysel moda dön',
+        })
+        if (!evet) return
+        const { error } = await supabase.from('profiller').update({ profil_tipi: 'bireysel' }).eq('id', user.id)
+        if (error) bildir('Mod değiştirilemedi. Tekrar dene.', { tur: 'hata' })
+        else bildir('Bireysel moda dönüldü', { tur: 'basari' })
         veriGetir()
     }
 
     async function ustaAra(metin) {
         setAramaMetni(metin)
+        setHata('')
+        const sira = ++sonArama.current
         if (metin.trim().length < 2) {
             setAramaSonuclari([])
+            setAramaYapildi(false)
             return
         }
         const { data } = await supabase
             .from('profiller')
-            .select('id, ad_soyad, unvan')
+            .select('id, ad_soyad, unvan, avatar_url')
             .eq('rol', 'yazilimci')
             .eq('onayli', true)
             .neq('id', user.id)
-            .ilike('ad_soyad', `%${metin}%`)
-            .limit(5)
+            .ilike('ad_soyad', `%${metin.trim()}%`)
+            .limit(6)
+        if (sira !== sonArama.current) return
         setAramaSonuclari(data || [])
+        setAramaYapildi(true)
     }
 
-    async function davetGonder(davetEdilenId) {
+    async function davetGonder(kisi) {
         setDavetGonderiliyor(true)
-        setHata("")
+        setHata('')
         const { error } = await supabase.from('ajans_davetleri').insert({
             ajans_id: user.id,
-            davet_edilen_id: davetEdilenId,
-            rol_aciklamasi: rolAciklamasi || null,
+            davet_edilen_id: kisi.id,
+            rol_aciklamasi: rolAciklamasi.trim() || null,
         })
         setDavetGonderiliyor(false)
         if (error) {
-            setHata(error.code === '23505' ? 'Bu kişiye zaten davet gönderilmiş.' : error.message)
-        } else {
-            setAramaMetni("")
-            setAramaSonuclari([])
-            setRolAciklamasi("")
-            veriGetir()
+            setHata(error.code === '23505' ? 'Bu kişiye zaten davet gönderilmiş. Reddettiyse aşağıdan daveti kaldırıp yeniden gönderebilirsin.' : 'Davet gönderilemedi. Tekrar dene.')
+            return
         }
+        bildir(`${kisi.ad_soyad || 'Yazılımcı'} davet edildi`, { tur: 'basari' })
+        sonArama.current++
+        setAramaMetni('')
+        setAramaSonuclari([])
+        setAramaYapildi(false)
+        setRolAciklamasi('')
+        veriGetir()
     }
 
-    async function daveteIptalEt(davetId) {
-        await supabase.from('ajans_davetleri').delete().eq('id', davetId)
+    async function davetiKaldir(davet, reddedildi) {
+        const { error } = await supabase.from('ajans_davetleri').delete().eq('id', davet.id)
+        if (error) bildir('Davet kaldırılamadı. Tekrar dene.', { tur: 'hata' })
+        else bildir(reddedildi ? 'Davet kaldırıldı; yeniden davet edebilirsin' : 'Davet iptal edildi')
         veriGetir()
     }
 
     async function uyeCikar(davetId) {
-        if (!confirm('Bu üyeyi ajanstan çıkarmak istediğine emin misin?')) return
-        await supabase.from('ajans_davetleri').delete().eq('id', davetId)
+        const evet = await onayla({
+            baslik: 'Üye ajanstan çıkarılsın mı?',
+            metin: 'Kişi ajans sayfanda görünmeyecek. Yeniden eklemek için tekrar davet göndermen gerekir.',
+            onay: 'Üyeyi çıkar',
+            tehlike: true,
+        })
+        if (!evet) return
+        const { error } = await supabase.from('ajans_davetleri').delete().eq('id', davetId)
+        if (error) bildir('Üye çıkarılamadı. Tekrar dene.', { tur: 'hata' })
+        else bildir('Üye ajanstan çıkarıldı', { tur: 'basari' })
         veriGetir()
     }
 
-    if (authYukleniyor || yukleniyor) {
-        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
+    if (authYukleniyor) {
+        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
     }
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
-                <p className="text-[#A1A1AA] mb-4">Ajans yönetimini görmek için giriş yapmalısın.</p>
-                <Link to="/giris" className="text-[#A78BFA] hover:underline">Giriş yap</Link>
+            <div className="uzay flex min-h-screen items-center px-4">
+                <SonucYok BaslikEtiketi="h1" baslik="Ajansını buradan yönetirsin" metin="Ekibini davet etmek ve ajans profilini açmak için giriş yap." eylem={<HapLink to="/giris">Giriş yap</HapLink>} />
             </div>
         )
+    }
+
+    if (yukleniyor) {
+        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
     }
 
     if (profil?.rol !== 'yazilimci') {
         return (
-            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
-                <p className="text-[#A1A1AA]">Ajans profili sadece yazılımcı hesapları için kullanılabilir.</p>
+            <div className="uzay flex min-h-screen items-center px-4">
+                <SonucYok BaslikEtiketi="h1" baslik="Ajans profili yazılımcılar için" metin="İş veren hesaplarında ajans profili yok. Ekip arıyorsan ustaları inceleyip ilan verebilirsin." eylem={<HapLink to="/ustalar">Ustalara göz at</HapLink>} />
             </div>
         )
     }
 
-    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#A1A1AA]/40"
+    const uyeler = davetler.filter((d) => d.durum === 'kabul_edildi')
+    const bekleyenler = davetler.filter((d) => d.durum === 'beklemede')
+    const reddedenler = davetler.filter((d) => d.durum === 'reddedildi')
+    const davetliIdler = new Set(davetler.map((d) => d.davet_edilen_id))
 
     if (profil?.profil_tipi !== 'ajans') {
         return (
-            <div className="min-h-screen bg-[#000000] px-6 py-16">
-                <div className="max-w-lg mx-auto text-center">
-                    <Link to="/profilim" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
-                        ← Profilime dön
-                    </Link>
-                    <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-8 mt-6">
-                        <h1 className="text-[#FFFFFF] text-2xl font-bold mb-3">Ajans Profiline Geç</h1>
-                        <p className="text-[#A1A1AA] text-sm mb-6">
-                            2-5 kişilik bir ekiple mi çalışıyorsun? Profilini ajans olarak göster, gerçek yazılımcı hesaplarını davet ederek ekibini portföyünde sergile.
-                        </p>
-                        <button
-                            onClick={ajansModunaGec}
-                            disabled={gecisYapiliyor}
-                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300"
-                        >
-                            {gecisYapiliyor ? "Geçiliyor..." : "Ajans Moduna Geç"}
+            <div className="uzay min-h-screen px-4 pb-24 pt-14 sm:px-8 lg:pt-20">
+                <div className="uz-yildizlar" aria-hidden />
+                <div className="relative mx-auto max-w-[760px]">
+                    <h1 className="font-pjs text-[clamp(2.2rem,4.6vw,3.4rem)] font-medium leading-[1.04] tracking-[-0.03em] text-white">Ajans profili</h1>
+                    <p className="mt-3 max-w-[56ch] text-[16px] font-light leading-relaxed text-gri">2–5 kişilik bir ekiple mi çalışıyorsun? Profilini ajans olarak göster; ekibindeki gerçek yazılımcı hesaplarını davet et, portföyünde birlikte görünün.</p>
+                    <ol className="mt-10 flex flex-col gap-3">
+                        {AJANS_ADIMLARI.map(([baslik, metin], i) => (
+                            <li key={baslik} className={`${kart} flex gap-4`}>
+                                <span aria-hidden className="font-kod flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-mor/40 bg-mor/10 text-[13px] text-mor-soluk">
+                                    {i + 1}
+                                </span>
+                                <div>
+                                    <h2 className="text-[15.5px] font-medium text-white">{baslik}</h2>
+                                    <p className="mt-1 text-[14px] leading-relaxed text-gri">{metin}</p>
+                                </div>
+                            </li>
+                        ))}
+                    </ol>
+                    <div className="mt-10 flex flex-wrap gap-2.5">
+                        <button type="button" onClick={ajansModunaGec} disabled={gecisYapiliyor} className="isik-hap isik-hap-birincil inline-flex items-center gap-2 rounded-full px-6 py-3 text-[15px] font-semibold disabled:opacity-60">
+                            {gecisYapiliyor ? 'Geçiliyor…' : 'Ajans moduna geç'} {!gecisYapiliyor && <Ok />}
                         </button>
+                        <Link to="/profilim" className="isik isik-cam rounded-full px-5 py-3 text-[14.5px] font-medium">
+                            Profilime dön
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -156,109 +237,112 @@ function AjansYonetimi() {
     }
 
     return (
-        <div className="min-h-screen bg-[#000000] px-6 py-16">
-            <div className="max-w-2xl mx-auto">
-                <Link to="/profilim" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
-                    ← Profilime dön
-                </Link>
-                <div className="flex items-center justify-between flex-wrap gap-4 mt-6 mb-10">
+        <div className="uzay min-h-screen px-4 pb-24 pt-14 sm:px-8 lg:pt-20">
+            <div className="uz-yildizlar" aria-hidden />
+            <div className="relative mx-auto max-w-[760px]">
+                <header className="mb-10 flex flex-wrap items-end justify-between gap-6">
                     <div>
-                        <h1 className="text-[#FFFFFF] text-3xl font-bold">Ajansım</h1>
-                        <p className="text-[#A1A1AA] text-sm mt-1">Ekibini davet et, portföyünde birlikte görünün.</p>
+                        <h1 className="font-pjs text-[clamp(2.2rem,4.6vw,3.4rem)] font-medium leading-[1.04] tracking-[-0.03em] text-white">Ajansım</h1>
+                        <p className="mt-3 text-[16px] font-light text-gri">Ekibini davet et, portföyünde birlikte görünün.</p>
                     </div>
-                    <button onClick={bireyselModaDon} className="text-[#A1A1AA]/60 text-xs hover:text-red-300 transition-colors">
-                        Bireysel moda dön
-                    </button>
-                </div>
+                    <Link to={`/ustalar/${user.id}`} className="isik isik-cam inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-medium">
+                        Ajans sayfamı gör <Ok />
+                    </Link>
+                </header>
 
-                {/* Üye Davet Et */}
-                <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
-                    <h2 className="text-[#FFFFFF] font-semibold mb-4">Üye Davet Et</h2>
-                    <div className="relative">
-                        <input
-                            type="text"
-                            value={aramaMetni}
-                            onChange={(e) => ustaAra(e.target.value)}
-                            placeholder="Onaylı bir yazılımcının adını yaz..."
-                            className={inputClass}
-                        />
-                        {aramaSonuclari.length > 0 && (
-                            <div className="absolute z-10 left-0 right-0 mt-2 bg-[#0D0D13] border border-white/[0.1] rounded-xl overflow-hidden shadow-2xl">
-                                {aramaSonuclari.map((u) => (
-                                    <div key={u.id} className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-white/[0.05]">
-                                        <div className="min-w-0">
-                                            <div className="text-[#FFFFFF] text-sm truncate">{u.ad_soyad}</div>
-                                            <div className="text-[#A1A1AA] text-xs truncate">{u.unvan}</div>
-                                        </div>
-                                        <button
-                                            onClick={() => davetGonder(u.id)}
-                                            disabled={davetGonderiliyor}
-                                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] text-xs font-medium px-3 py-1.5 rounded-full hover:bg-[#FFFFFF] transition-all duration-300 shrink-0 disabled:opacity-50"
-                                        >
-                                            Davet Et
-                                        </button>
-                                    </div>
-                                ))}
+                <div className="flex flex-col gap-6">
+                    <section aria-labelledby="ajans-davet" className={kart}>
+                        <h2 id="ajans-davet" className="mb-1 text-[17px] font-medium tracking-[-0.01em] text-white">
+                            Üye davet et
+                        </h2>
+                        <p className="mb-5 text-[14px] text-gri">Yalnızca onaylı yazılımcı hesapları listelenir. Davet, kişi kabul edince ekibinde görünür.</p>
+                        <div className="flex flex-col gap-5">
+                            <Alan etiket="Ekipteki rolü" istege ipucu="Davet ettiğin kişinin yanında görünür. Örn. Backend geliştirici">
+                                {(p) => <input {...p} className="alan" value={rolAciklamasi} onChange={(e) => setRolAciklamasi(e.target.value)} maxLength={60} autoComplete="off" />}
+                            </Alan>
+                            <Alan etiket="Yazılımcı ara" ipucu="En az 2 harf yaz." hata={hata}>
+                                {(p) => <input {...p} type="search" className="alan" value={aramaMetni} onChange={(e) => ustaAra(e.target.value)} autoComplete="off" spellCheck={false} />}
+                            </Alan>
+                        </div>
+                        <p className="sr-only" role="status" aria-live="polite">
+                            {aramaYapildi ? (aramaSonuclari.length ? `${aramaSonuclari.length} yazılımcı bulundu` : 'Eşleşen onaylı yazılımcı yok') : ''}
+                        </p>
+                        {aramaYapildi && (
+                            <div className="mt-4">
+                                {aramaSonuclari.length === 0 ? (
+                                    <p className="rounded-2xl border border-dashed border-white/[0.1] px-4 py-4 text-[14px] text-gri">“{aramaMetni.trim()}” adıyla onaylı bir yazılımcı bulunamadı. Kişinin profilinin onaylı olduğundan emin ol.</p>
+                                ) : (
+                                    <ul className="flex flex-col gap-2" aria-label="Arama sonuçları">
+                                        {aramaSonuclari.map((k) => (
+                                            <KisiSatiri key={k.id} profil={k} alt={k.unvan}>
+                                                {davetliIdler.has(k.id) ? (
+                                                    <span className="px-3 text-[13px] text-gri-koyu">Davet edildi</span>
+                                                ) : (
+                                                    <button type="button" onClick={() => davetGonder(k)} disabled={davetGonderiliyor} className="isik-hap isik-hap-birincil rounded-full px-4 py-1.5 text-[13px] font-semibold disabled:opacity-60">
+                                                        Davet et<span className="sr-only">: {k.ad_soyad}</span>
+                                                    </button>
+                                                )}
+                                            </KisiSatiri>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
                         )}
-                    </div>
-                    <input
-                        type="text"
-                        value={rolAciklamasi}
-                        onChange={(e) => setRolAciklamasi(e.target.value)}
-                        placeholder="Rolü (isteğe bağlı, örn. Backend Geliştirici)"
-                        className={inputClass + " mt-3"}
-                    />
-                    {hata && <p className="text-red-400 text-sm mt-2">{hata}</p>}
-                </div>
+                    </section>
 
-                {/* Bekleyen Davetler */}
-                {bekleyenDavetler.length > 0 && (
-                    <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 mb-6">
-                        <h2 className="text-[#FFFFFF] font-semibold mb-4">Bekleyen Davetler</h2>
-                        <div className="flex flex-col gap-2">
-                            {bekleyenDavetler.map((d) => (
-                                <div key={d.id} className="flex items-center justify-between gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3">
-                                    <div className="min-w-0">
-                                        <div className="text-[#FFFFFF] text-sm">{d.profiller?.ad_soyad}</div>
-                                        {d.rol_aciklamasi && <div className="text-[#A1A1AA]/70 text-xs">{d.rol_aciklamasi}</div>}
-                                    </div>
-                                    <button onClick={() => daveteIptalEt(d.id)} className="text-[#A1A1AA] text-xs hover:text-red-300 transition-colors shrink-0">
-                                        İptal Et
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-
-                {/* Ekip Üyeleri */}
-                <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
-                    <h2 className="text-[#FFFFFF] font-semibold mb-4">Ekip Üyeleri ({uyeler.length})</h2>
-                    {uyeler.length === 0 ? (
-                        <p className="text-[#A1A1AA] text-sm">Henüz kabul edilmiş üye yok.</p>
-                    ) : (
-                        <div className="flex flex-col gap-2">
-                            {uyeler.map((u) => (
-                                <div key={u.id} className="flex items-center justify-between gap-3 bg-white/[0.02] border border-white/[0.06] rounded-xl px-4 py-3">
-                                    <div className="flex items-center gap-3 min-w-0">
-                                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] text-xs font-bold shrink-0">
-                                            {baslangicHarfleri(u.profiller?.ad_soyad)}
-                                        </div>
-                                        <div className="min-w-0">
-                                            <Link to={`/ustalar/${u.davet_edilen_id}`} className="text-[#FFFFFF] text-sm hover:text-[#A78BFA] transition-colors">
-                                                {u.profiller?.ad_soyad}
-                                            </Link>
-                                            {u.rol_aciklamasi && <div className="text-[#A1A1AA]/70 text-xs">{u.rol_aciklamasi}</div>}
-                                        </div>
-                                    </div>
-                                    <button onClick={() => uyeCikar(u.id)} className="text-[#A1A1AA] text-xs hover:text-red-300 transition-colors shrink-0">
-                                        Çıkar
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
+                    {(bekleyenler.length > 0 || reddedenler.length > 0) && (
+                        <section aria-labelledby="ajans-bekleyen" className={kart}>
+                            <h2 id="ajans-bekleyen" className="mb-5 text-[17px] font-medium tracking-[-0.01em] text-white">
+                                Gönderilen davetler
+                            </h2>
+                            <ul className="flex flex-col gap-2">
+                                {[...bekleyenler, ...reddedenler].map((d) => {
+                                    const reddedildi = d.durum === 'reddedildi'
+                                    return (
+                                        <KisiSatiri
+                                            key={d.id}
+                                            profil={d.profiller}
+                                            alt={d.rol_aciklamasi}
+                                            rozet={<span className={`uz-etiket text-[11px] ${reddedildi ? 'text-red-300' : ''}`}>{reddedildi ? 'Reddetti' : 'Yanıt bekleniyor'}</span>}
+                                        >
+                                            <button type="button" onClick={() => davetiKaldir(d, reddedildi)} className={kucukDugme}>
+                                                {reddedildi ? 'Kaldır' : 'İptal et'}
+                                                <span className="sr-only">: {d.profiller?.ad_soyad}</span>
+                                            </button>
+                                        </KisiSatiri>
+                                    )
+                                })}
+                            </ul>
+                        </section>
                     )}
+
+                    <section aria-labelledby="ajans-ekip" className={kart}>
+                        <h2 id="ajans-ekip" className="mb-5 text-[17px] font-medium tracking-[-0.01em] text-white">
+                            Ekip <span className="font-normal text-gri-koyu">· {uyeler.length} kişi</span>
+                        </h2>
+                        {uyeler.length === 0 ? (
+                            <p className="text-[14px] leading-relaxed text-gri">Henüz daveti kabul eden yok. Kabul edenler burada ve ajans sayfanda listelenir.</p>
+                        ) : (
+                            <ul className="flex flex-col gap-2">
+                                {uyeler.map((u) => (
+                                    <KisiSatiri key={u.id} profil={u.profiller} alt={u.rol_aciklamasi || u.profiller?.unvan}>
+                                        <Link to={`/ustalar/${u.davet_edilen_id}`} className={kucukDugme}>
+                                            Profil<span className="sr-only">: {u.profiller?.ad_soyad}</span>
+                                        </Link>
+                                        <button type="button" onClick={() => uyeCikar(u.id)} className={`${kucukDugme} hover:text-red-300`}>
+                                            Çıkar<span className="sr-only">: {u.profiller?.ad_soyad}</span>
+                                        </button>
+                                    </KisiSatiri>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+
+                    <div className="flex justify-end">
+                        <button type="button" onClick={bireyselModaDon} className="text-[13px] text-gri-koyu transition-colors hover:text-red-300">
+                            Bireysel moda dön
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

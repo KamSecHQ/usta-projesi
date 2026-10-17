@@ -1,173 +1,121 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
+import HesapCercevesi from '../components/hesap/HesapCercevesi'
+import { hesapHatasi } from '../components/hesap/hesapHatalari'
+import { Alan, SifreAlani } from '../components/form/Alan'
+import { Ok } from '../components/uzay/Hareket'
+import Ikon from '../components/mesaj/Ikon'
 
+const ROLLER = [
+    ['yazilimci', 'Yazılımcıyım', 'Portföyünü aç, ilanlara teklif ver.'],
+    ['is-veren', 'İş verenim', 'İlan aç, teklifleri karşılaştır, ustanı seç.'],
+]
 
 function HesapOlustur() {
-    useSayfaBasligi('Hesap Oluştur')
-
+    useSayfaBasligi('Hesap Oluştur', 'Kalfahane hesabını ücretsiz aç: yazılımcıysan portföyünü oluştur, işletmeysen ilan açıp teklif topla.')
     const [searchParams] = useSearchParams()
-    const varsayilanRol = searchParams.get('rol') === 'is-veren' ? 'is-veren' : 'yazilimci'
-
-    const [adSoyad, setAdSoyad] = useState("")
-    const [telefon, setTelefon] = useState("")
-    const [email, setEmail] = useState("")
-    const [sifre, setSifre] = useState("")
-    const [rol, setRol] = useState(varsayilanRol)
-    const [hata, setHata] = useState("")
+    const [rol, setRol] = useState(searchParams.get('rol') === 'is-veren' ? 'is-veren' : 'yazilimci')
+    const [adSoyad, setAdSoyad] = useState('')
+    const [telefon, setTelefon] = useState('')
+    const [email, setEmail] = useState('')
+    const [sifre, setSifre] = useState('')
+    const [hatalar, setHatalar] = useState({})
     const [gonderiliyor, setGonderiliyor] = useState(false)
     const [basarili, setBasarili] = useState(false)
-    const navigate = useNavigate()
 
     async function kayitOl(e) {
         e.preventDefault()
-        setHata("")
+        const h = {}
+        if (adSoyad.trim().length < 3) h.adSoyad = 'Adını ve soyadını yaz.'
+        if (!/^\S+@\S+\.\S+$/.test(email.trim())) h.email = 'Geçerli bir e-posta adresi yaz.'
+        if (sifre.length < 6) h.sifre = 'Şifre en az 6 karakter olmalı.'
+        setHatalar(h)
+        if (Object.keys(h).length) return
+
         setGonderiliyor(true)
-
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password: sifre,
-            options: { data: { rol } }
-        })
-
+        const { data, error } = await supabase.auth.signUp({ email: email.trim(), password: sifre, options: { data: { rol } } })
         if (error) {
-            setHata(error.message)
+            setHatalar({ genel: hesapHatasi(error) })
             setGonderiliyor(false)
             return
         }
-
-        // Kayıt sonrası isim ve telefonu profile hemen yazıyoruz,
-        // böylece kullanıcı bunları tekrar ProfilDuzenle'de girmek zorunda kalmıyor.
+        // İsim ve telefon profile hemen yazılır; kullanıcı bunları profil düzenlemede tekrar girmez
         if (data.user) {
-            await supabase
-                .from('profiller')
-                .update({ ad_soyad: adSoyad || null })
-                .eq('id', data.user.id)
-            if (telefon.trim()) {
-                await supabase.from('profil_iletisim').upsert({ id: data.user.id, telefon: telefon.trim() })
-            }
+            await supabase.from('profiller').update({ ad_soyad: adSoyad.trim() }).eq('id', data.user.id)
+            if (telefon.trim()) await supabase.from('profil_iletisim').upsert({ id: data.user.id, telefon: telefon.trim() })
         }
-
         setGonderiliyor(false)
         setBasarili(true)
     }
 
-    const inputClass = "w-full bg-white/[0.03] border border-white/[0.1] rounded-xl px-4 py-3 text-[#FFFFFF] outline-none focus:border-[#8B5CF6]/60 focus:bg-white/[0.05] transition-all duration-300 placeholder:text-[#A1A1AA]/40"
-    const labelClass = "text-[#A1A1AA] text-xs uppercase tracking-wider font-mono block mb-2"
+    if (basarili) {
+        return (
+            <HesapCercevesi baslik="Son bir adım" altBaslik="Hesabın oluşturuldu; e-postanı onaylaman gerekiyor.">
+                <div role="status">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-full bg-mor/20 text-mor-soluk">
+                        <Ikon ad="eposta" className="h-6 w-6" />
+                    </span>
+                    <p className="mt-5 text-[16px] text-white">
+                        <span className="font-semibold">{email.trim()}</span> adresine bir onay bağlantısı gönderdik.
+                    </p>
+                    <p className="mt-2 text-[14.5px] leading-relaxed text-gri">Bağlantıya tıkladıktan sonra giriş yapabilirsin. Birkaç dakikada gelmezse gereksiz (spam) klasörüne bak.</p>
+                    <Link to="/giris" className="mt-6 inline-flex items-center gap-2 text-[14.5px] font-medium text-mor-soluk hover:text-white">
+                        Giriş sayfasına git <Ok />
+                    </Link>
+                </div>
+            </HesapCercevesi>
+        )
+    }
 
     return (
-        <div className="min-h-screen bg-[#000000] px-6 py-20 relative overflow-hidden">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_0%,rgba(201,125,60,0.08),transparent)]" />
-
-            <div className="max-w-md mx-auto relative">
-                <Link to="/" className="text-[#A1A1AA] text-sm hover:text-[#FFFFFF] transition-colors">
-                    ← Anasayfaya dön
-                </Link>
-                <h1 className="text-[#FFFFFF] text-3xl font-bold mt-6 mb-2">
-                    Hesap Oluştur
-                </h1>
-                <p className="text-[#A1A1AA] text-sm mb-8">
-                    Türkiye'nin yazılım çarşısına katıl.
-                </p>
-
-                {basarili ? (
-                    <div className="bg-white/[0.03] backdrop-blur-md border border-[#8B5CF6]/40 rounded-2xl p-6">
-                        <p className="text-[#C4B5FD] font-semibold">✓ Kayıt başarılı!</p>
-                        <p className="text-[#A1A1AA] text-sm mt-2">
-                            E-postana gelen onay linkine tıkla, sonra giriş yapabilirsin.
-                        </p>
+        <HesapCercevesi baslik="Hesap oluştur" altBaslik="Türkiye’nin yazılım çarşısına katıl. Ücretsiz.">
+            <form onSubmit={kayitOl} noValidate className="flex flex-col gap-5">
+                <fieldset>
+                    <legend className="alan-etiket">Kalfahane’yi nasıl kullanacaksın?</legend>
+                    <div role="radiogroup" aria-label="Hesap türü" className="grid gap-3 sm:grid-cols-2">
+                        {ROLLER.map(([d, ad, ozet]) => (
+                            <button key={d} type="button" role="radio" aria-checked={rol === d} onClick={() => setRol(d)} className="secim-kart">
+                                <span className="text-[15px] font-semibold text-white">{ad}</span>
+                                <span className="text-[13px] text-gri">{ozet}</span>
+                            </button>
+                        ))}
                     </div>
-                ) : (
-                    <form onSubmit={kayitOl} className="bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6 flex flex-col gap-4">
-                        <div>
-                            <label className={labelClass}>Ben bir...</label>
-                            <div className="grid grid-cols-2 gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setRol("yazilimci")}
-                                    className={`isik isik-birincil px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "yazilimci"
-                                        ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
-                                        : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
-                                        }`}
-                                >
-                                    Yazılımcıyım
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setRol("is-veren")}
-                                    className={`isik isik-birincil px-4 py-3 rounded-xl text-sm font-medium border transition-all duration-300 ${rol === "is-veren"
-                                        ? "bg-[#FDFDFD] text-[#050505] border-[#8B5CF6]"
-                                        : "bg-white/[0.03] text-[#A1A1AA] border-white/[0.1] hover:bg-white/[0.06]"
-                                        }`}
-                                >
-                                    İş Verenim
-                                </button>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label className={labelClass}>Ad Soyad</label>
-                            <input
-                                type="text"
-                                value={adSoyad}
-                                onChange={(e) => setAdSoyad(e.target.value)}
-                                placeholder="Ad Soyad"
-                                required
-                                className={inputClass}
-                            />
-                        </div>
-
-                        <div>
-                            <label className={labelClass}>Telefon</label>
-                            <input
-                                type="tel"
-                                value={telefon}
-                                onChange={(e) => setTelefon(e.target.value)}
-                                placeholder="0555 555 55 55"
-                                className={inputClass}
-                            />
-                        </div>
-
-                        <div>
-                            <label className={labelClass}>E-posta</label>
-                            <input
-                                type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                                className={inputClass}
-                            />
-                        </div>
-
-                        <div>
-                            <label className={labelClass}>Şifre</label>
-                            <input
-                                type="password"
-                                value={sifre}
-                                onChange={(e) => setSifre(e.target.value)}
-                                required
-                                minLength={6}
-                                className={inputClass}
-                            />
-                        </div>
-
-                        {hata && <p className="text-red-400 text-sm">{hata}</p>}
-
-                        <button
-                            type="submit"
-                            disabled={gonderiliyor}
-                            className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 mt-2"
-                        >
-                            {gonderiliyor ? "Kaydediliyor..." : "Kayıt Ol"}
-                        </button>
-                        <p className="text-[#A1A1AA] text-sm text-center">
-                            Zaten hesabın var mı? <Link to="/giris" className="text-[#A78BFA] hover:underline">Giriş yap</Link>
-                        </p>
-                    </form>
+                </fieldset>
+                <Alan etiket="Ad soyad" hata={hatalar.adSoyad}>
+                    {(p) => <input {...p} autoComplete="name" required className="alan" value={adSoyad} onChange={(e) => setAdSoyad(e.target.value)} />}
+                </Alan>
+                <Alan etiket="E-posta" hata={hatalar.email}>
+                    {(p) => <input {...p} type="email" inputMode="email" autoComplete="email" required className="alan" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="ornek@eposta.com" />}
+                </Alan>
+                <SifreAlani deger={sifre} degisti={setSifre} otomatik="new-password" enAz={6} hata={hatalar.sifre} ipucu="En az 6 karakter; uzun bir cümle hem akılda kalır hem güvenlidir." />
+                <Alan etiket="Telefon" istege ipucu="Herkese açık değildir; yalnızca sen ve yönetici görür. İstersen mesajlaşmada kendin paylaşırsın.">
+                    {(p) => <input {...p} type="tel" inputMode="tel" autoComplete="tel" className="alan" value={telefon} onChange={(e) => setTelefon(e.target.value)} placeholder="0555 555 55 55" />}
+                </Alan>
+                {hatalar.genel && (
+                    <p className="alan-hata" role="alert">
+                        {hatalar.genel}
+                    </p>
                 )}
-            </div>
-        </div>
+                <button type="submit" disabled={gonderiliyor} className="isik-hap isik-hap-birincil inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-[15px] font-semibold disabled:opacity-60">
+                    {gonderiliyor ? 'Hesap açılıyor…' : 'Hesabımı oluştur'} {!gonderiliyor && <Ok />}
+                </button>
+                <p className="text-[12.5px] leading-relaxed text-gri-koyu">
+                    Hesap oluşturarak{' '}
+                    <Link to="/gizlilik" className="text-gri underline underline-offset-2 hover:text-white">
+                        Gizlilik Politikası
+                    </Link>
+                    ’nı okuduğunu kabul edersin.
+                </p>
+                <p className="text-[14px] text-gri">
+                    Zaten hesabın var mı?{' '}
+                    <Link to="/giris" className="font-medium text-white hover:text-mor-soluk">
+                        Giriş yap
+                    </Link>
+                </p>
+            </form>
+        </HesapCercevesi>
     )
 }
 

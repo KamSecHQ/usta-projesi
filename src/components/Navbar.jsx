@@ -93,7 +93,7 @@ function Navbar() {
             setAdminMi(gercekAdmin)
 
             if (profil?.rol) {
-                const sayi = await tamamlananIsSayisiGetir(supabase, user.id, profil.rol)
+                const sayi = await tamamlananIsSayisiGetir(supabase, user.id)
                 setKidem(kidemRozetiHesapla(profil.rol, sayi))
             }
 
