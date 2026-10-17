@@ -69,7 +69,7 @@ Kasmanın üç kaynağı vardı:
 | 23 | Sayfa başına açıklama, `og:title`, `og:url` ve kanonik adres (`useSayfaBasligi(baslik, aciklama)`) | ✅ |
 | 24 | Yapılandırılmış veri: Organization ve WebSite + arama kutusu (JSON-LD) | ✅ |
 | 25 | 404 sayfası `noindex` | ✅ |
-| 26 | Usta profilleri, ilanlar ve blog yazıları için dinamik site haritası (Vercel fonksiyonu) | ⏳ |
+| 26 | Usta profilleri, ilanlar ve blog yazıları için dinamik site haritası (Vercel fonksiyonu `api/site-haritasi.js`) | ✅ |
 | 27 | Usta için `Person`, ilan için `JobPosting`, yazı için `Article` yapılandırılmış verisi | ⏳ |
 | 28 | Ön işleme (prerender): arama motorlarına içerikli HTML. Sabit sayfaların başlık ve açıklama etiketleri derlemede yazılıyor (`scripts/sayfa-etiketleri.mjs`); içerik ön işlemesi kaldı | ⏳ |
 | 29 | Usta profili için dinamik paylaşım kartı (isim, unvan, kıdem). Metin kartı yapıldı (`api/paylasim.js`, ilan ve blog yazısı dahil); isme özel görsel kaldı | ⏳ |
@@ -171,9 +171,9 @@ Kasmanın üç kaynağı vardı:
 |---|---|---|
 | 91 | Ölü kod temizliği: rotada olmayan `KayitOl.jsx`, `IsVer.jsx` | ✅ |
 | 92 | Lint uyarıları 11 → 0 (hook bağımlılıkları `useCallback` ile, kullanılmayan değişkenler, hızlı yenileme dışa aktarımları) | ✅ |
-| 93 | Birim testleri: Node'un yerleşik test çalıştırıcısıyla (yeni bağımlılık yok) 33 test; `npm test` | ✅ |
+| 93 | Birim testleri: Node'un yerleşik test çalıştırıcısıyla (yeni bağımlılık yok); `npm test`, şu an 56 test | ✅ |
 | 94 | Uçtan uca testler (Playwright): kayıt, ilan, teklif, mesaj | ⏳ |
-| 95 | GitHub Actions: lint (uyarı da hata) + test + build + ilk yük bütçesi (`npm run butce`, gzip ≤ 200 KB) | ✅ (ilk push'ta doğrulanacak) |
+| 95 | GitHub Actions: lint (uyarı da hata) + test + build + ilk yük bütçesi (`npm run butce`, gzip ≤ 200 KB) | ✅ |
 | 96 | Hata izleme (Sentry) ve Web Vitals | 🔒 hesap |
 | 97 | Supabase adresi ve anahtarının ortam değişkenine taşınması | ⏳ |
 | 98 | TypeScript'e kademeli geçiş (`checkJs` ile başlayarak) | ⏳ |
@@ -199,8 +199,8 @@ Kasmanın üç kaynağı vardı:
 
 ## Sayılarla
 
-- ✅ Tamamlanan: 44 faz
-- ⏳ Kod tarafında sırada: 34 faz
+- ✅ Tamamlanan: 45 faz
+- ⏳ Kod tarafında sırada: 33 faz
 - 🔒 Senin kararını, erişimini ya da canlı veritabanı onayını bekleyen: 22 faz
 
 ## Sıradaki önerilen paket

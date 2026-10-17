@@ -40,6 +40,10 @@
             "destination": "/gizlilik.html"
         },
         {
+            "source": "/sitemap.xml",
+            "destination": "/api/site-haritasi"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }

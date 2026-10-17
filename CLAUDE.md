@@ -13,6 +13,7 @@ Yeni bir oturumda önce `DEVAM.md` oku: kurulum, yapılanlar, bekleyen işler ve
   - Sabit sayfalar (`SAYFA_ETIKETLERI`: /ustalar, /is-ilanlari, /blog, /hesap-olustur, /gizlilik, /ornek): sayfalar `useSayfaBasligi(SAYFA_ETIKETLERI.x.baslik, …aciklama)` ile buradan okur; `npm run build` sonunda `scripts/sayfa-etiketleri.mjs` her biri için `dist/<yol>.html` üretir; `vercel.json` yolu o dosyaya yönlendirir. Yeni sayfa: listeye ekle + `vercel.json` yönlendirmesi (eksikse derleme durur).
   - Dinamik sayfalar (/ustalar/:id, /is-ilanlari/:id, /blog/:slug): `vercel.json` yalnızca paylaşım botlarının (user-agent) isteğini `api/paylasim.js` Vercel fonksiyonuna gönderir; fonksiyon herkese açık kaydı Supabase REST'ten okuyup `dinamikEtiketler()` ile kartı doldurur. Hata olursa varsayılan etiketler döner. Ziyaretçi normal uygulamayı alır.
   - Supabase adresi ve yayınlanabilir anahtar `src/supabaseAyarlari.js` (uygulama ve fonksiyon ortak).
+- Site haritası dinamik: `/sitemap.xml` → `api/site-haritasi.js` (sabit sayfalar `src/siteHaritasi.js`'de + onaylı ustalar, açık ilanlar, yayınlanmış yazılar). `public/sitemap.xml` eklenmez: varsa Vercel onu sunar ve dinamik harita devre dışı kalır (test denetler). Yeni herkese açık sayfa `SABIT_ADRESLER`'e eklenir.
 - Yayın: Vercel (GitHub `KamSecHQ/usta-projesi`, `main`)
 
 ## Stack
