@@ -1,8 +1,43 @@
 {
     "rewrites": [
         {
+            "source": "/ustalar/:id",
+            "has": [{ "type": "header", "key": "user-agent", "value": ".*(LinkedInBot|facebookexternalhit|Facebot|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|redditbot|Pinterestbot|SkypeUriPreview|Iframely|Embedly|vkShare).*" }],
+            "destination": "/api/paylasim?tur=usta&id=:id"
+        },
+        {
+            "source": "/is-ilanlari/:id",
+            "has": [{ "type": "header", "key": "user-agent", "value": ".*(LinkedInBot|facebookexternalhit|Facebot|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|redditbot|Pinterestbot|SkypeUriPreview|Iframely|Embedly|vkShare).*" }],
+            "destination": "/api/paylasim?tur=ilan&id=:id"
+        },
+        {
+            "source": "/blog/:slug",
+            "has": [{ "type": "header", "key": "user-agent", "value": ".*(LinkedInBot|facebookexternalhit|Facebot|Twitterbot|WhatsApp|Slackbot|TelegramBot|Discordbot|redditbot|Pinterestbot|SkypeUriPreview|Iframely|Embedly|vkShare).*" }],
+            "destination": "/api/paylasim?tur=yazi&id=:slug"
+        },
+        {
             "source": "/ornek",
             "destination": "/ornek.html"
+        },
+        {
+            "source": "/ustalar",
+            "destination": "/ustalar.html"
+        },
+        {
+            "source": "/is-ilanlari",
+            "destination": "/is-ilanlari.html"
+        },
+        {
+            "source": "/blog",
+            "destination": "/blog.html"
+        },
+        {
+            "source": "/hesap-olustur",
+            "destination": "/hesap-olustur.html"
+        },
+        {
+            "source": "/gizlilik",
+            "destination": "/gizlilik.html"
         },
         {
             "source": "/(.*)",

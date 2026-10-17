@@ -1,6 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
+import { SUPABASE_ADRESI, SUPABASE_ANAHTARI } from './supabaseAyarlari'
 
-const supabaseUrl = 'https://lalqdppmjirelxngliim.supabase.co'
-const supabaseKey = 'sb_publishable_4_QRTlzAS4J74myS9klBng_SNF8kN42'
-
-export const supabase = createClient(supabaseUrl, supabaseKey) 
+export const supabase = createClient(SUPABASE_ADRESI, SUPABASE_ANAHTARI)

@@ -9,7 +9,10 @@ Yeni bir oturumda önce `DEVAM.md` oku: kurulum, yapılanlar, bekleyen işler ve
 - `npm run build`, `npm run lint` (oxlint, uyarı sayısı 0 tutulur), `npm test` (Node'un yerleşik test çalıştırıcısı, `testler/*.test.js`), `npm run butce` (derlemeden sonra ilk yük bütçesi: gzip ≤ 200 KB)
 - GitHub Actions (`.github/workflows/kontrol.yml`): her push ve PR'da lint (`--deny-warnings`), test, derleme, bütçe. Testler yalnızca saf modülleri içe aktarır; Supabase ya da React'a bağımlı kod teste girmez (bu yüzden mesajlaşmanın saf yardımcıları `src/mesajBicimi.js`'te, ilan açıklamasının iki yönü `components/ilan/ilanSablonlari.js`'te).
 - `npm run preview` → http://127.0.0.1:4173 (canlı paketin aynısı), `npm run olc` (akıcılık ölçümü), `npm run og-gorsel` (paylaşım görselini `scripts/og-gorsel.html`'den üretir), `npm run og-vitrin` (örnek vitrinin görseli `public/og-ornek.png`)
-- Sayfaya özel paylaşım kartı: `npm run build` sonunda `scripts/sayfa-etiketleri.mjs` `dist/index.html`'i kopyalayıp başlık, açıklama ve og/twitter etiketlerini değiştirir (şu an `/ornek` → `dist/ornek.html`); `vercel.json` o adresi bu dosyaya yönlendirir. Yeni sayfa eklerken üçüne de (liste, görsel, yönlendirme) eklenir.
+- Paylaşım kartları (LinkedIn, WhatsApp, X JavaScript çalıştırmaz; yalnızca HTML etiketlerini okur). Tek kaynak `src/paylasimEtiketleri.js`:
+  - Sabit sayfalar (`SAYFA_ETIKETLERI`: /ustalar, /is-ilanlari, /blog, /hesap-olustur, /gizlilik, /ornek): sayfalar `useSayfaBasligi(SAYFA_ETIKETLERI.x.baslik, …aciklama)` ile buradan okur; `npm run build` sonunda `scripts/sayfa-etiketleri.mjs` her biri için `dist/<yol>.html` üretir; `vercel.json` yolu o dosyaya yönlendirir. Yeni sayfa: listeye ekle + `vercel.json` yönlendirmesi (eksikse derleme durur).
+  - Dinamik sayfalar (/ustalar/:id, /is-ilanlari/:id, /blog/:slug): `vercel.json` yalnızca paylaşım botlarının (user-agent) isteğini `api/paylasim.js` Vercel fonksiyonuna gönderir; fonksiyon herkese açık kaydı Supabase REST'ten okuyup `dinamikEtiketler()` ile kartı doldurur. Hata olursa varsayılan etiketler döner. Ziyaretçi normal uygulamayı alır.
+  - Supabase adresi ve yayınlanabilir anahtar `src/supabaseAyarlari.js` (uygulama ve fonksiyon ortak).
 - Yayın: Vercel (GitHub `KamSecHQ/usta-projesi`, `main`)
 
 ## Stack

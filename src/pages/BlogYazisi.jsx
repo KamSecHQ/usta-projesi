@@ -10,6 +10,7 @@ import useOkunanBolum from '../components/yazi/useOkunanBolum'
 import { blogOnizlemesi } from './blogOnizleme'
 import '../components/uzay/uzay.css'
 import { KapiSayfasi } from '../components/hesap/GirisKapisi'
+import { ozetle } from '../paylasimEtiketleri'
 
 const SITE = 'https://www.kalfahane.com'
 
@@ -55,7 +56,7 @@ function BlogYazisi() {
     const [digerleri, setDigerleri] = useState([])
     const [durum, setDurum] = useState('yukleniyor')
     const [kapakHatasi, setKapakHatasi] = useState(false)
-    useSayfaBasligi(yazi ? yazi.baslik : 'Blog', yazi?.ozet?.replace(/\s+/g, ' ').slice(0, 155))
+    useSayfaBasligi(yazi ? yazi.baslik : 'Blog', yazi?.ozet ? ozetle(yazi.ozet) : undefined)
     useMakaleVerisi(yazi)
 
     // Geliştirmede ?onizleme=1 ile örnek yazı (canlıda yok)

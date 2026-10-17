@@ -15,6 +15,7 @@ import Ikon from '../components/mesaj/Ikon'
 import { cevrimiciMi, musaitlikBilgisi, ucretAraligiGoster, videoEmbedUrl, kidemRozetiHesapla, tamamlananIsSayisiGetir } from '../ustaYardimcilari'
 import { KapiSayfasi } from '../components/hesap/GirisKapisi'
 import { useProfilRolu } from '../profilRolu'
+import { ozetle } from '../paylasimEtiketleri'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return '?'
@@ -66,7 +67,7 @@ function UstaProfili() {
     const [uyesiOldugum, setUyesiOldugum] = useState(null)
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
-    useSayfaBasligi(profil ? `${profil.ad_soyad || 'Usta'} — ${profil.unvan || 'Portföy'}` : 'Portföy', profil?.bio?.replace(/\s+/g, ' ').slice(0, 155))
+    useSayfaBasligi(profil ? `${profil.ad_soyad || 'Usta'} — ${profil.unvan || 'Portföy'}` : 'Portföy', profil?.bio ? ozetle(profil.bio) : undefined)
 
     useEffect(() => {
         let iptal = false

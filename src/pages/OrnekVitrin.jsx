@@ -23,6 +23,7 @@ import {
 } from './ornekVitrinVerisi'
 import '../components/mesaj/mesaj.css'
 import '../components/ornek/ornek.css'
+import { SAYFA_ETIKETLERI } from '../paylasimEtiketleri'
 
 // Örnek vitrin: Kalfahane'de bir işin baştan sona akışı, açıkça "örnek" olarak işaretlenmiş
 // verilerle. Hiçbir şey veritabanına yazılmaz; teklif ve mesaj eylemleri gerçek çarşıya yönlendirir.
@@ -414,7 +415,7 @@ function AyrintiPenceresi({ ilan, usta, kapat, girisli }) {
 
 // ---------- Sayfa ----------
 export default function OrnekVitrin() {
-    useSayfaBasligi('Örnek vitrin', "Kalfahane'de bir iş nasıl ilerler: ilan, teklif, mesajlaşma, teslim ve kıdem. Örnek bir işle adım adım gör; farklı sektörlerden örnek ilanlar ve ustalar.")
+    useSayfaBasligi(SAYFA_ETIKETLERI.ornek.baslik, SAYFA_ETIKETLERI.ornek.aciklama)
     const [parametreler, setParametreler] = useSearchParams()
     const [sekme, setSekme] = useState('ilanlar')
     const [etkinAdim, setEtkinAdim] = useState(null)

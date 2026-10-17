@@ -6,9 +6,10 @@ import { SonucYok, FiltreCipi } from '../components/liste/ListeAraclari'
 import { Sahne, HapLink } from '../components/uzay/Hareket'
 import { OneCikanYazi, YaziKarti, IskeletKart } from '../components/yazi/YaziKartlari'
 import { blogOnizlemesi } from './blogOnizleme'
+import { SAYFA_ETIKETLERI } from '../paylasimEtiketleri'
 
 function BlogListesi() {
-    useSayfaBasligi('Blog', 'Yazılım yaptırırken ve serbest çalışırken işine yarayacak rehberler: bütçe, teklif, sözleşme ve teknoloji seçimi.')
+    useSayfaBasligi(SAYFA_ETIKETLERI.blog.baslik, SAYFA_ETIKETLERI.blog.aciklama)
     const [yazilar, setYazilar] = useState([])
     const [yukleniyor, setYukleniyor] = useState(true)
     const [hata, setHata] = useState(false)

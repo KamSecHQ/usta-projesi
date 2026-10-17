@@ -1,52 +1,21 @@
 // Derlemeden sonra çalışır (npm run build): paylaşım önizlemesi için sayfaya özel HTML üretir.
 // Site tek sayfalık uygulama; LinkedIn, WhatsApp ve X bağlantıyı açarken JavaScript çalıştırmaz,
-// yalnızca HTML'deki etiketleri okur. Bu yüzden dist/index.html kopyalanır ve başlık, açıklama,
-// kanonik adres ile og/twitter etiketleri sayfaya göre değiştirilir. vercel.json o adresi bu
-// dosyaya yönlendirir. Etiketlerden biri bulunamazsa derleme durur (sessizce eski etiket kalmasın).
+// yalnızca HTML'deki etiketleri okur. dist/index.html kopyalanır, başlık, açıklama, kanonik adres
+// ve og/twitter etiketleri SAYFA_ETIKETLERI'ne (src/paylasimEtiketleri.js) göre değiştirilir.
+// vercel.json her yolu kendi dosyasına yönlendirir. Etiket bulunamazsa derleme durur.
 import { readFileSync, writeFileSync } from 'node:fs'
-
-const SITE = 'https://www.kalfahane.com'
-
-const SAYFALAR = [
-    {
-        dosya: 'ornek.html',
-        yol: '/ornek',
-        baslik: 'Örnek vitrin: bir iş baştan sona — Kalfahane',
-        aciklama: "Kalfahane'de bir iş nasıl ilerler: ilan, teklif, konuşma, teslim ve kıdem. Örnek bir işle adım adım gör; farklı sektörlerden örnek ilanlar ve ustalar.",
-        gorsel: '/og-ornek.png',
-        gorselAlt: 'Kalfahane örnek vitrin: Bir iş, baştan sona. Örnek ilan ve kabul edilen teklif.',
-    },
-]
-
-const kacis = (m) => m.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+import { SAYFA_ETIKETLERI, etiketleriDegistir } from '../src/paylasimEtiketleri.js'
 
 const kaynak = readFileSync('dist/index.html', 'utf8')
+const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'))
 
-for (const s of SAYFALAR) {
-    const adres = `${SITE}${s.yol}`
-    const gorsel = `${SITE}${s.gorsel}`
-    const degisimler = [
-        [/<title>[^<]*<\/title>/, `<title>${kacis(s.baslik)}</title>`],
-        [/(<meta\s+name="description"\s+content=")[^"]*(")/, `$1${kacis(s.aciklama)}$2`],
-        [/(<link rel="canonical" href=")[^"]*(")/, `$1${adres}$2`],
-        [/(<meta property="og:url" content=")[^"]*(")/, `$1${adres}$2`],
-        [/(<meta property="og:title" content=")[^"]*(")/, `$1${kacis(s.baslik)}$2`],
-        [/(<meta property="og:description" content=")[^"]*(")/, `$1${kacis(s.aciklama)}$2`],
-        [/(<meta property="og:image" content=")[^"]*(")/, `$1${gorsel}$2`],
-        [/(<meta property="og:image:alt" content=")[^"]*(")/, `$1${kacis(s.gorselAlt)}$2`],
-        [/(<meta name="twitter:title" content=")[^"]*(")/, `$1${kacis(s.baslik)}$2`],
-        [/(<meta name="twitter:description" content=")[^"]*(")/, `$1${kacis(s.aciklama)}$2`],
-        [/(<meta name="twitter:image" content=")[^"]*(")/, `$1${gorsel}$2`],
-        [/(<meta name="twitter:image:alt" content=")[^"]*(")/, `$1${kacis(s.gorselAlt)}$2`],
-    ]
-    let html = kaynak
-    for (const [desen, yerine] of degisimler) {
-        if (!desen.test(html)) {
-            console.error(`sayfa-etiketleri: ${s.dosya} için etiket bulunamadı: ${desen}`)
-            process.exit(1)
-        }
-        html = html.replace(desen, yerine)
+for (const sayfa of Object.values(SAYFA_ETIKETLERI)) {
+    const dosya = `${sayfa.yol.slice(1)}.html`
+    writeFileSync(`dist/${dosya}`, etiketleriDegistir(kaynak, sayfa))
+    // Yönlendirme unutulursa dosya hiç sunulmaz: derleme burada uyarır
+    if (!vercel.rewrites.some((r) => r.source === sayfa.yol && r.destination === `/${dosya}`)) {
+        console.error(`sayfa-etiketleri: vercel.json'da ${sayfa.yol} → /${dosya} yönlendirmesi yok`)
+        process.exit(1)
     }
-    writeFileSync(`dist/${s.dosya}`, html)
-    console.log(`yazıldı: dist/${s.dosya} (${s.yol})`)
+    console.log(`yazıldı: dist/${dosya} (${sayfa.yol})`)
 }

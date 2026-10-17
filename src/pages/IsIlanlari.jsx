@@ -8,6 +8,7 @@ import { Sahne, HapLink } from '../components/uzay/Hareket'
 import IlanKarti, { IskeletIlan } from '../components/ilan/IlanKarti'
 import { BosTezgah } from '../components/usta/UstaIcazeti'
 import OrnekVitrinDaveti from '../components/ornek/OrnekVitrinDaveti'
+import { SAYFA_ETIKETLERI } from '../paylasimEtiketleri'
 
 const SIRALAMALAR = [
     ['yeni', 'En yeni'],
@@ -21,7 +22,7 @@ const butceDegeri = (ilan) => ilan.butce_max ?? ilan.butce_min ?? null
 const ORNEK_DAVET_ESIGI = 10
 
 function IsIlanlari() {
-    useSayfaBasligi('İş ilanları', 'İşletmelerin açtığı güncel yazılım işleri: web sitesi, mobil uygulama, entegrasyon. Bütçeyi gör, teklifini ver.')
+    useSayfaBasligi(SAYFA_ETIKETLERI.isIlanlari.baslik, SAYFA_ETIKETLERI.isIlanlari.aciklama)
 
     // Süzme adres çubuğunda tutulur: paylaşılabilir ve geri tuşuyla korunur
     const [parametreler, setParametreler] = useSearchParams()

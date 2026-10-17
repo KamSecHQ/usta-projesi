@@ -9,6 +9,7 @@ import { HapLink, Ok } from '../components/uzay/Hareket'
 import MesajlasDugmesi from '../components/MesajlasDugmesi'
 import { aciklamayiAyir } from '../components/ilan/ilanSablonlari'
 import { KapiSayfasi } from '../components/hesap/GirisKapisi'
+import { ozetle } from '../paylasimEtiketleri'
 
 const TEKLIF_DURUMU = { beklemede: 'Beklemede', kabul_edildi: 'Kabul edildi', reddedildi: 'Reddedildi' }
 const MESAJ_ONERI = 80
@@ -133,7 +134,7 @@ function IlanDetay() {
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
 
-    useSayfaBasligi(ilan ? ilan.baslik : 'İş ilanı', ilan?.aciklama?.replace(/\s+/g, ' ').slice(0, 155))
+    useSayfaBasligi(ilan ? ilan.baslik : 'İş ilanı', ilan?.aciklama ? ozetle(ilan.aciklama) : undefined)
 
     const veriGetir = useCallback(async () => {
         const { data: ilanData, error } = await supabase.from('ilanlar').select('*').eq('id', id).single()

@@ -71,8 +71,8 @@ Kasmanın üç kaynağı vardı:
 | 25 | 404 sayfası `noindex` | ✅ |
 | 26 | Usta profilleri, ilanlar ve blog yazıları için dinamik site haritası (Vercel fonksiyonu) | ⏳ |
 | 27 | Usta için `Person`, ilan için `JobPosting`, yazı için `Article` yapılandırılmış verisi | ⏳ |
-| 28 | Ön işleme (prerender): arama motorlarına içerikli HTML | ⏳ |
-| 29 | Usta profili için dinamik paylaşım kartı (isim, unvan, kıdem) | ⏳ |
+| 28 | Ön işleme (prerender): arama motorlarına içerikli HTML. Sabit sayfaların başlık ve açıklama etiketleri derlemede yazılıyor (`scripts/sayfa-etiketleri.mjs`); içerik ön işlemesi kaldı | ⏳ |
+| 29 | Usta profili için dinamik paylaşım kartı (isim, unvan, kıdem). Metin kartı yapıldı (`api/paylasim.js`, ilan ve blog yazısı dahil); isme özel görsel kaldı | ⏳ |
 | 30 | Google Search Console ve Bing doğrulaması | 🔒 |
 
 ## İz D: Erişilebilirlik

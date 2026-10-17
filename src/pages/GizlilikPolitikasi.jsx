@@ -3,6 +3,7 @@ import useSayfaBasligi from '../useSayfaBasligi'
 import { Ok } from '../components/uzay/Hareket'
 import useOkunanBolum from '../components/yazi/useOkunanBolum'
 import '../components/uzay/uzay.css'
+import { SAYFA_ETIKETLERI } from '../paylasimEtiketleri'
 
 // Metin, sistemin gerçek davranışını anlatır. Veri akışı değişirse (yeni tablo, yeni
 // üçüncü taraf hizmet, yeni tarayıcı kaydı) bu sayfa ve SON_GUNCELLEME birlikte güncellenir.
@@ -89,7 +90,7 @@ const metin = 'max-w-[68ch] text-[16.5px] font-light leading-[1.75] text-[#D4D4D
 const baglanti = 'text-mor-soluk underline decoration-mor-soluk/40 underline-offset-[3px] hover:text-white hover:decoration-white'
 
 function GizlilikPolitikasi() {
-    useSayfaBasligi('Gizlilik politikası', 'Kalfahane hangi verileri neden işler, kim görür, nerede saklar ve haklarını nasıl kullanırsın: KVKK kapsamında aydınlatma.')
+    useSayfaBasligi(SAYFA_ETIKETLERI.gizlilik.baslik, SAYFA_ETIKETLERI.gizlilik.aciklama)
     const aktif = useOkunanBolum(KIMLIKLER)
 
     return (

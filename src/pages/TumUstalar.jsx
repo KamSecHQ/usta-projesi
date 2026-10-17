@@ -10,6 +10,7 @@ import { Sahne } from '../components/uzay/Hareket'
 import { USTA_ALANLARI, kartVerisiniTamamla, favorileriGetir } from '../ustaVerisi'
 import { aramaIcinKatla, sikEtiketler } from '../ustaYardimcilari'
 import OrnekVitrinDaveti from '../components/ornek/OrnekVitrinDaveti'
+import { SAYFA_ETIKETLERI } from '../paylasimEtiketleri'
 
 const SIRALAMALAR = [
     ['yeni', 'En yeni'],
@@ -22,7 +23,7 @@ const SIRALAMALAR = [
 const ORNEK_DAVET_ESIGI = 10
 
 function TumUstalar() {
-    useSayfaBasligi('Ustalar', 'Doğrulanmış Türk yazılımcıların portföylerini incele: React, mobil, e-ticaret ve daha fazlası. Teknolojiye göre ara, ustanı seç.')
+    useSayfaBasligi(SAYFA_ETIKETLERI.ustalar.baslik, SAYFA_ETIKETLERI.ustalar.aciklama)
     const { user } = useAuth()
 
     // Süzme adres çubuğunda: paylaşılabilir, geri tuşuyla korunur, bant plakasından gelince güncellenir

@@ -8,6 +8,7 @@ import { hesapHatasi } from '../components/hesap/hesapHatalari'
 import { Alan, SifreAlani } from '../components/form/Alan'
 import { Ok } from '../components/uzay/Hareket'
 import Ikon from '../components/mesaj/Ikon'
+import { SAYFA_ETIKETLERI } from '../paylasimEtiketleri'
 
 const ROLLER = [
     ['yazilimci', 'Yazılımcıyım', 'Portföyünü aç, ilanlara teklif ver.'],
@@ -15,7 +16,7 @@ const ROLLER = [
 ]
 
 function HesapOlustur() {
-    useSayfaBasligi('Hesap oluştur', 'Kalfahane hesabını ücretsiz aç: yazılımcıysan portföyünü oluştur, işletmeysen ilan açıp teklif topla.')
+    useSayfaBasligi(SAYFA_ETIKETLERI.hesapOlustur.baslik, SAYFA_ETIKETLERI.hesapOlustur.aciklama)
     const [searchParams] = useSearchParams()
     const [rol, setRol] = useState(searchParams.get('rol') === 'is-veren' ? 'is-veren' : 'yazilimci')
     const [adSoyad, setAdSoyad] = useState('')

@@ -1,9 +1,5 @@
 import { useEffect } from 'react'
-
-const SITE = 'https://www.kalfahane.com'
-const VARSAYILAN_BASLIK = "Kalfahane — Türkiye'nin Yazılım Çarşısı"
-const VARSAYILAN_ACIKLAMA =
-    'Doğrulanmış Türk yazılımcılarla işletmeleri bir araya getiren pazaryeri. Portföyünü oluştur, ihtiyacın olan ustayı bul.'
+import { SITE, VARSAYILAN_ACIKLAMA, tamBaslik } from './paylasimEtiketleri'
 
 function metaAyarla(secici, olustur, deger) {
     let el = document.head.querySelector(secici)
@@ -26,15 +22,15 @@ const meta = (ad, ozellik = false) => () => {
 // bu bilgileri okur. Sayfadan çıkınca önceki değerler geri yüklenir.
 function useSayfaBasligi(baslik, aciklama) {
     useEffect(() => {
-        const tamBaslik = baslik ? `${baslik} — Kalfahane` : VARSAYILAN_BASLIK
+        const baslikMetni = tamBaslik(baslik)
         const metin = aciklama || VARSAYILAN_ACIKLAMA
         const adres = SITE + window.location.pathname
 
         const eskiBaslik = document.title
-        document.title = tamBaslik
+        document.title = baslikMetni
         const eskiler = [
             ['meta[name="description"]', metaAyarla('meta[name="description"]', meta('description'), metin)],
-            ['meta[property="og:title"]', metaAyarla('meta[property="og:title"]', meta('og:title', true), tamBaslik)],
+            ['meta[property="og:title"]', metaAyarla('meta[property="og:title"]', meta('og:title', true), baslikMetni)],
             ['meta[property="og:description"]', metaAyarla('meta[property="og:description"]', meta('og:description', true), metin)],
             ['meta[property="og:url"]', metaAyarla('meta[property="og:url"]', meta('og:url', true), adres)],
             [

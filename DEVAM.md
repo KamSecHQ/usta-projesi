@@ -9,7 +9,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 
 ## ŞU ANKİ DURUM (ilk önce bunu oku)
 
-- **Son yayınlar (17 Ekim 2026):** `780c585` (atölye yazısı okunur; üyeye kayıt daveti yerine role göre sıradaki adım), `f071012` (site geneli premium cila: cam ışık rayı menü, giriş kapıları, iç sayfa atmosferi ve altbilgi, metinler cümle düzeninde), `9ba6d74` (faz 50, hero küresi).
+- **Son yayınlar (17 Ekim 2026):** `c971cb5` (örnek vitrin paylaşım kartı), `1a51f85` (örnek vitrin `/ornek`, profil düzenleme role göre), `780c585` (atölye yazısı okunur; üyeye kayıt daveti yerine role göre sıradaki adım), `f071012` (site geneli premium cila: cam ışık rayı menü, giriş kapıları, iç sayfa atmosferi ve altbilgi, metinler cümle düzeninde), `9ba6d74` (faz 50, hero küresi).
 - **Önceki not:** 17 Ekim 2026: faz 50 yayını `9ba6d74`; öncesi `165f0fe`. Vercel ve GitHub Actions başarılı, canlı site doğrulandı (CloudFront izi yok, poster sunuluyor ve ilk karede sönüyor, küre çiziliyor, konsol temiz). Çalışılan dal `main`; eski `perf/kasma-ve-yol-haritasi` dalı aynı commit'te kaldı, silinebilir.
 - **GitHub Actions** (`Kontrol`) ilk kez çalıştı ve geçti: lint 0 uyarı, 33/33 test, derleme, ilk yük 164 KB.
 - **Yayın akışı:** kullanıcı "commitle ve siteye yükle" deyince: `npx oxlint --deny-warnings`, `npm test`, `npm run build`, `npm run butce`; Türkçe mesajla commit; `git push origin main`; Vercel durumu (`gh api repos/KamSecHQ/usta-projesi/commits/<sha>/status`) ve Actions (`gh run list --repo KamSecHQ/usta-projesi`) izlenir; canlı site doğrulanır. Bu Mac'te GitHub kimlik bilgisi var; diğer Mac'te `gh auth login` gerekebilir (kullanıcı adını ve token'ı kullanıcı kendisi girer).
