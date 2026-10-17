@@ -14,6 +14,7 @@ import { HapLink, Ok } from '../components/uzay/Hareket'
 import Ikon from '../components/mesaj/Ikon'
 import { cevrimiciMi, musaitlikBilgisi, ucretAraligiGoster, videoEmbedUrl, kidemRozetiHesapla, tamamlananIsSayisiGetir } from '../ustaYardimcilari'
 import { KapiSayfasi } from '../components/hesap/GirisKapisi'
+import { useProfilRolu } from '../profilRolu'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return '?'
@@ -54,6 +55,8 @@ function Rozet({ children, renk = 'text-[#E4E4E7]', zemin = 'bg-white/[0.06]' })
 function UstaProfili() {
     const { id } = useParams()
     const { user } = useAuth()
+    const { girisli, rol: ziyaretciRolu } = useProfilRolu()
+    const ziyaretci = !girisli
     const [profil, setProfil] = useState(null)
     const [projeler, setProjeler] = useState([])
     const [kidem, setKidem] = useState(null)
@@ -293,7 +296,8 @@ function UstaProfili() {
                                         </HapLink>
                                     ) : (
                                         <>
-                                            {yazilimci && (
+                                            {/* İlan yalnızca iş veren açar: üye yazılımcıya bu düğme gösterilmez */}
+                                            {yazilimci && (ziyaretci ? true : ziyaretciRolu === 'is-veren') && (
                                                 <HapLink to={user ? '/ilan-ver' : '/hesap-olustur?rol=is-veren'} className="justify-center">
                                                     İlan aç, teklif iste
                                                 </HapLink>

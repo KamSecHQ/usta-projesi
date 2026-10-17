@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '../AuthContext'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
 import HesapCercevesi from '../components/hesap/HesapCercevesi'
@@ -24,6 +25,7 @@ function HesapOlustur() {
     const [hatalar, setHatalar] = useState({})
     const [gonderiliyor, setGonderiliyor] = useState(false)
     const [basarili, setBasarili] = useState(false)
+    const { user, yukleniyor: authYukleniyor } = useAuth()
 
     async function kayitOl(e) {
         e.preventDefault()
@@ -49,6 +51,9 @@ function HesapOlustur() {
         setGonderiliyor(false)
         setBasarili(true)
     }
+
+    // Zaten üye olan kayıt formunu görmez; kayıt sırasında açılan oturum da panele götürür
+    if (!authYukleniyor && user && !basarili) return <Navigate to="/panel" replace />
 
     if (basarili) {
         return (

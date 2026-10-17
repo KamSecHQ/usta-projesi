@@ -101,11 +101,15 @@ const TURLER = ['somun', 'acSusluk', 'kapaSusluk', 'kucuktur', 'buyuktur', 'egik
 const RENKLER = ['mor', 'kara', 'seramik', 'krom', 'kara', 'seramik', 'mor', 'krom', 'seramik']
 
 const rastgele = THREE.MathUtils.randFloatSpread
-const MERKEZ_Y = -1.3
+// Başlık ve alt yazı sahnenin üst kısmında durur. Parçalar o bölgeye girmesin diye yumuşak bir
+// tavan var: yazının alt kenarı (panel yüksekliğine oranı FizikPaneli ölçer) dünya koordinatına
+// çevrilir, tavanı aşan parça aşağı itilir. Çekim merkezi tavan ile zemin arasının ortası.
+const KAMERA_UZAKLIGI_VARSAYILAN = 17
+const TAVAN_PAYI = 0.35
 
 // ---------- Parça ----------
 
-function Parca({ geometri, malzeme, dagit, olcek = 1 }) {
+function Parca({ geometri, malzeme, dagit, olcek = 1, metinAltOrani }) {
     const govde = useRef()
     const kuvvet = useMemo(() => new THREE.Vector3(), [])
     const baslangic = useMemo(() => [rastgele(14), rastgele(10), rastgele(8) - 2], [])
@@ -117,15 +121,30 @@ function Parca({ geometri, malzeme, dagit, olcek = 1 }) {
         return [((b.max.x - b.min.x) / 2) * olcek * 0.92, ((b.max.y - b.min.y) / 2) * olcek * 0.92, ((b.max.z - b.min.z) / 2) * olcek * 0.92]
     }, [geometri, olcek])
 
-    useFrame((_, dt) => {
+    // Parçanın en uzak ucu: dönerken tavana bu kadar yaklaşabilir
+    const yaricap = Math.max(...yariBoyut)
+
+    useFrame(({ viewport, camera }, dt) => {
         const b = govde.current
         if (!b) return
         const adim = Math.min(0.1, dt)
         const p = b.translation()
+        const yariYukseklik = viewport.height / 2
+        const tavan = yariYukseklik - metinAltOrani.current * viewport.height - TAVAN_PAYI
+        const merkezY = (tavan - yariYukseklik) / 2
+
         // Merkeze çekim: Lusion'daki gibi her kare küçük bir dürtü
-        // Merkez başlığın altında: parçalar metnin üstüne çıkmaz
-        kuvvet.set(-p.x, MERKEZ_Y - p.y, -p.z).multiplyScalar(adim * 1.6 * olcek)
+        kuvvet.set(-p.x, merkezY - p.y, -p.z).multiplyScalar(adim * 1.6 * olcek)
         b.applyImpulse(kuvvet, true)
+
+        // Yumuşak tavan: kameraya yakın parça perspektifle daha yukarıda görünür, ona göre ölçülür
+        const uzaklik = camera.position.z || KAMERA_UZAKLIGI_VARSAYILAN
+        const ekranUstu = ((p.y + yaricap) * uzaklik) / Math.max(1, uzaklik - p.z)
+        const asim = ekranUstu - tavan
+        if (asim > 0) {
+            kuvvet.set(0, -asim * adim * 9 * olcek, 0)
+            b.applyImpulse(kuvvet, true)
+        }
 
         // Tıklanınca dışarı saçılır
         if (dagit.current !== son.current) {
@@ -193,7 +212,7 @@ function HazirSinyali({ onHazir }) {
     return null
 }
 
-function Sahne({ adet, dagit, azalt, hafif, onHazir }) {
+function Sahne({ adet, dagit, azalt, hafif, onHazir, metinAltOrani }) {
     const geo = useMemo(geometrileriUret, [])
     const parcalar = useMemo(
         () =>
@@ -214,7 +233,7 @@ function Sahne({ adet, dagit, azalt, hafif, onHazir }) {
             <Physics gravity={[0, 0, 0]} paused={azalt}>
                 <Imlec />
                 {parcalar.map((p, i) => (
-                    <Parca key={i} geometri={geo[p.tur]} malzeme={p.renk} dagit={dagit} olcek={p.olcek} />
+                    <Parca key={i} geometri={geo[p.tur]} malzeme={p.renk} dagit={dagit} olcek={p.olcek} metinAltOrani={metinAltOrani} />
                 ))}
                 <Isitici sonIslem ilkKare />
             </Physics>
@@ -248,8 +267,11 @@ function hareketAzaltilsinMi() {
     return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-export default function FizikSahnesi({ olayKaynagi, onHazir, aktif = true }) {
+// metinAltOrani: üstteki yazının alt kenarının panel yüksekliğine oranı (ref; yeniden çizim yok)
+export default function FizikSahnesi({ olayKaynagi, onHazir, aktif = true, metinAltOrani }) {
     const dagit = useRef(0)
+    const varsayilanOran = useRef(0.42)
+    const oran = metinAltOrani || varsayilanOran
     const [azalt] = useState(hareketAzaltilsinMi)
     const [dar] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768)
     // Dar ekran ya da az çekirdekli cihaz: ağır son işlem geçişleri kapatılır
@@ -280,7 +302,7 @@ export default function FizikSahnesi({ olayKaynagi, onHazir, aktif = true }) {
         >
             <PerformanceMonitor bounds={() => [40, 120]} onDecline={() => setDpr(1)} />
             <Suspense fallback={null}>
-                <Sahne adet={dar ? 12 : 18} dagit={dagit} azalt={azalt || !aktif} hafif={hafif} onHazir={onHazir} />
+                <Sahne adet={dar ? 12 : 18} dagit={dagit} azalt={azalt || !aktif} hafif={hafif} onHazir={onHazir} metinAltOrani={oran} />
             </Suspense>
         </Canvas>
     )

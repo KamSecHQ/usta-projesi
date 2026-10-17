@@ -3,6 +3,8 @@ import { Sahne, SatirBaslik, HapLink } from './uzay/Hareket'
 import { supabase } from '../supabaseClient'
 import UstaIcazeti, { BosTezgah, IskeletIcazet } from './usta/UstaIcazeti'
 import { USTA_ALANLARI, kartVerisiniTamamla } from '../ustaVerisi'
+import { useAuth } from '../AuthContext'
+import { useProfilRolu } from '../profilRolu'
 
 const KART_SAYISI = 3
 
@@ -41,6 +43,14 @@ function Ustalar() {
     }, [])
 
     const bosYer = Math.max(0, KART_SAYISI - ustalar.length)
+
+    // İkinci düğme: ziyaretçiye katılma daveti, üyeye kendi rolündeki sıradaki adım
+    const { user } = useAuth()
+    const { girisli, rol, hazir } = useProfilRolu()
+    let ikinciEylem = null
+    if (hazir && !girisli) ikinciEylem = { ad: 'Usta olarak katıl', to: '/hesap-olustur?rol=yazilimci' }
+    else if (hazir && rol === 'yazilimci') ikinciEylem = { ad: 'Herkese açık profilim', to: user ? `/ustalar/${user.id}` : '/profilim' }
+    else if (hazir && rol === 'is-veren') ikinciEylem = { ad: 'İlan ver', to: '/ilan-ver' }
 
     return (
         <Sahne as="section" id="ustalar" className="uz-ufuk px-4 py-28 sm:px-8 lg:py-36">
@@ -81,7 +91,9 @@ function Ustalar() {
 
             <div className="mt-12 flex flex-wrap justify-center gap-2.5">
                 <HapLink to="/ustalar" className="uz-otur" gecikme={0.45}>Tüm ustaları gör</HapLink>
-                <HapLink to="/hesap-olustur?rol=yazilimci" tur="cam" className="uz-otur" gecikme={0.52}>Usta olarak katıl</HapLink>
+                {ikinciEylem && (
+                    <HapLink to={ikinciEylem.to} tur="cam" className="uz-otur" gecikme={0.52}>{ikinciEylem.ad}</HapLink>
+                )}
             </div>
         </Sahne>
     )

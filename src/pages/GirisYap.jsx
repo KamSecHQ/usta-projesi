@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '../AuthContext'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
 import HesapCercevesi from '../components/hesap/HesapCercevesi'
@@ -27,6 +28,7 @@ function GirisYap() {
     const [hatalar, setHatalar] = useState({})
     const [gonderiliyor, setGonderiliyor] = useState(false)
     const [sifirlama, setSifirlama] = useState(false)
+    const { user, yukleniyor: authYukleniyor } = useAuth()
 
     // Boş ya da biçimsiz alan sunucuya gitmeden alanın altında söylenir
     function denetle(sifreDahil) {
@@ -65,6 +67,9 @@ function GirisYap() {
         bildir('Bu e-postayla bir hesap varsa, şifre sıfırlama bağlantısı gönderildi.', { tur: 'basari', sure: 6000 })
         setSifirlama(false)
     }
+
+    // Zaten giriş yapmış kullanıcı giriş formunu görmez: gideceği sayfaya geçer
+    if (!authYukleniyor && user) return <Navigate to={sonra} replace />
 
     return (
         <HesapCercevesi baslik={sifirlama ? 'Şifreni sıfırla' : 'Tekrar hoş geldin'} altBaslik={sifirlama ? 'E-postana yeni şifre belirleme bağlantısı gönderelim.' : 'Kaldığın yerden devam et.'}>

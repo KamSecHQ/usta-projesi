@@ -5,6 +5,7 @@ import '@fontsource-variable/plus-jakarta-sans'
 import './videoHero.css'
 import './gezinme.css'
 import { useAuth } from '../AuthContext'
+import { useProfilRolu, uyeEylemleri } from '../profilRolu'
 import DunyaKuresi from './atolye/DunyaKuresi'
 import Isitici from './atolye/Isitici'
 import kurePoster from '../assets/kure-poster.webp'
@@ -63,8 +64,16 @@ function NavLink({ link, onClick, className }) {
     )
 }
 
+// Ziyaretçiye kayıt daveti; üyeye rolüne göre sıradaki adım (profilRolu.js)
+const ZIYARETCI_EYLEMLERI = [
+    { ad: 'Yazılımcı olarak katıl', to: '/hesap-olustur?rol=yazilimci' },
+    { ad: 'İş vermek istiyorum', to: '/hesap-olustur?rol=is-veren' },
+]
+
 export default function VideoHero({ onHazir }) {
     const { user } = useAuth()
+    const { girisli, rol, hazir: rolHazir } = useProfilRolu()
+    const [birincilEylem, ikincilEylem] = girisli ? uyeEylemleri(rol) : ZIYARETCI_EYLEMLERI
     const [azalt] = useState(hareketAzaltilsinMi)
     // Giriş sahnesi: .anim oyuncuları sahne dışında tutar, .go sahneyi başlatır, bitince ikisi de kalkar
     const [anim, setAnim] = useState(!azalt)
@@ -282,13 +291,14 @@ export default function VideoHero({ onHazir }) {
                     <br />
                     kıdem burada satın alınmaz, tamamlanan her işle kazanılır.
                 </p>
-                <div className="ctas">
-                    <Link to="/hesap-olustur?rol=yazilimci" className="btn btn-lg btn-primary isik-hap isik-hap-birincil isik-hap-yorunge">
+                {/* Rol gelene kadar yer tutulur ama görünmez: ziyaretçi daveti üyeye bir an bile görünmez */}
+                <div className="ctas" style={rolHazir ? undefined : { visibility: 'hidden' }}>
+                    <Link to={birincilEylem.to} className="btn btn-lg btn-primary isik-hap isik-hap-birincil isik-hap-yorunge">
                         <span className="isik-yorunge" aria-hidden="true" />
-                        Yazılımcı olarak katıl <Ok />
+                        {birincilEylem.ad} <Ok />
                     </Link>
-                    <Link to="/hesap-olustur?rol=is-veren" className="btn btn-lg btn-ghost isik-hap">
-                        İş vermek istiyorum <Ok />
+                    <Link to={ikincilEylem.to} className="btn btn-lg btn-ghost isik-hap">
+                        {ikincilEylem.ad} <Ok />
                     </Link>
                 </div>
             </div>

@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { useAuth } from '../AuthContext'
 
 const SUTUNLAR = [
     {
@@ -10,19 +11,24 @@ const SUTUNLAR = [
             { ad: 'Blog', to: '/blog' },
         ],
     },
-    {
-        baslik: 'Hesap',
-        linkler: [
-            { ad: 'Giriş yap', to: '/giris' },
-            { ad: 'Hesap oluştur', to: '/hesap-olustur' },
-            { ad: 'Panelim', to: '/panel' },
-            { ad: 'Profilim', to: '/profilim' },
-        ],
-    },
 ]
+
+// Ziyaretçiye giriş ve kayıt, üyeye kendi sayfaları
+const HESAP_ZIYARETCI = { baslik: 'Hesap', linkler: [{ ad: 'Giriş yap', to: '/giris' }, { ad: 'Hesap oluştur', to: '/hesap-olustur' }] }
+const HESAP_UYE = {
+    baslik: 'Hesabın',
+    linkler: [
+        { ad: 'Panelim', to: '/panel' },
+        { ad: 'Mesajlar', to: '/mesajlar' },
+        { ad: 'Profilim', to: '/profilim' },
+        { ad: 'Ayarlar', to: '/ayarlar' },
+    ],
+}
 
 // Altbilgi: anasayfada tam boy, iç sayfalarda (App.jsx) kısa logotiple. Görünüm gezinme.css'te.
 function Footer({ kompakt = false }) {
+    const { user } = useAuth()
+    const sutunlar = [...SUTUNLAR, user ? HESAP_UYE : HESAP_ZIYARETCI]
     return (
         <footer className={`alt-bilgi relative overflow-hidden px-4 pt-20 font-pjs sm:px-8 ${kompakt ? 'kompakt' : ''}`}>
             <div className="relative mx-auto max-w-[1240px]">
@@ -35,7 +41,7 @@ function Footer({ kompakt = false }) {
                             Doğrulanmış Türk yazılımcılarla işletmeleri buluşturan çarşı. Kıdem burada satın alınmaz; tamamlanan her işle kazanılır.
                         </p>
                     </div>
-                    {SUTUNLAR.map((s) => (
+                    {sutunlar.map((s) => (
                         <nav key={s.baslik} className="md:col-span-2" aria-label={s.baslik}>
                             <div className="alt-baslik">{s.baslik}</div>
                             <ul className="flex flex-col gap-2.5">

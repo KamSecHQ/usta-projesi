@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Ok } from '../uzay/Hareket'
 import { musaitlikBilgisi, ucretAraligiGoster, cevrimiciMi, kidemRozetiHesapla } from '../../ustaYardimcilari'
+import { useProfilRolu } from '../../profilRolu'
 
 // Usta kartı ("icazet") ve boş tezgâh daveti: anasayfa, /ustalar ve Favorilerim aynı kartı kullanır.
 // Görünüm .isik-kart, .vitrin-desen ve .bos-tezgah sınıflarındadır (uzay/uzay.css).
@@ -161,13 +162,64 @@ const DAVETLER = {
     },
 }
 
+// Üyeye kayıt daveti gösterilmez: aynı boşluk rolüne uygun bir sıradaki adıma dönüşür
+const UYE_DAVETLERI = {
+    portfoy: {
+        to: '/profilim#projeler',
+        baslik: 'Vitrinin büyüdükçe öne çıkar',
+        metin: 'Portföyüne yeni bir iş ekle; dolu bir vitrin, iş verenin ilk baktığı yerdir.',
+        eylem: 'Portföyüme proje ekle',
+    },
+    ilanlar: {
+        to: '/is-ilanlari',
+        baslik: 'Açık ilanlar seni bekliyor',
+        metin: 'Teknolojilerine uyan işlere teklif ver; tamamlanan her iş kıdemine işlenir.',
+        eylem: 'Açık ilanlara göz at',
+    },
+    teklifler: {
+        to: '/tekliflerim',
+        baslik: 'Tekliflerini takip et',
+        metin: 'Verdiğin teklifler, durumları ve sıradaki adım tek yerde.',
+        eylem: 'Tekliflerim',
+    },
+    ilanVer: {
+        to: '/ilan-ver',
+        baslik: 'Aradığın usta burada yok mu?',
+        metin: 'İşini tarif et, ilanını aç; uygun ustalar sana teklif getirsin. İlan açmak ücretsiz.',
+        eylem: 'İlan ver',
+    },
+    ilanlarim: {
+        to: '/ilanlarim',
+        baslik: 'Gelen teklifleri karşılaştır',
+        metin: 'Açtığın ilanlara gelen teklifler İlanlarım’da yan yana: fiyat, kıdem ve portföy.',
+        eylem: 'İlanlarım',
+    },
+    panel: {
+        to: '/panel',
+        baslik: 'Çarşıdaki yerin',
+        metin: 'İlanların, tekliflerin ve mesajların panelinde.',
+        eylem: 'Panelime git',
+    },
+}
+
+function davetSec(tur, girisli, rol) {
+    if (!girisli) return DAVETLER[tur]
+    if (rol === 'yazilimci') return tur === 'usta' ? UYE_DAVETLERI.portfoy : tur === 'isVeren' ? UYE_DAVETLERI.ilanlar : UYE_DAVETLERI.teklifler
+    if (rol === 'is-veren') return tur === 'usta' ? UYE_DAVETLERI.ilanlarim : tur === 'isVeren' ? UYE_DAVETLERI.ilanVer : DAVETLER.ilan
+    return UYE_DAVETLERI.panel
+}
+
 export function BosTezgah({ sira, tur = 'usta', genis = false }) {
-    const d = DAVETLER[tur]
+    const { girisli, rol, hazir } = useProfilRolu()
+    const d = davetSec(tur, girisli, rol)
+    // Rol gelene kadar kart yerini tutar ama görünmez: yanlış davet bir an bile görünmez
     return (
         <Link
             to={d.to}
             className={`uz-otur group block h-full rounded-[20px] ${genis ? 'mx-auto max-w-[560px]' : ''}`}
-            style={{ '--d': `${0.3 + sira * 0.1}s` }}
+            style={{ '--d': `${0.3 + sira * 0.1}s`, visibility: hazir ? undefined : 'hidden' }}
+            aria-hidden={hazir ? undefined : true}
+            tabIndex={hazir ? undefined : -1}
         >
             <article className="isik-kart bos-tezgah flex h-full min-h-[280px] flex-col items-center justify-center px-8 py-12 text-center">
                 <span className="flex h-14 w-14 items-center justify-center rounded-full border border-dashed border-mor-acik/50 text-mor-acik transition-colors duration-300 group-hover:border-mor-acik group-hover:bg-mor/15">
