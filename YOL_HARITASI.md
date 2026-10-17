@@ -70,7 +70,7 @@ Kasmanın üç kaynağı vardı:
 | 24 | Yapılandırılmış veri: Organization ve WebSite + arama kutusu (JSON-LD) | ✅ |
 | 25 | 404 sayfası `noindex` | ✅ |
 | 26 | Usta profilleri, ilanlar ve blog yazıları için dinamik site haritası (Vercel fonksiyonu `api/site-haritasi.js`) | ✅ |
-| 27 | Usta için `Person`, ilan için `JobPosting`, yazı için `Article` yapılandırılmış verisi | ⏳ |
+| 27 | Usta için `Person` (`ProfilePage` içinde), yazı için `Article` yapılandırılmış verisi (`src/yapilandirilmisVeri.js`). İlan için `JobPosting` bilerek yok: ilanlar proje işi, Google'ın iş ilanı kurallarına uymaz | ✅ |
 | 28 | Ön işleme (prerender): arama motorlarına içerikli HTML. Sabit sayfaların başlık ve açıklama etiketleri derlemede yazılıyor (`scripts/sayfa-etiketleri.mjs`); içerik ön işlemesi kaldı | ⏳ |
 | 29 | Usta profili için dinamik paylaşım kartı (isim, unvan, kıdem). Metin kartı yapıldı (`api/paylasim.js`, ilan ve blog yazısı dahil); isme özel görsel kaldı | ⏳ |
 | 30 | Google Search Console ve Bing doğrulaması | 🔒 |
@@ -101,7 +101,7 @@ Kasmanın üç kaynağı vardı:
 | 45 | `/ustalar` uzay temasında: anasayfayla ortak ışıklı kart, gerçek veriden teknoloji çipleri, müsaitlik anahtarı, sıralama, süzme adreste; favoriler tek sorguda | ✅ |
 | 46 | `/is-ilanlari`: ışıklı ilan kartları, teknoloji ve bütçe süzgeci, bütçeye göre sıralama, boş durum ve ilan daveti | ✅ |
 | 47 | Uygulama geneli bildirim (toast) sistemi (`useBildirim()`); `alert()` ve `confirm()` kalktı | ✅ |
-| 48 | Mobilde alt sekme çubuğu (Panel, Mesajlar, İlanlar) | ⏳ |
+| 48 | Mobilde alt sekme çubuğu: giriş yapmış kullanıcıya role göre beş sekme (`AltSekmeler.jsx`), açık konuşmada gizlenir | ✅ |
 | 49 | Sayfa geçiş animasyonları (View Transitions API) | ⏳ |
 | 50 | Kendi yapımımız hero: gerçek zamanlı noktalı WebGL küre (Natural Earth kıtaları, İstanbul merkezli ağ, kendi posteri); 38 MB video kalktı | ✅ |
 
@@ -171,7 +171,7 @@ Kasmanın üç kaynağı vardı:
 |---|---|---|
 | 91 | Ölü kod temizliği: rotada olmayan `KayitOl.jsx`, `IsVer.jsx` | ✅ |
 | 92 | Lint uyarıları 11 → 0 (hook bağımlılıkları `useCallback` ile, kullanılmayan değişkenler, hızlı yenileme dışa aktarımları) | ✅ |
-| 93 | Birim testleri: Node'un yerleşik test çalıştırıcısıyla (yeni bağımlılık yok); `npm test`, şu an 56 test | ✅ |
+| 93 | Birim testleri: Node'un yerleşik test çalıştırıcısıyla (yeni bağımlılık yok); `npm test`, şu an 60 test | ✅ |
 | 94 | Uçtan uca testler (Playwright): kayıt, ilan, teklif, mesaj | ⏳ |
 | 95 | GitHub Actions: lint (uyarı da hata) + test + build + ilk yük bütçesi (`npm run butce`, gzip ≤ 200 KB) | ✅ |
 | 96 | Hata izleme (Sentry) ve Web Vitals | 🔒 hesap |
@@ -199,8 +199,8 @@ Kasmanın üç kaynağı vardı:
 
 ## Sayılarla
 
-- ✅ Tamamlanan: 45 faz
-- ⏳ Kod tarafında sırada: 33 faz
+- ✅ Tamamlanan: 47 faz
+- ⏳ Kod tarafında sırada: 31 faz
 - 🔒 Senin kararını, erişimini ya da canlı veritabanı onayını bekleyen: 22 faz
 
 ## Sıradaki önerilen paket

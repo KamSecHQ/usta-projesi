@@ -611,7 +611,7 @@ button.isik-kutu:hover {
 .bildirim-alani {
     position: fixed;
     left: 50%;
-    bottom: max(24px, env(safe-area-inset-bottom));
+    bottom: calc(max(24px, env(safe-area-inset-bottom)) + var(--alt-sekme, 0px));
     z-index: 120;
     display: flex;
     flex-direction: column;

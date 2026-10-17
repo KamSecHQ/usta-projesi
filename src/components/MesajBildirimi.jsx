@@ -56,7 +56,7 @@ function MesajBildirimi({ gelen, kullaniciId }) {
                     : bildirim.icerik
 
     return (
-        <div className="fixed z-[70] bottom-5 left-4 right-4 sm:left-auto sm:right-5 sm:w-[360px]" role="status" aria-live="polite">
+        <div className="fixed z-[70] bottom-[calc(1.25rem+var(--alt-sekme,0px))] left-4 right-4 sm:left-auto sm:right-5 sm:w-[360px]" role="status" aria-live="polite">
             <div className="msj-bildirim relative flex items-start gap-3 p-3.5 pr-11">
                 <button
                     onClick={() => {

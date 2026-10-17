@@ -11,33 +11,8 @@ import { blogOnizlemesi } from './blogOnizleme'
 import '../components/uzay/uzay.css'
 import { KapiSayfasi } from '../components/hesap/GirisKapisi'
 import { ozetle } from '../paylasimEtiketleri'
-
-const SITE = 'https://www.kalfahane.com'
-
-// Arama motorları için makale bilgisi (JSON-LD). Sayfadan çıkınca kaldırılır.
-function useMakaleVerisi(yazi) {
-    useEffect(() => {
-        if (!yazi) return
-        const veri = {
-            '@context': 'https://schema.org',
-            '@type': 'Article',
-            headline: yazi.baslik,
-            description: yazi.ozet || undefined,
-            image: yazi.kapak_gorseli_url ? [yazi.kapak_gorseli_url] : [`${SITE}/og-image.png`],
-            datePublished: yazi.created_at,
-            dateModified: yazi.guncellenme_tarihi || yazi.created_at,
-            articleSection: yazi.kategori || undefined,
-            mainEntityOfPage: `${SITE}/blog/${yazi.slug}`,
-            author: { '@type': 'Organization', name: 'Kalfahane', url: SITE },
-            publisher: { '@type': 'Organization', name: 'Kalfahane', url: SITE },
-        }
-        const etiket = document.createElement('script')
-        etiket.type = 'application/ld+json'
-        etiket.textContent = JSON.stringify(veri)
-        document.head.appendChild(etiket)
-        return () => etiket.remove()
-    }, [yazi])
-}
+import { makaleVerisi } from '../yapilandirilmisVeri'
+import useYapilandirilmisVeri from '../useYapilandirilmisVeri'
 
 function GeriBaglanti() {
     return (
@@ -57,7 +32,7 @@ function BlogYazisi() {
     const [durum, setDurum] = useState('yukleniyor')
     const [kapakHatasi, setKapakHatasi] = useState(false)
     useSayfaBasligi(yazi ? yazi.baslik : 'Blog', yazi?.ozet ? ozetle(yazi.ozet) : undefined)
-    useMakaleVerisi(yazi)
+    useYapilandirilmisVeri(makaleVerisi(yazi))
 
     // Geliştirmede ?onizleme=1 ile örnek yazı (canlıda yok)
     const [onizleme] = useState(() => (import.meta.env.DEV ? blogOnizlemesi(new URLSearchParams(window.location.search).get('onizleme')) : null))

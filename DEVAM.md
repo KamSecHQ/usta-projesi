@@ -9,6 +9,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 
 ## ŞU ANKİ DURUM (ilk önce bunu oku)
 
+- **Blog:** ilk üç yazı (bütçe rehberi, teklif rehberi, sözleşme maddeleri) 17 Ekim 2026'da kullanıcının onayıyla yayınlandı (`supabase/veri/20261017_ilk_blog_yazilari.sql`). Düzenleme ve yeni yazılar Blog yönetiminden (`/admin/blog`); yayınlanan yazı site haritasına ve paylaşım kartlarına kendiliğinden girer.
 - **Son yayınlar (17 Ekim 2026):** `c971cb5` (örnek vitrin paylaşım kartı), `1a51f85` (örnek vitrin `/ornek`, profil düzenleme role göre), `780c585` (atölye yazısı okunur; üyeye kayıt daveti yerine role göre sıradaki adım), `f071012` (site geneli premium cila: cam ışık rayı menü, giriş kapıları, iç sayfa atmosferi ve altbilgi, metinler cümle düzeninde), `9ba6d74` (faz 50, hero küresi).
 - **Önceki not:** 17 Ekim 2026: faz 50 yayını `9ba6d74`; öncesi `165f0fe`. Vercel ve GitHub Actions başarılı, canlı site doğrulandı (CloudFront izi yok, poster sunuluyor ve ilk karede sönüyor, küre çiziliyor, konsol temiz). Çalışılan dal `main`; eski `perf/kasma-ve-yol-haritasi` dalı aynı commit'te kaldı, silinebilir.
 - **GitHub Actions** (`Kontrol`) ilk kez çalıştı ve geçti: lint 0 uyarı, 33/33 test, derleme, ilk yük 164 KB.

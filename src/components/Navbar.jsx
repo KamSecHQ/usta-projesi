@@ -9,6 +9,7 @@ import { rayOlaylari } from './navVurgu'
 import { kidemRozetiHesapla, tamamlananIsSayisiGetir } from '../ustaYardimcilari'
 import { useOkunmamis } from '../mesajlasma'
 import MesajBildirimi from './MesajBildirimi'
+import AltSekmeler from './AltSekmeler'
 import './gezinme.css'
 
 // Anasayfanın bölümleri: Keşfet menüsü ve mobil menü buradan kaydırır
@@ -552,6 +553,7 @@ function Navbar() {
 
             <AramaPaleti acik={aramaAcik} kapat={() => setAramaAcik(false)} />
             <MesajBildirimi gelen={gelenMesaj} kullaniciId={user?.id} />
+            <AltSekmeler okunmamis={okunmamisMesaj} />
         </>
     )
 }

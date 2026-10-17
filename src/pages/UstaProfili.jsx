@@ -16,6 +16,8 @@ import { cevrimiciMi, musaitlikBilgisi, ucretAraligiGoster, videoEmbedUrl, kidem
 import { KapiSayfasi } from '../components/hesap/GirisKapisi'
 import { useProfilRolu } from '../profilRolu'
 import { ozetle } from '../paylasimEtiketleri'
+import { profilSayfasiVerisi } from '../yapilandirilmisVeri'
+import useYapilandirilmisVeri from '../useYapilandirilmisVeri'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return '?'
@@ -68,6 +70,7 @@ function UstaProfili() {
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
     useSayfaBasligi(profil ? `${profil.ad_soyad || 'Usta'} — ${profil.unvan || 'Portföy'}` : 'Portföy', profil?.bio ? ozetle(profil.bio) : undefined)
+    useYapilandirilmisVeri(profilSayfasiVerisi(profil))
 
     useEffect(() => {
         let iptal = false

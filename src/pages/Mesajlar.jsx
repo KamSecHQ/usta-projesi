@@ -796,7 +796,7 @@ function Mesajlar() {
     }
 
     return (
-        <div ref={kokRef} className="msj-kok relative flex overflow-hidden bg-black" style={{ height: `calc(100dvh - ${ust}px)` }}>
+        <div ref={kokRef} className="msj-kok relative flex overflow-hidden bg-black" style={{ height: `calc(100dvh - ${ust}px - var(--alt-sekme, 0px))` }}>
             {icerik}
         </div>
     )
