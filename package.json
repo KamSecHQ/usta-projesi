@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "test": "node --test \"testler/**/*.test.js\"",
     "butce": "node scripts/paket-butcesi.mjs",
+    "kure-poster": "node scripts/kure-poster-uret.mjs",
     "preview": "vite preview --port 4173",
     "olc": "node scripts/akicilik-olc.mjs",
     "og-gorsel": "node scripts/og-gorsel-uret.mjs"

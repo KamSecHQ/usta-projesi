@@ -45,7 +45,10 @@
     box-sizing: border-box;
 }
 
-/* ---------- 4. Video arka plan ---------- */
+/* ---------- 4. Arka plan: canlı WebGL küre + kendi posterimiz ----------
+   Küre paylaşılan 3D tuvalinde (z-index 5) .bg-kure kutusunun yerine çizilir. Tuval hazır
+   olana kadar aynı sahnenin kaydı olan poster görünür; ilk karede çapraz geçişle söner.
+   Poster ve küre aynı "cover" kutusuna göre yerleşir: .bg kutusu 1.6 oranlıdır. */
 .vhero .bg {
     position: absolute;
     left: 50%;
@@ -69,28 +72,28 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 51% 8%;
     display: block;
     background-color: #000;
     pointer-events: none;
 }
 
-/* Döngü geçişi: videonun son karesi bu tuvale kopyalanır ve video başa sararken söner.
-   Videonun kendi saydamlığı hiç değişmez: saydamlık geçişi macOS'te videoyu donanım
-   katmanından çıkarıp tam çözünürlükte birleştirmeye zorluyor, sayfa 30 kareye düşüyordu. */
-.vhero .bg-gecis {
-    background-color: transparent;
+.vhero .bg-poster {
+    transition: opacity .9s cubic-bezier(.16, 1, .3, 1);
+}
+
+.vhero .bg-poster.soldu {
     opacity: 0;
-    transition: opacity .9s linear;
 }
 
-.vhero .bg-gecis.gorunur {
-    opacity: 1;
-    transition: none;
+/* Kürenin çizildiği kutu: hero'nun tamamı */
+.vhero .bg-kure {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
-/* Video kaynağına ulaşılamazsa: mor ufuk ışığı ve seyrek yıldızlar */
-.vhero .bg.video-yok {
+/* Poster yüklenemezse ve WebGL yoksa: mor ufuk ışığı ve seyrek yıldızlar */
+.vhero .bg.poster-yok {
     background:
         radial-gradient(1.5px 1.5px at 12% 22%, rgba(255, 255, 255, .8), transparent 60%),
         radial-gradient(1px 1px at 28% 64%, rgba(255, 255, 255, .55), transparent 60%),
@@ -105,8 +108,16 @@
         #000;
 }
 
-.vhero .bg.video-yok .bg-video {
+.vhero .bg.poster-yok .bg-video {
     display: none;
+}
+
+/* Yalnızca geliştirmede (?kure=poster): poster kaydı için arayüz gizlenir, zaman donar */
+.vhero.kure-kaydi .nav,
+.vhero.kure-kaydi .hero-inner,
+.vhero.kure-kaydi .burger,
+.vhero.kure-kaydi .bg {
+    visibility: hidden;
 }
 
 /* ---------- 5. Nav (masaüstü) ---------- */
@@ -120,7 +131,8 @@
     align-items: center;
     padding-left: calc(24.5 * var(--u));
     padding-right: calc(50.7 * var(--u));
-    z-index: 3;
+    /* Paylaşılan 3D tuvali z-index 5'te; menü ve metin onun üstünde */
+    z-index: 7;
 }
 
 .vhero .logo {
@@ -257,7 +269,7 @@
     transform: translate(-50%, -50%) translate(calc(var(--dx) * var(--u)), calc(var(--dy) * var(--u)));
     width: max-content;
     text-align: center;
-    z-index: 2;
+    z-index: 6;
 }
 
 .vhero h1 {
@@ -415,7 +427,7 @@
         flex-direction: column;
         box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
         transform-origin: top right;
-        z-index: 5;
+        z-index: 8;
     }
 
     .vhero .menu.open {

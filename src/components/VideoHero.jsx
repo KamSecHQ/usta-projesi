@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { View } from '@react-three/drei'
 import '@fontsource-variable/plus-jakarta-sans'
 import './videoHero.css'
 import { useAuth } from '../AuthContext'
+import DunyaKuresi from './atolye/DunyaKuresi'
+import Isitici from './atolye/Isitici'
+import kurePoster from '../assets/kure-poster.webp'
 
-const VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260912_104036_bd6924f6-3c8e-417e-8465-6d03c8c2e9e6.mp4'
-const POSTER = 'https://d2ol7oe51mr4n9.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/82e7eb75-c65f-490a-99b5-f3d1cad54200.webp'
+// Hero'nun arka planı canlı WebGL küre (atolye/DunyaKuresi.jsx). Eski 38 MB'lık video ve onun
+// dış kaynaklı posteri kalktı; tuval hazır olana kadar küre sahnesinin kendi kaydı olan poster
+// görünür. Dosya adı tarihsel: bileşen artık video oynatmıyor.
+// Poster: ?kure=poster modunda alınan 1920×1200 kare (cwebp -q 82). Küre değişirse yeniden üretilir.
+const POSTER = kurePoster
 
-// Telefonda ve veri tasarrufu açıkken ~38 MB'lık video indirilmez; yerine poster gösterilir
-function videoOynatilsinMi() {
-    if (typeof window === 'undefined') return false
-    const baglanti = navigator.connection
-    if (baglanti?.saveData) return false
-    // Bağlantı tahmini sayfa açılırken kötümser olabilir; yalnızca gerçekten yavaş (2g) bağlantıda vazgeçilir
-    if (/(^|-)2g$/.test(baglanti?.effectiveType || '')) return false
-    return !window.matchMedia('(max-width: 767px)').matches
-}
+// Yalnızca geliştirmede: ?kure=poster ile zaman donar, arayüz gizlenir (poster kaydı için)
+const POSTER_KAYDI = import.meta.env.DEV && typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('kure') === 'poster'
 
 const LINKLER = [
     { ad: 'Ustalar', to: '/ustalar' },
@@ -67,14 +67,13 @@ export default function VideoHero({ onHazir }) {
     const [anim, setAnim] = useState(!azalt)
     const [go, setGo] = useState(false)
     const [menuAcik, setMenuAcik] = useState(false)
-    const [videoAcik] = useState(videoOynatilsinMi)
-    const video = useRef(null)
-    const gecis = useRef(null)
+    const kok = useRef(null)
     const burger = useRef(null)
     const menu = useRef(null)
     const hazirBildirildi = useRef(false)
-    // Video dış kaynaktan geliyor; ulaşılamazsa kendi arka planımıza düşeriz
-    const [videoYok, setVideoYok] = useState(false)
+    // Poster yüklenemezse (ya da hiç yoksa) CSS yedeğine düşülür; canlı küre çizilince poster söner
+    const [posterYok, setPosterYok] = useState(!POSTER)
+    const [kureCizildi, setKureCizildi] = useState(false)
 
     function hazir() {
         if (hazirBildirildi.current) return
@@ -82,8 +81,13 @@ export default function VideoHero({ onHazir }) {
         onHazir?.()
     }
 
-    function videoHatasi() {
-        setVideoYok(true)
+    function posterHatasi() {
+        setPosterYok(true)
+        hazir()
+    }
+
+    function kureIlkKare() {
+        setKureCizildi(true)
         hazir()
     }
 
@@ -147,96 +151,44 @@ export default function VideoHero({ onHazir }) {
         }
     }, [menuAcik])
 
-    // ---- C) Arka plan videosu: tek video oynar. Döngü sonunda son kare bir tuvale kopyalanır,
-    // video başa sarar ve tuval yavaşça söner; döngü noktası görünmez, aynı anda tek video çözülür.
+    // ---- C) Hero ekrandan çıkınca düğmedeki yörünge ışığı durur ----
     useEffect(() => {
-        const v = video.current
-        const tuval = gecis.current
-        if (!v) return
-
-        if (azalt) {
-            v.removeAttribute('autoplay')
-            v.pause()
-            try {
-                v.currentTime = 0
-            } catch {
-                // bazı tarayıcılar meta veri gelmeden konum ayarına izin vermez
-            }
-            return
-        }
-
-        const oynat = () => {
-            const p = v.play()
-            if (p && p.catch) p.catch(() => {})
-        }
-        let kare
-        const donguSonu = () => {
-            if (tuval && v.videoWidth) {
-                if (tuval.width !== v.videoWidth) tuval.width = v.videoWidth
-                if (tuval.height !== v.videoHeight) tuval.height = v.videoHeight
-                try {
-                    tuval.getContext('2d').drawImage(v, 0, 0)
-                    tuval.classList.add('gorunur')
-                } catch {
-                    // kopyalanamazsa geçişsiz döner
-                }
-            }
-            v.currentTime = 0
-            oynat()
-            // Video yeni turun ilk karesini çizdikten sonra tuval sönmeye başlar
-            cancelAnimationFrame(kare)
-            kare = requestAnimationFrame(() => (kare = requestAnimationFrame(() => tuval?.classList.remove('gorunur'))))
-        }
-        v.addEventListener('ended', donguSonu)
-        oynat()
-
-        // Hero ekrandan çıkınca video duraklar: 1080p çözümleme arka planda boşuna çalışmaz
-        const kok = v.closest('.vhero')
-        const g = new IntersectionObserver(([e]) => {
-            kok?.classList.toggle('isik-durdu', !e.isIntersecting)
-            if (e.isIntersecting) oynat()
-            else v.pause()
-        })
-        if (kok) g.observe(kok)
-
-        return () => {
-            v.removeEventListener('ended', donguSonu)
-            cancelAnimationFrame(kare)
-            g.disconnect()
-        }
-    }, [azalt, videoAcik])
+        const el = kok.current
+        if (!el) return
+        const g = new IntersectionObserver(([e]) => el.classList.toggle('isik-durdu', !e.isIntersecting))
+        g.observe(el)
+        return () => g.disconnect()
+    }, [])
 
     const menuKapat = () => setMenuAcik(false)
 
     return (
-        <main className={`vhero ${anim ? 'anim' : ''} ${go ? 'go' : ''}`} onAnimationEnd={animasyonBitti} id="giris">
+        <main ref={kok} className={`vhero ${anim ? 'anim' : ''} ${go ? 'go' : ''} ${POSTER_KAYDI ? 'kure-kaydi' : ''}`} onAnimationEnd={animasyonBitti} id="giris">
             <div
-                className={`bg ${videoYok ? 'video-yok' : ''}`}
+                className={`bg ${posterYok ? 'poster-yok' : ''}`}
                 role="img"
-                aria-label="Yıldızlı bir gökyüzünde, mor nokta matrisiyle çizilmiş, yavaşça dönen Dünya küresi"
+                aria-label="Yıldızlı bir gökyüzünde, kıtaları mor noktalarla çizilmiş, yavaşça dönen Dünya küresi; İstanbul'dan dünyaya ışık çizgileri uzanıyor"
             >
-                {videoAcik ? (
-                    <>
-                        <video
-                            ref={video}
-                            className="bg-video"
-                            autoPlay
-                            muted
-                            playsInline
-                            preload="auto"
-                            disablePictureInPicture
-                            aria-hidden="true"
-                            poster={POSTER}
-                            onLoadedData={hazir}
-                            onError={videoHatasi}
-                        >
-                            <source src={VIDEO} type="video/mp4" onError={videoHatasi} />
-                        </video>
-                        <canvas ref={gecis} className="bg-video bg-gecis" aria-hidden="true" />
-                    </>
-                ) : (
-                    <img className="bg-video" src={POSTER} alt="" aria-hidden="true" decoding="async" fetchPriority="high" onLoad={hazir} onError={videoHatasi} />
+                {POSTER && !posterYok && (
+                    <img
+                        className={`bg-video bg-poster ${kureCizildi ? 'soldu' : ''}`}
+                        src={POSTER}
+                        alt=""
+                        aria-hidden="true"
+                        decoding="async"
+                        fetchPriority="high"
+                        onLoad={hazir}
+                        onError={posterHatasi}
+                    />
                 )}
+            </div>
+
+            {/* Canlı küre: paylaşılan 3D tuvaline bu kutunun yerine çizilir */}
+            <div data-3d className="bg-kure" aria-hidden="true">
+                <View className="absolute inset-0">
+                    <DunyaKuresi azalt={azalt} donuk={POSTER_KAYDI} onIlkKare={kureIlkKare} />
+                    <Isitici />
+                </View>
             </div>
 
             <header className="nav">

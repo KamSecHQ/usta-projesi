@@ -103,7 +103,7 @@ Kasmanın üç kaynağı vardı:
 | 47 | Uygulama geneli bildirim (toast) sistemi (`useBildirim()`); `alert()` ve `confirm()` kalktı | ✅ |
 | 48 | Mobilde alt sekme çubuğu (Panel, Mesajlar, İlanlar) | ⏳ |
 | 49 | Sayfa geçiş animasyonları (View Transitions API) | ⏳ |
-| 50 | Kendi yapımımız hero: gerçek zamanlı noktalı WebGL küre (38 MB video ve lisans sorunu kalkar) | 🔒 tasarım onayı |
+| 50 | Kendi yapımımız hero: gerçek zamanlı noktalı WebGL küre (Natural Earth kıtaları, İstanbul merkezli ağ, kendi posteri); 38 MB video kalktı | ✅ |
 
 ## İz F: İş veren akışı (ilan ve teklif)
 
@@ -163,7 +163,7 @@ Kasmanın üç kaynağı vardı:
 | 87 | Mesaj ve teklif için hız sınırı (spam koruması) | 🔒 veritabanı |
 | 88 | Kayıtta bot koruması (Cloudflare Turnstile) | 🔒 hesap |
 | 89 | RLS politikaları için otomatik testler | 🔒 veritabanı |
-| 90 | Hero videosunun lisansı: kendi barındırma ya da faz 50 ile değiştirme | 🔒 |
+| 90 | Hero videosunun lisansı: faz 50 ile video tamamen kaldırıldı, tüm görsel kendi üretimimiz | ✅ |
 
 ## İz J: Mühendislik altyapısı
 
@@ -187,6 +187,7 @@ Kasmanın üç kaynağı vardı:
 - Anasayfa düğmeleri saydam ışık haplarına dönüştü (`.isik-hap`): kenar imlecin olduğu yerde yanar, içte mor ışık izler; hero'nun ana düğmesinde dönen yörünge ışığı. Hero, teknoloji çipleri, Ustalar ve kapanış bölümü.
 - Ustalar bölümü: portföy vitrinli, imlece eğilen ışıklı kartlar (`.isik-kart`), profil fotoğrafı, çevrimiçi göstergesi, gerçek portföy sayısı; boş yerlerde uydurma profil yerine "boş tezgâh" ve "ilan aç" davetleri. Projeler tek sorguda gelir.
 - Hizmet kategorilerine kısa açıklamalar.
+- Dokuzuncu tur (17 Ekim): faz 50, hero küresi. Video yerine canlı WebGL küre; kıtalar Natural Earth (kamu malı) verisinden 11 KB'lık maskeyle, İstanbul'dan dünyaya ağ ve ışık darbeleri, kendi 102 KB posteri. Ölçüm 60 FPS, takılan kare 0.
 - Sekizinci tur (17 Ekim, ilk Mac'e dönüş): blog listesi, blog yazısı (içindekiler, okuma süresi, `Article` JSON-LD), gizlilik politikası (sistemin gerçek veri akışına ve KVKK m.11'e göre yeniden yazıldı), proje detayı ve 404 uzay temasına taşındı. YouTube gömmeleri çerezsiz modda. Ardından yönetim paneli (arama, profil gücü, onay diyalogları) ve blog yönetimi (canlı önizlemeli editör) de taşındı; eski görünümde sayfa kalmadı. Faz 69 (herkese açık kıdem) kullanıcı onayıyla canlıya alındı.
 - Yedinci tur: hesap sayfaları baştan yazıldı (giriş, hesap oluşturma; ortak `HesapCercevesi`). **Şifremi unuttum** akışı yoktu: artık sıfırlama bağlantısı gönderilir, `/sifre-yenile` sayfasında yeni şifre belirlenir (hesabın var olup olmadığı yanıttan anlaşılmaz). Supabase hataları Türkçe (`hesapHatasi`); ham İngilizce mesaj gösterilmez. Profil düzenleme uzay temasında; ayarlara "tüm cihazlarda oturumu kapat" eklendi. Ajans sayfası oturum kapalıyken sonsuza dek "Yükleniyor" gösteriyordu, düzeltildi; reddedilen davet kaldırılıp yeniden gönderilebiliyor, yazarken eski arama yanıtları yenisini ezmiyor.
 - Altıncı tur: panelde kanıtsız ve yanlış bir cümle vardı ("İş verenler en çok bu profillere teklif gönderiyor"; teklifi ustalar verir), düzeltildi. Portföy kartında bağlantı içinde bağlantı vardı (geçersiz HTML, klavyede tek odak), canlı bağlantı kartın dışına alındı. Prizde ölçüm: 3/3 koşuda 60 FPS, takılma yok.
@@ -198,13 +199,13 @@ Kasmanın üç kaynağı vardı:
 
 ## Sayılarla
 
-- ✅ Tamamlanan: 42 faz
+- ✅ Tamamlanan: 44 faz
 - ⏳ Kod tarafında sırada: 34 faz
-- 🔒 Senin kararını, erişimini ya da canlı veritabanı onayını bekleyen: 24 faz
+- 🔒 Senin kararını, erişimini ya da canlı veritabanı onayını bekleyen: 22 faz
 
 ## Sıradaki önerilen paket
 
 1. Faz 44: ortak arayüz bileşenleri ve eski görünümde kalan sayfalar (panel, proje detayı, blog, gizlilik, 404, yönetim paneli).
 2. ~~Faz 69~~ tamamlandı (17 Ekim): kıdem herkese açık.
 3. ~~Faz 93, 95~~ tamamlandı (17 Ekim): `npm test`, CI, paket bütçesi. Faz 94 (Playwright) paket indirmesi gerektirdiği için onay bekliyor.
-4. Faz 50: kendi WebGL küremiz (onay verirsen). Bu faz video lisans sorununu (faz 90) da kapatır.
+4. ~~Faz 50~~ tamamlandı (17 Ekim): kendi WebGL küremiz; faz 90 (video lisansı) da kapandı.

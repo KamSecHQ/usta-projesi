@@ -47,7 +47,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 
 ## Mimari özeti
 
-- **Anasayfa** (`src/pages/Anasayfa.jsx`, lazy): videolu hero (`components/VideoHero.jsx`), tam ekran 3D atölye (`components/atolye/`), fizik paneli (`atolye/FizikSahnesi.jsx`, kendi tuvali), süreç bölümü ve kod yazan robot (`atolye/KodYazanRobot.jsx`), kıdem cetveli ve sikke, teknoloji bandı, Ustalar bölümü. Tüm drei `<View>`'lar tek tuvali paylaşır (`atolye/AtolyeTuvali.jsx`). Lenis yalnızca anasayfada.
+- **Anasayfa** (`src/pages/Anasayfa.jsx`, lazy): canlı WebGL küreli hero (`components/VideoHero.jsx` + `atolye/DunyaKuresi.jsx`; dosya adı tarihsel), tam ekran 3D atölye (`components/atolye/`), fizik paneli (`atolye/FizikSahnesi.jsx`, kendi tuvali), süreç bölümü ve kod yazan robot (`atolye/KodYazanRobot.jsx`), kıdem cetveli ve sikke, teknoloji bandı, Ustalar bölümü. Tüm drei `<View>`'lar tek tuvali paylaşır (`atolye/AtolyeTuvali.jsx`). Lenis yalnızca anasayfada.
 - **Uzay teması:** siyah zemin, Plus Jakarta Sans, mor ışık. Hareket ve yüzey dili `components/uzay/` (`Sahne`, `SatirBaslik`, `HapLink`, `Ok`, `uzay.css`). Işıklı düğmeler: `.isik-hap` (anasayfa ve yeni sayfalar), eski `.isik` / `.isik-kutu` (iç sayfalarda hâlâ var). İmleç takibi `src/isikTakip.js`.
 - **Ortak bileşenler (bu dönemde eklendi):**
   - `components/form/Alan.jsx`: `Alan` (etiket, ipucu, hata alana bağlı) ve `SifreAlani` (göster/gizle).
@@ -76,7 +76,7 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 
 ### 7.1 Kasma çözüldü
 - Shader ısıtma (`atolye/Isitici.jsx`): sahneler ekrana girmeden boşta derlenir, dokular GPU'ya yüklenir, tek piksele bir kez çizilir. Shader beklemesi 342 → 15 ms.
-- Hero videosu: tek `<video>` + son kareyi tuvale kopyalayıp söndüren döngü. Her 10 sn'deki 0,8 sn'lik 30 kare düşüşü kalktı. Telefonda (<768 px), veri tasarrufunda ve 2g'de video yerine poster.
+- Hero videosu: tek `<video>` + son kareyi tuvale kopyalayıp söndüren döngü (sonradan faz 50 ile video tamamen kalktı, bkz. 7.9).
 - Fizik sahnesi keskinliği 1.25x sabit, zorlanınca 1x; zayıf cihazda N8AO kapalı. Paylaşılan tuvalin keskinlik artışı kaydırma bitince uygulanır.
 - Ölçüm aracı `npm run olc` (`scripts/akicilik-olc.mjs`). Prizde, görünür pencerede: en uzun kare 183 → 19 ms, takılan kare 8 → 0, 60 FPS.
 - Kod bölme: bütün sayfalar lazy (iç sayfa ilk kodu 681 → 53 KB), react/supabase/three ayrı parçalar (`vite.config.js`), eski sekmede eksik parça olursa tek yenileme (`main.jsx`).
@@ -113,6 +113,15 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 - `vercel.json`: güvenlik başlıkları ve hash'li dosyalara kalıcı önbellek.
 - Temizlik: `KayitOl.jsx`, `IsVer.jsx`, `UstaCard.jsx` silindi; eski bakırcı/stüdyo renk tokenları silindi; Onest ve Bricolage yazı tipleri yalnızca anasayfa parçasında; lint uyarıları 0.
 
+### 7.9 Faz 50: kendi yapımımız hero küresi (video ve lisans sorunu kalktı)
+- Lisansı belirsiz 38 MB'lık CloudFront videosu ve posteri kaldırıldı; yerine canlı WebGL küre (`atolye/DunyaKuresi.jsx`): Natural Earth 1:110m (kamu malı) verisinden üretilen 1° kara maskesiyle noktalı kıtalar, İstanbul merkezli ağ çizgileri ve ışık darbeleri, atmosfer kenar ışığı, iki yörünge ve uydu, tohumlu yıldızlar, imlece hafif dönüş. Metin bloğunun arkasındaki ışıklar yarıya kısılır.
+- Veri kullanıcı onayıyla bir kez indirildi (unpkg `world-atlas@2.0.2/land-110m.json`, 55 KB); repoda yalnızca üretim betiği (`scripts/kara-maskesi-uret.mjs`) ve 11 KB'lık maske (`atolye/karaMaskesi.js`) var.
+- Paylaşılan tuvalde `<View>` (ikinci tuval yok) + `<Isitici />`. Hero menü, metin ve mobil menü z-index 7/6/8 (tuval 5).
+- Poster `src/assets/kure-poster.webp` (102 KB) sahnenin donuk karesi (`?kure=poster`, `npm run kure-poster`); tuval hazır olana kadar görünür, ilk karede 0,9 sn'de söner. WebGL yoksa poster kalır; poster de yüklenemezse CSS yedeği (mor ufuk).
+- Ölçüm (prizde, görünür pencere, `npm run olc`, preview): 3 koşunun ikisinde 60 FPS, en uzun kare 19 ms, `uzunKare25: 0`, kaydırmada uzun görev 0. İlk koşudaki 130-150 ms'lik kareler soğuk GPU önbelleğiydi, tekrarlanmadı.
+- Anasayfa parçası 106 → 130 KB (maske + küre); ilk yük değişmedi (164 KB gzip). Gizlilik metninden "anasayfa videosu dış sunucudan yüklenir" maddesi çıkarıldı. `index.html`'deki CloudFront `dns-prefetch`'leri silindi.
+- Not: `.impeccable/surfaces/src-pages-anasayfa-jsx.md` hâlâ eski bakırcı yönünü anlatıyor (tasarım becerisinin bağlamı, git'te yok); güncel yön `DESIGN.md`.
+
 ### 7.8 Faz 93 ve 95: testler, CI, paket bütçesi
 - `npm test`: Node'un yerleşik test çalıştırıcısı, yeni bağımlılık yok. 33 test: para/bütçe biçimleri, Türkçe arama katlama, teknoloji uyumu, bütçeye göre konum, kıdem eşikleri (CLAUDE.md ile aynı olduğunu da denetler), toplu kıdem sorgusunun ayıklaması, slug, YouTube çerezsiz gömme, iletişim kartı bağlantı/e-posta güvenliği, mesaj zaman biçimleri, ilan açıklamasının gidiş-dönüşü (`aciklamaOlustur` → `aciklamayiAyir`), blog metin biçimi, profil gücü.
 - Testlenebilsin diye: mesajlaşmanın saf yardımcıları `src/mesajBicimi.js`'e ayrıldı (`mesajlasma.js` aynen dışa aktarır); `aciklamayiAyir` ilan sayfasından `ilanSablonlari.js`'e taşındı.
@@ -142,20 +151,18 @@ Son güncelleme: 17 Ekim 2026. Proje SSD'de (`/Volumes/WorkSSD/kalfahane`) duruy
 ## Ölçüm notu
 
 - `npm run olc` görünür bir Chrome penceresi açar ve sayfayı kaydırır. Pencere görünmüyorsa (kapak kapalı, başka masaüstü, küçültülmüş) tarayıcı kare çizmez; araç artık bu durumda zaman aşımıyla çıkar. Eski Mac'teki son turda bu yüzden videolu ölçüm yapılamadı.
-- Son ölçüm başsız ve videosuz yapıldı (`BASSIZ=1 VIDEOSUZ=1 npm run olc`): 60 FPS, en uzun kare 17 ms, takılan kare 0. **Yeni Mac'te prizde, ekran açıkken videolu ölçüm tekrarlanmalı** (`npm run build && npm run preview`, sonra `npm run olc`; hedef `uzunKare25: 0`).
+- Son ölçüm (17 Ekim, küreli hero, bu Mac'te prizde, görünür pencere): 60 FPS, en uzun kare 19 ms, `uzunKare25: 0`. Preview `localhost`'a bağlandığı için adres verilir: `npm run olc -- http://localhost:4173/`. `VIDEOSUZ=1` bayrağı artık işlevsiz (video yok).
 - Pil %20'nin altındayken kare hızı 30'a sabitlenir; ölçüm prizde yapılır.
 
 ## Bekleyen işler
 
 - **Kullanıcı onayı bekleyenler:**
-  - Faz 50: video yerine kendi yapımımız WebGL küre (tasarım onayı); video lisans sorununu (faz 90) da kapatır.
 - **Kod tarafında sıradaki (önerilen):**
   1. Faz 44 bitti (7.5, 7.7). İstenirse panel (`Dashboard.jsx`) eski `.isik-kutu` dilinden yeni `.isik-kart`/`.isik-hap` diline hizalanabilir.
   2. Faz 93 ve 95 bitti (7.8). Faz 94 (Playwright uçtan uca) paket indirmesi gerektirdiği için onay bekliyor.
   3. Ayrıntılı liste: `YOL_HARITASI.md` (39 ✅, 36 ⏳, 25 🔒) ve sonundaki "Sıradaki önerilen paket".
 - **E-posta:** `kalfahane.com` için MX kaydı yok; `merhaba@kalfahane.com` posta almıyor. Hesap silme (KVKK) talepleri bu adrese gidiyor; Ayarlar "48 saat içinde işleme alırız", gizlilik metni "30 gün içinde yanıtlarız" diyor. Bu söz ancak posta kutusu kurulunca tutulabilir.
 - **KVKK:** gizlilik metninde veri sorumlusunun adı/unvanı ve adresi yok (kullanıcıdan gelmeli); metnin bir hukukçuya okutulması önerilir.
-- **Hero videosu:** başka birinin CloudFront hesabından çekiliyor, lisansı belirsiz, ~38 MB (faz 50/90).
 - **Sızdırılmış şifre koruması:** Supabase paneli → Authentication → Attack Protection.
 - **Gerçek iki hesapla mesajlaşma testi** ve şifre sıfırlama e-postasının gerçek testi yapılmadı.
 - **Açık gözlem:** İstatistikler/SSS bölgesinde ölçümlerin birinde tek bir ~180 ms'lik GPU karesi; şüpheli `filter: blur` giriş geçişi.

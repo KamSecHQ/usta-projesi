@@ -182,7 +182,6 @@ function GizlilikPolitikasi() {
                                 <ul className="yazi-govdesi">
                                     <li><strong>Supabase:</strong> veritabanı, giriş ve anlık mesajlaşma altyapısı. Sunucular Almanya’da (Frankfurt, Avrupa Birliği); verilerin bu nedenle yurt dışında işlenir.</li>
                                     <li><strong>Vercel:</strong> sitenin kendisini sunar; sayfa istekleri için teknik kayıtlar (IP adresi, tarayıcı bilgisi) tutabilir.</li>
-                                    <li><strong>Anasayfa videosu:</strong> harici bir içerik dağıtım ağından yüklenir; bu sırada IP adresin o sunucuya iletilir.</li>
                                     <li><strong>YouTube ve Loom:</strong> bir ustanın profilinde tanıtım videosu varsa oradan yüklenir. YouTube videoları çerezsiz modda gömülür; bu hizmetler kendi gizlilik politikalarına tabidir.</li>
                                     <li><strong>WhatsApp, e-posta, telefon:</strong> mesajlaşmadaki iletişim kartında bir düğmeye bastığında ilgili uygulama açılır; bundan sonrası o uygulamanın kurallarına tabidir.</li>
                                 </ul>

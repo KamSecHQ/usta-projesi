@@ -98,7 +98,7 @@ components:
 
 **Creative North Star: "The Signal Room in Deep Space"**
 
-Kalfahane is set at night, in space. The ground is true black, the type is Plus Jakarta Sans, and violet light is the only color that moves. The language comes from the home page's video hero: a dotted violet globe turning slowly in a starfield, a white pill as the main action, and a dark glass pill beside it. Every other page continues that world rather than starting a new one.
+Kalfahane is set at night, in space. The ground is true black, the type is Plus Jakarta Sans, and violet light is the only color that moves. The language comes from the home page's hero: a real-time WebGL globe whose continents are drawn as a violet dot matrix, turning slowly in a starfield, with thin network arcs and light pulses reaching out from Istanbul, a white pill as the main action and a dark glass pill beside it. Every other page continues that world rather than starting a new one.
 
 Light means something here. Violet glow sits on what is alive: the primary action under the cursor, your own message, the typing signal, an unread count, an accepted deal. Everything else stays quiet, made of hairlines at 7 to 12% white and glass that is barely there. Interfaces inside the product (panel, offers, messages) are calm operating surfaces; the drama is spent on the home page's 3D workshop and the hero.
 
@@ -171,7 +171,7 @@ Depth is light, not shadow stacks. Panels get a 1px white hairline at 7 to 12%, 
 - **Danger (`.isik-tehlike`):** red-tinted glass, only for reject/delete.
 - Cursor position (`--x`, `--y`) is written by one global listener in `src/isikTakip.js`. `.isik` sets `position: relative`; wrap it if it must be absolutely positioned.
 
-- **Light pill (`.isik-hap`, home page):** a nearly transparent glass pill (white 9% to 2.5% over a 32% night tint) whose 1px rim is white at the top and violet at the bottom; under the cursor the rim lights up at the cursor point and a violet light follows the cursor inside. `.isik-hap-birincil` is the white variant. No backdrop blur: the hero video sits underneath, and re-blurring every video frame is expensive. The lift uses `translate`, never `transform`, so entrance animations keep working.
+- **Light pill (`.isik-hap`, home page):** a nearly transparent glass pill (white 9% to 2.5% over a 32% night tint) whose 1px rim is white at the top and violet at the bottom; under the cursor the rim lights up at the cursor point and a violet light follows the cursor inside. `.isik-hap-birincil` is the white variant. No backdrop blur: the live globe sits underneath, and re-blurring every frame is expensive. The lift uses `translate`, never `transform`, so entrance animations keep working.
 - **Orbit light (`.isik-hap-yorunge` + `<span class="isik-yorunge">`):** the page's single signature light. A violet comet orbits the hero's primary action every 4.8s; it pauses when the hero leaves the screen and disappears under reduced motion. Use it nowhere else.
 
 ### Cards
@@ -219,6 +219,15 @@ Depth is light, not shadow stacks. Panels get a 1px white hairline at 7 to 12%, 
 
 ### Navigation
 The sticky navbar is near-black with a hairline; on the home page it hides until the hero is passed. The messages icon carries a violet unread badge.
+
+### Hero globe (`atolye/DunyaKuresi.jsx`)
+- **Composition:** a giant globe rising from the bottom of the first viewport, laid out in a 1.6-ratio "cover" box (center at 92% of the box height, radius 46% of its width), so the headline sits over the upper hemisphere on every screen; on phones only the top arc shows.
+- **Body:** near-black interior (`#030210`), light only at the edge: a fresnel rim from violet to lavender-white, and outside it a thin atmosphere that falls off within about 5% of the radius. No lit interior, no gradient fill.
+- **Continents:** a 1° latitude-longitude dot matrix from Natural Earth land (public domain), lavender dots that dim and shrink toward the limb and twinkle slowly; Turkey's dots are brighter and nearly white.
+- **Network:** thin lavender arcs between land nodes, long arcs from Istanbul to distant nodes; comet-like white pulses travel along about a third of them. Istanbul is the one hub: a bright core with a ring expanding every ~2 seconds.
+- **Sky:** seeded stars with slow twinkle, a few with fine cross rays; two tilted orbit rings, each with a satellite light and a fading tail.
+- **Readability:** every light behind the headline block dims to half (measured from `.hero-inner`), so the text never fights the globe.
+- **Motion:** about one turn every six minutes (Turkey starts right of the text), a slight tilt toward the cursor; reduced motion freezes the frame. The poster is the same scene's frozen first frame, so the swap from poster to live globe is invisible.
 
 ## Motion
 
