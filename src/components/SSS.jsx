@@ -4,23 +4,27 @@ import { useState } from 'react'
 const sorular = [
     {
         soru: "Kalfahane tam olarak nedir?",
-        cevap: "Kalfahane, Türk yazılımcılarla iş sahiplerini bir araya getiren bir pazaryeri. Yazılımcılar profil ve portföylerini oluşturur, iş verenler bu portföylere bakarak doğrudan iletişime geçer."
+        cevap: "Türk yazılımcılarla işletmeleri buluşturan bir çarşı. Ustalar portföyünü ve kıdemini sergiler; iş verenler ilan açar, gelen teklifleri karşılaştırır ve işini doğru ustaya verir."
     },
     {
         soru: "Yazılımcı olarak nasıl katılırım?",
-        cevap: "Sağ üstteki \"Yazılımcı Olarak Katıl\" butonuna basarak hesap oluştur, ardından profilini (unvan, teknolojiler, projelerin) doldur. Profilin tamamlanır tamamlanmaz Ustalar listesinde görünmeye başlar."
+        cevap: "Hesap oluştururken \"Yazılımcıyım\" seçeneğini seç, ardından profilini doldur: unvan, teknolojiler, ücret aralığı ve portföy projeleri. Profilini platform inceler; onaylanınca Ustalar listesinde görünürsün."
     },
     {
-        soru: "İş veren olarak güvenilir bir yazılımcıyı nasıl bulurum?",
-        cevap: "Ustalar sayfasında isim, uzmanlık ya da teknolojiye göre arama yapabilir, her ustanın portföyünü ve tamamladığı projeleri inceleyebilirsin. Onaylı Usta rozeti, platform tarafından ekstra incelenmiş profilleri gösterir."
+        soru: "İş veren olarak doğru ustayı nasıl seçerim?",
+        cevap: "İlanını aç, teknolojine uyan ustalar teklif versin. Teklifleri fiyat, kıdem ve portföye göre karşılaştır; sorularını mesajlaşmadan sor. Onaylı usta rozeti, profili platformun ayrıca incelediğini gösterir."
     },
     {
-        soru: "Platformu kullanmak ücretli mi?",
-        cevap: "Kalfahane şu an geliştirme aşamasında ve profil oluşturmak, arama yapmak, iletişime geçmek tamamen ücretsiz. Ödeme ve komisyon sistemi ileride ayrıca duyurulacak."
+        soru: "Kıdem nasıl kazanılır?",
+        cevap: "Kıdem satın alınmaz. Kabul edilmiş bir teklifle başlayıp tamamlanan her iş sayılır: ilk işte Kalfa, üçüncüde Usta, onuncuda Kıdemli Usta. İş verenler de tamamladıkları işlerle Güvenilir ve Kıdemli İş Veren rozeti kazanır."
+    },
+    {
+        soru: "Kullanmak ücretli mi?",
+        cevap: "Hayır. Profil açmak, ilan vermek, teklif vermek ve mesajlaşmak ücretsiz. Ödeme şu an Kalfahane üzerinden yapılmaz; şartları taraflar mesajlaşmada netleştirir. Emanet ödeme sistemi yakında."
     },
     {
         soru: "Verilerim güvende mi?",
-        cevap: "Hesap bilgilerin Supabase altyapısında saklanır ve yalnızca sen kendi profilini düzenleyebilirsin. Başvuru/iletişim verilerine yalnızca yetkili yöneticiler erişebilir."
+        cevap: "Profilini yalnızca sen düzenleyebilirsin. Telefon numaran herkese açık profilde yer almaz; yalnızca mesajlaşmada paylaşmayı seçtiğin kişiler görür. Hangi verinin neden işlendiği gizlilik politikasında anlatılıyor."
     },
 ]
 
@@ -57,7 +61,7 @@ function SSS() {
     const [acikIndex, setAcikIndex] = useState(0)
 
     return (
-        <Sahne as="section" className="uz-ufuk px-4 py-28 sm:px-8 lg:py-36">
+        <Sahne as="section" id="sss" className="uz-ufuk px-4 py-28 sm:px-8 lg:py-36">
             <div className="mx-auto max-w-[1100px] text-center">
                 <SatirBaslik
                     satirlar={['Çarşıya girmeden önce.']}

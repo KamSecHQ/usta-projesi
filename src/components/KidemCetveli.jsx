@@ -58,7 +58,7 @@ function KidemCetveli() {
     }, [])
 
     return (
-        <Sahne as="section" className="uz-ufuk overflow-hidden px-4 py-28 sm:px-8 lg:py-36">
+        <Sahne as="section" id="kidem" className="uz-ufuk overflow-hidden px-4 py-28 sm:px-8 lg:py-36">
             <div className="mx-auto max-w-[1100px] text-center">
                 <SatirBaslik
                     satirlar={['Kıdem satın alınmaz,', 'dövülür.']}

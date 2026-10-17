@@ -5,12 +5,13 @@ import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import { useBildirim } from '../components/bildirim/bildirimBaglami'
 import { HapLink, Ok } from '../components/uzay/Hareket'
-import { Anahtar, SonucYok } from '../components/liste/ListeAraclari'
+import { Anahtar } from '../components/liste/ListeAraclari'
 import IlanKarti from '../components/ilan/IlanKarti'
 import TeknolojiSecici from '../components/ilan/TeknolojiSecici'
 import { SABLONLAR, TESLIM_SECENEKLERI, aciklamaOlustur } from '../components/ilan/ilanSablonlari'
 import { TEKNOLOJILER } from '../components/atolye/teknolojiler'
 import { butceGoster } from '../ustaYardimcilari'
+import GirisKapisi, { KapiSayfasi } from '../components/hesap/GirisKapisi'
 
 const ADIMLAR = ['İş türü', 'Anlat', 'Teknoloji ve bütçe', 'Gözden geçir']
 const BOS_TASLAK = {
@@ -79,7 +80,7 @@ const ONIZLEME = import.meta.env.DEV && new URLSearchParams(window.location.sear
 const ONIZLEME_KULLANICI = { id: 'onizleme' }
 
 function IlanVer() {
-    useSayfaBasligi('İş İlanı Ver')
+    useSayfaBasligi('İlan ver')
     const oturum = useAuth()
     const user = ONIZLEME ? ONIZLEME_KULLANICI : oturum.user
     const authYukleniyor = ONIZLEME ? false : oturum.yukleniyor
@@ -241,22 +242,18 @@ function IlanVer() {
     }
 
     if (authYukleniyor || (user && rolYukleniyor)) {
-        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!user) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="İlan vermek için giriş yap" metin="İlan açmak ücretsiz. Hesabın yoksa iş veren olarak birkaç dakikada açabilirsin." eylem={<div className="flex flex-wrap justify-center gap-2.5"><HapLink to="/giris">Giriş yap</HapLink><HapLink to="/hesap-olustur?rol=is-veren" tur="cam">Hesap oluştur</HapLink></div>} />
-            </div>
+            <GirisKapisi ikon="arti" baslik="İlan vermek için giriş yap" metin="İlan açmak ücretsiz. Hesabın yoksa iş veren olarak birkaç dakikada açabilirsin." kayitRolu="is-veren" />
         )
     }
 
     if (rol !== 'is-veren') {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="İlan vermek için iş veren hesabı gerekiyor" metin="Bu hesap yazılımcı olarak kayıtlı. Açık ilanlara teklif verebilir ya da iş veren olarak ayrı bir hesap açabilirsin." eylem={<HapLink to="/is-ilanlari">Açık ilanlara bak</HapLink>} />
-            </div>
+            <KapiSayfasi ikon="ilanlar" baslik="İlan vermek için iş veren hesabı gerekiyor" metin="Bu hesap yazılımcı olarak kayıtlı. Açık ilanlara teklif verebilir ya da iş veren olarak ayrı bir hesap açabilirsin." eylem={<HapLink to="/is-ilanlari">Açık ilanlara bak</HapLink>} />
         )
     }
 

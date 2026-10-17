@@ -151,24 +151,15 @@
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%) translateX(calc(-23 * var(--u)));
-    display: flex;
-    align-items: center;
-    gap: calc(24.3 * var(--u));
-    white-space: nowrap;
+    gap: calc(1.5 * var(--u));
 }
 
-.vhero .nav-links a {
-    color: var(--ink-muted);
-    text-decoration: none;
-    font-size: calc(11.5 * var(--u));
-    font-weight: 500;
-    letter-spacing: calc(-0.15 * var(--u));
-    line-height: 1;
-    transition: color .18s ease;
-}
-
-.vhero .nav-links a:hover {
-    color: #fff;
+/* Işık rayı (gezinme.css) hero ölçeğinde: sağdaki hap düğmelerle aynı boy */
+.vhero .nav-ray {
+    --hap-y: calc(23 * var(--u));
+    --hap-x: calc(11.5 * var(--u));
+    --hap-yazi: calc(11.5 * var(--u));
+    --ray-ic: calc(2.5 * var(--u));
 }
 
 .vhero .nav-actions {
@@ -623,6 +614,7 @@
 }
 
 .vhero.anim .logo,
+.vhero.anim .nav-links,
 .vhero.anim .nav-links a,
 .vhero.anim .nav-actions .btn,
 .vhero.anim .burger,
@@ -728,6 +720,20 @@
     animation: vh-logoIn .62s var(--e-soft) .46s both;
 }
 
+@keyframes vh-fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.vhero.anim.go .nav-links {
+    animation: vh-fadeIn .7s var(--e-soft) .48s both;
+}
+
 .vhero.anim.go .nav-links a {
     animation: vh-liftIn .55s var(--e-soft) both;
 }
@@ -803,6 +809,7 @@
     }
 
     .vhero.anim .logo,
+    .vhero.anim .nav-links,
     .vhero.anim .nav-links a,
     .vhero.anim .nav-actions .btn,
     .vhero.anim .burger,

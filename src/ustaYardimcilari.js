@@ -6,8 +6,8 @@ export function cevrimiciMi(sonGorulme) {
 
 export const MUSAITLIK_BILGISI = {
     musait: { renk: '#4ADE80', etiket: 'Müsait' },
-    kismi_musait: { renk: '#E3B776', etiket: 'Kısmi Müsait' },
-    musait_degil: { renk: '#9CA3AF', etiket: 'Müsait Değil' },
+    kismi_musait: { renk: '#E3B776', etiket: 'Kısmen müsait' },
+    musait_degil: { renk: '#9CA3AF', etiket: 'Müsait değil' },
 }
 
 export function musaitlikBilgisi(durum) {

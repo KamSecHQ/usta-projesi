@@ -219,12 +219,7 @@ html.uzay-tema ::-webkit-scrollbar-thumb:hover {
     background: #8B5CF6;
 }
 
-html.uzay-tema .ust-cubuk {
-    background: rgba(0, 0, 0, 0.82);
-    border-color: rgba(255, 255, 255, 0.08);
-    box-shadow: none;
-    font-family: var(--font-pjs);
-}
+/* Üst çubuğun cam yüzeyi ve saç teli: components/gezinme.css */
 
 
 

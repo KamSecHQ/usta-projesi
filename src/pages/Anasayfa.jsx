@@ -69,7 +69,7 @@ function Anasayfa() {
 
     return (
         <div className="uzay">
-            <div className="uz-yildizlar" aria-hidden />
+            <div className="uz-yildizlar uz-yildizlar-sade" aria-hidden />
             <Yukleyici hedef={yaziHazir ? 85 : 70} bitti={heroHazir && yaziHazir} />
             <VideoHero onHazir={() => setHeroHazir(true)} />
             <FizikPaneli />

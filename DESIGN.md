@@ -217,8 +217,19 @@ Depth is light, not shadow stacks. Panels get a 1px white hairline at 7 to 12%, 
 - **Contact card:** glass card with call, WhatsApp, e-mail and copy actions; only http(s) links are rendered.
 - **Typing signal:** three violet dots in an incoming bubble.
 
-### Navigation
-The sticky navbar is near-black with a hairline; on the home page it hides until the hero is passed. The messages icon carries a violet unread badge.
+### Navigation (`components/gezinme.css`)
+- **Bar:** dark glass (blur on inner pages, solid on the home page so the 3D canvas is not re-blurred every frame) with a hairline that glows violet at the center. On the home page it hides until the hero is passed.
+- **Light rail (`.nav-ray` + `.nav-hap`):** the main links live in one glass capsule; a glass highlight slides behind the hovered link (`navVurgu.js`), the rim brightens near the cursor, the current section is a lit pill with a small violet glow under it. The hero menu uses the same rail at hero scale.
+- **Glass icon buttons (`.nav-ikon` + `.isik-hap`):** search, quick-create, messages (violet unread badge), admin bell.
+- **Menus (`.menu-panel`, `.menu-satir`, `.menu-ikon`):** dark glass panel, inset rounded rows, icon tiles; the Keşfet menu gives each item a one-line description. Mobile menu is a glass sheet of icon rows with an active state.
+- **Announcement strip:** "Erken erişim" chip with a pulsing dot, one honest line.
+- **Footer (`Footer.jsx`):** on every page except messages; inner pages use the compact logotype.
+
+### Full-page states (`hesap/GirisKapisi.jsx`)
+Login-required, no-permission, wrong-role and not-found pages use one card (`.kapi-kart`): icon tile, headline, one line, actions, and the globe's horizon rising from the bottom. `GirisKapisi` adds "Giriş yap" (returns to the page through `?sonra=`) and "Hesap oluştur". Never a bare dashed box on an empty page.
+
+### Page atmosphere
+`.uz-yildizlar` on inner pages carries a violet top light, faint corner halos and a dot grid fading from the top (screen blend, so text is never tinted). The home page opts out with `.uz-yildizlar-sade`.
 
 ### Hero globe (`atolye/DunyaKuresi.jsx`)
 - **Composition:** a giant globe rising from the bottom of the first viewport, laid out in a 1.6-ratio "cover" box (center at 92% of the box height, radius 46% of its width), so the headline sits over the upper hemisphere on every screen; on phones only the top arc shows.

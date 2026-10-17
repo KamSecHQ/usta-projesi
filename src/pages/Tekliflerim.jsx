@@ -10,6 +10,7 @@ import MesajlasDugmesi from '../components/MesajlasDugmesi'
 import DegerlendirmeFormu from '../components/degerlendirme/DegerlendirmeFormu'
 import { verdigimDegerlendirmeler } from '../components/degerlendirme/degerlendirmeVerisi'
 import { tekliflerimOnizlemesi } from './tekliflerimOnizleme'
+import GirisKapisi from '../components/hesap/GirisKapisi'
 
 const DURUMLAR = [
     ['', 'Tümü'],
@@ -149,14 +150,12 @@ function Tekliflerim() {
     }, [user, veriGetir])
 
     if (authYukleniyor || (user && yukleniyor)) {
-        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!user) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Tekliflerini görmek için giriş yap" metin="Verdiğin teklifler ve durumları burada toplanır." eylem={<HapLink to="/giris">Giriş yap</HapLink>} />
-            </div>
+            <GirisKapisi ikon="teklif" baslik="Tekliflerin burada toplanır" metin="Verdiğin teklifleri, durumlarını ve sıradaki adımı tek yerden izle. Görmek için giriş yap." kayitRolu="yazilimci" />
         )
     }
 

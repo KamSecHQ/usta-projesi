@@ -32,6 +32,10 @@ function Sayi({ hedef, basla }) {
     )
 }
 
+// Çarşı küçükken tek haneli sayılar cümleyi zayıflatır: eşiğin altında sayılar gösterilmez,
+// çarşının kuruluş hâli anlatılır (sayı uydurulmaz). Eşik aşılınca canlı sayılar cümlesi döner.
+const ESIK = { yazilimci: 25, proje: 25 }
+
 // Çarşı defteri: canlı sayılar bir cümlenin içinde okunur
 function Istatistikler() {
     const [veriler, setVeriler] = useState({ yazilimci: null, isVeren: null, proje: null })
@@ -69,19 +73,33 @@ function Istatistikler() {
         return () => g.disconnect()
     }, [])
 
+    const kurulus = veriler.yazilimci !== null && (veriler.yazilimci < ESIK.yazilimci || veriler.proje < ESIK.proje)
+
+    // Tek bölüm öğesi: görünürlük gözlemcisi ilk karede bağlanır, içerik veri gelince değişir
     return (
         <section ref={kutu} className={`uz-ufuk px-4 py-28 sm:px-8 lg:py-36 ${basla ? 'uz-go' : ''}`}>
             <div className="mx-auto max-w-[1100px] text-center">
-                <p className="uz-sub mx-auto max-w-[24ch] font-pjs text-[clamp(2rem,4.8vw,3.9rem)] font-medium leading-[1.12] tracking-[-0.025em] text-white text-balance">
-                    Çarşıda bugün <Sayi hedef={veriler.yazilimci} basla={basla} /> yazılımcı, <Sayi hedef={veriler.isVeren} basla={basla} /> iş veren ve <Sayi hedef={veriler.proje} basla={basla} /> portföy projesi var.
-                </p>
+                {kurulus ? (
+                    <>
+                        <p className="uz-sub mx-auto max-w-[20ch] font-pjs text-[clamp(2rem,4.8vw,3.9rem)] font-medium leading-[1.12] tracking-[-0.025em] text-white text-balance">
+                            Çarşı yeni kuruluyor; ilk{'\u00a0'}tezgâhlar <span className="text-mor-soluk">şimdi</span> açılıyor.
+                        </p>
+                        <p className="uz-sub mx-auto mt-5 max-w-[46ch] text-balance text-[17px] font-light leading-[1.6] text-gri" style={{ '--d': '0.2s' }}>
+                            İlk ustalar kıdemlerini burada, ilk işleriyle kuruyor. Tezgâhını erken aç, çarşıyla birlikte büyü.
+                        </p>
+                    </>
+                ) : (
+                    <p className="uz-sub mx-auto max-w-[24ch] font-pjs text-[clamp(2rem,4.8vw,3.9rem)] font-medium leading-[1.12] tracking-[-0.025em] text-white text-balance">
+                        Çarşıda bugün <Sayi hedef={veriler.yazilimci} basla={basla} /> yazılımcı, <Sayi hedef={veriler.isVeren} basla={basla} /> iş veren ve <Sayi hedef={veriler.proje} basla={basla} /> portföy projesi var.
+                    </p>
+                )}
                 <div className="uz-kalk mt-8 inline-flex" style={{ '--d': '0.4s' }}>
                     <span className="uz-etiket">
                         <span className="relative flex h-2 w-2">
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mor-acik opacity-60 motion-reduce:animate-none" />
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-mor-acik" />
                         </span>
-                        Sayılar canlı veritabanından
+                        {kurulus ? 'Erken erişim dönemi' : 'Sayılar canlı veritabanından'}
                     </span>
                 </div>
             </div>

@@ -12,6 +12,7 @@ import {
     MUSAITLIK_BILGISI,
 } from '../ustaYardimcilari'
 import { onizlemeVerisi } from './panelOnizleme'
+import GirisKapisi from '../components/hesap/GirisKapisi'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
@@ -325,8 +326,9 @@ function Dashboard() {
 
     if (authYukleniyor || (user && yukleniyor)) {
         return (
-            <div className="min-h-screen bg-black px-6 pt-28">
-                <div className="mx-auto grid max-w-6xl animate-pulse gap-4 md:grid-cols-3">
+            <div className="uzay relative min-h-screen px-6 pt-28" role="status" aria-label="Panel yükleniyor">
+                <div className="uz-yildizlar" aria-hidden />
+                <div className="relative mx-auto grid max-w-6xl animate-pulse gap-4 motion-reduce:animate-none md:grid-cols-3">
                     <div className="h-48 rounded-[20px] bg-white/[0.04] md:col-span-3" />
                     <div className="h-36 rounded-[20px] bg-white/[0.04]" />
                     <div className="h-36 rounded-[20px] bg-white/[0.04]" />
@@ -338,12 +340,7 @@ function Dashboard() {
 
     if (!user) {
         return (
-            <div className="flex min-h-screen flex-col items-center justify-center bg-black px-6 text-center">
-                <p className="mb-5 text-[#A1A1AA]">Panelini görmek için giriş yapmalısın.</p>
-                <Link to="/giris" className="isik isik-birincil rounded-full px-6 py-3 text-sm font-medium">
-                    Giriş yap
-                </Link>
-            </div>
+            <GirisKapisi ikon="panel" baslik="Panelin seni bekliyor" metin="İlanların, tekliflerin, mesajların ve kıdem yolun tek ekranda. Görmek için giriş yap." />
         )
     }
 

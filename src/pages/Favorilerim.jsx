@@ -8,6 +8,7 @@ import FavoriButonu from '../components/FavoriButonu'
 import { SonucYok } from '../components/liste/ListeAraclari'
 import { Sahne, HapLink } from '../components/uzay/Hareket'
 import { USTA_ALANLARI, kartVerisiniTamamla } from '../ustaVerisi'
+import GirisKapisi from '../components/hesap/GirisKapisi'
 
 function Favorilerim() {
     useSayfaBasligi('Favorilerim')
@@ -39,14 +40,12 @@ function Favorilerim() {
     }, [user])
 
     if (authYukleniyor) {
-        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!user) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Favorilerin burada toplanır" metin="Beğendiğin ustaları kaydetmek ve sonra karşılaştırmak için giriş yap." eylem={<HapLink to="/giris">Giriş yap</HapLink>} />
-            </div>
+            <GirisKapisi ikon="kalp" baslik="Favorilerin burada toplanır" metin="Beğendiğin ustaları kaydet, sonra yan yana karşılaştır. Bunun için hesabına giriş yap." />
         )
     }
 

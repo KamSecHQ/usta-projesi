@@ -2,7 +2,6 @@ import { useState, useEffect, useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
-import { SonucYok } from '../components/liste/ListeAraclari'
 import { HapLink, Ok } from '../components/uzay/Hareket'
 import YaziGovdesi from '../components/yazi/YaziGovdesi'
 import { Kunye, YaziKarti } from '../components/yazi/YaziKartlari'
@@ -10,6 +9,7 @@ import { basliktanKimlik, bloklaraAyir } from '../components/yazi/yaziBicimi'
 import useOkunanBolum from '../components/yazi/useOkunanBolum'
 import { blogOnizlemesi } from './blogOnizleme'
 import '../components/uzay/uzay.css'
+import { KapiSayfasi } from '../components/hesap/GirisKapisi'
 
 const SITE = 'https://www.kalfahane.com'
 
@@ -123,9 +123,7 @@ function BlogYazisi() {
 
     if (durum === 'yok') {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Yazı bulunamadı" metin="Yazı kaldırılmış ya da bağlantı hatalı olabilir." eylem={<HapLink to="/blog">Tüm yazılar</HapLink>} />
-            </div>
+            <KapiSayfasi ikon="blog" baslik="Yazı bulunamadı" metin="Yazı kaldırılmış ya da bağlantı hatalı olabilir." eylem={<HapLink to="/blog">Tüm yazılar</HapLink>} />
         )
     }
 

@@ -1,7 +1,7 @@
 // Işıklı cam düğmeler için imleç takibi: tek bir genel dinleyici, imlecin altındaki
-// .isik / .isik-kutu / .isik-hap / .isik-kart öğesine yerel --x / --y (piksel) ve
+// .isik / .isik-kutu / .isik-hap / .isik-kart / .nav-ray öğesine yerel --x / --y (piksel) ve
 // eğilme için --nx / --ny (-1..1) değerlerini yazar.
-const SECICI = '.isik, .isik-kutu, .isik-hap, .isik-kart'
+const SECICI = '.isik, .isik-kutu, .isik-hap, .isik-kart, .nav-ray'
 
 let kuruldu = false
 

@@ -3,7 +3,7 @@ import { Sahne, SatirBaslik } from './uzay/Hareket'
 
 const kategoriler = [
     {
-        ad: "Web Geliştirme",
+        ad: "Web geliştirme",
         aciklama: "Kurumsal site, panel, tanıtım sayfası",
         arama: "web",
         icon: (
@@ -14,7 +14,7 @@ const kategoriler = [
         )
     },
     {
-        ad: "Mobil Uygulama",
+        ad: "Mobil uygulama",
         aciklama: "iOS, Android, Flutter, React Native",
         arama: "mobil",
         icon: (
@@ -25,7 +25,7 @@ const kategoriler = [
         )
     },
     {
-        ad: "E-Ticaret",
+        ad: "E-ticaret",
         aciklama: "Mağaza, ödeme ve kargo entegrasyonu",
         arama: "e-ticaret",
         icon: (
@@ -37,7 +37,7 @@ const kategoriler = [
         )
     },
     {
-        ad: "UI/UX Tasarım",
+        ad: "UI/UX tasarım",
         aciklama: "Arayüz, kullanıcı deneyimi, tasarım sistemi",
         arama: "tasarım",
         icon: (
@@ -50,7 +50,7 @@ const kategoriler = [
         )
     },
     {
-        ad: "Backend & API",
+        ad: "Backend ve API",
         aciklama: "Sunucu, veritabanı, servis entegrasyonları",
         arama: "backend",
         icon: (
@@ -63,7 +63,7 @@ const kategoriler = [
         )
     },
     {
-        ad: "Otomasyon & Bot",
+        ad: "Otomasyon ve bot",
         aciklama: "İş akışı otomasyonu, WhatsApp botları",
         arama: "otomasyon",
         icon: (

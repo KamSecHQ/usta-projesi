@@ -14,7 +14,7 @@ const ROLLER = [
 ]
 
 function HesapOlustur() {
-    useSayfaBasligi('Hesap Oluştur', 'Kalfahane hesabını ücretsiz aç: yazılımcıysan portföyünü oluştur, işletmeysen ilan açıp teklif topla.')
+    useSayfaBasligi('Hesap oluştur', 'Kalfahane hesabını ücretsiz aç: yazılımcıysan portföyünü oluştur, işletmeysen ilan açıp teklif topla.')
     const [searchParams] = useSearchParams()
     const [rol, setRol] = useState(searchParams.get('rol') === 'is-veren' ? 'is-veren' : 'yazilimci')
     const [adSoyad, setAdSoyad] = useState('')
@@ -104,7 +104,7 @@ function HesapOlustur() {
                 <p className="text-[12.5px] leading-relaxed text-gri-koyu">
                     Hesap oluşturarak{' '}
                     <Link to="/gizlilik" className="text-gri underline underline-offset-2 hover:text-white">
-                        Gizlilik Politikası
+                        Gizlilik politikası
                     </Link>
                     ’nı okuduğunu kabul edersin.
                 </p>

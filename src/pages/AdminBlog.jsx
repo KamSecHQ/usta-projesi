@@ -208,7 +208,7 @@ function AdminBlog() {
     }
 
     if (authYukleniyor || (kullaniciId && adminMi === null)) {
-        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!kullaniciId || !adminMi) {

@@ -6,8 +6,8 @@ import useSayfaBasligi from '../useSayfaBasligi'
 import { SifreAlani } from '../components/form/Alan'
 import { hesapHatasi } from '../components/hesap/hesapHatalari'
 import { useBildirim, useOnay } from '../components/bildirim/bildirimBaglami'
-import { SonucYok } from '../components/liste/ListeAraclari'
-import { HapLink, Ok } from '../components/uzay/Hareket'
+import { Ok } from '../components/uzay/Hareket'
+import GirisKapisi from '../components/hesap/GirisKapisi'
 
 const kart = 'rounded-[22px] border border-white/[0.08] bg-[#08080D] p-6 sm:p-7'
 
@@ -96,14 +96,12 @@ function Ayarlar() {
     }
 
     if (yukleniyor) {
-        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!user) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Ayarlar hesabına bağlı" metin="Şifreni ve oturumlarını yönetmek için giriş yap." eylem={<HapLink to="/giris">Giriş yap</HapLink>} />
-            </div>
+            <GirisKapisi ikon="ayarlar" baslik="Ayarlar hesabına bağlı" metin="Şifreni, açık oturumlarını ve hesap tercihlerini yönetmek için giriş yap." />
         )
     }
 

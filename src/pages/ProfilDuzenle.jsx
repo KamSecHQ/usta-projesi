@@ -11,6 +11,7 @@ import { profilGucuMaddeleri, profilGucuYuzdesi } from '../profilGucu'
 import { Alan } from '../components/form/Alan'
 import TeknolojiSecici from '../components/ilan/TeknolojiSecici'
 import { Ok } from '../components/uzay/Hareket'
+import GirisKapisi from '../components/hesap/GirisKapisi'
 
 const ONE_CIKAN_LIMIT = 3
 
@@ -116,7 +117,7 @@ function ProjeFormu({ baslangic, oneCikanSayisi, gonderiliyor, onKaydet, onIptal
 }
 
 function ProfilDuzenle() {
-    useSayfaBasligi('Profilimi Düzenle')
+    useSayfaBasligi('Profilimi düzenle')
 
     const { user, yukleniyor: authYukleniyor } = useAuth()
     const konumBilgisi = useLocation()
@@ -290,23 +291,23 @@ function ProfilDuzenle() {
         setProjeler(projeler.filter((p) => p.id !== id))
     }
 
-    if (authYukleniyor || yukleniyor) {
-        return <div className="min-h-screen bg-[#000000] flex items-center justify-center text-[#A1A1AA]">Yükleniyor...</div>
+    // Ziyaretçi için veri hiç yüklenmez: giriş kapısı yükleme bekleyişinden önce gelir
+    if (authYukleniyor) {
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!user) {
-        return (
-            <div className="min-h-screen bg-[#000000] flex flex-col items-center justify-center text-center px-6">
-                <p className="text-[#A1A1AA] mb-4">Profilini düzenlemek için giriş yapmalısın.</p>
-                <Link to="/giris" className="text-[#A78BFA] hover:underline">Giriş yap</Link>
-            </div>
-        )
+        return <GirisKapisi ikon="kisi" baslik="Vitrinini burada kurarsın" metin="Unvanın, ücretin, teknolojilerin ve portföyün herkese açık profilinde görünür. Düzenlemek için giriş yap." />
+    }
+
+    if (yukleniyor) {
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     const musaitlikSecenekleri = [
         { deger: 'musait', ad: 'Müsait' },
-        { deger: 'kismi_musait', ad: 'Kısmi Müsait' },
-        { deger: 'musait_degil', ad: 'Müsait Değil' },
+        { deger: 'kismi_musait', ad: 'Kısmen müsait' },
+        { deger: 'musait_degil', ad: 'Müsait değil' },
     ]
     const gomulVideo = videoEmbedUrl(videoUrl)
     const onizlemeUcret = ucretAraligiGoster(ucretMin || null, ucretMax || null)
@@ -457,7 +458,7 @@ function ProfilDuzenle() {
                             disabled={kaydediliyor}
                             className="isik isik-birincil bg-[#FDFDFD] text-[#050505] font-semibold px-6 py-3 rounded-full disabled:opacity-50 hover:bg-[#FFFFFF] transition-all duration-300 self-start"
                         >
-                            {kaydediliyor ? "Kaydediliyor..." : "Profili Kaydet"}
+                            {kaydediliyor ? "Kaydediliyor..." : "Profili kaydet"}
                         </button>
 
                         {/* Projelerim */}
@@ -469,7 +470,7 @@ function ProfilDuzenle() {
                                         onClick={() => setYeniProjeAcik(true)}
                                         className="text-[#A78BFA] text-sm hover:underline"
                                     >
-                                        + Proje Ekle
+                                        + Proje ekle
                                     </button>
                                 )}
                             </div>
@@ -482,7 +483,7 @@ function ProfilDuzenle() {
                                         gonderiliyor={projeGonderiliyor}
                                         onKaydet={projeEkle}
                                         onIptal={() => setYeniProjeAcik(false)}
-                                        gonderMetni="Projeyi Kaydet"
+                                        gonderMetni="Projeyi kaydet"
                                     />
                                 </div>
                             )}
@@ -505,7 +506,7 @@ function ProfilDuzenle() {
                                                     gonderiliyor={projeGonderiliyor}
                                                     onKaydet={(veriler) => projeGuncelle(p.id, veriler)}
                                                     onIptal={() => setDuzenlenenId(null)}
-                                                    gonderMetni="Değişiklikleri Kaydet"
+                                                    gonderMetni="Değişiklikleri kaydet"
                                                 />
                                             </div>
                                         ) : (
@@ -575,7 +576,7 @@ function ProfilDuzenle() {
                                 </ul>
                             )}
                         </div>
-                        <p className="text-[#A1A1AA] text-xs uppercase tracking-wider font-mono mb-3">Canlı Önizleme</p>
+                        <p className="text-[#A1A1AA] text-xs uppercase tracking-wider font-mono mb-3">Canlı önizleme</p>
                         <div className="isik-kutu bg-white/[0.03] backdrop-blur-md border border-white/[0.08] rounded-2xl p-6">
                             <div className="flex items-center gap-3 mb-4">
                                 <div className="relative shrink-0">
@@ -589,7 +590,7 @@ function ProfilDuzenle() {
                                     />
                                 </div>
                                 <div className="min-w-0">
-                                    <div className="text-[#FFFFFF] font-semibold truncate">{adSoyad || "İsim Soyisim"}</div>
+                                    <div className="text-[#FFFFFF] font-semibold truncate">{adSoyad || "Ad soyad"}</div>
                                     <div className="text-[#A1A1AA] text-sm truncate">{unvan || "Unvan"}</div>
                                     {konum && <div className="text-[#A1A1AA]/60 text-xs mt-0.5">{konum}</div>}
                                 </div>

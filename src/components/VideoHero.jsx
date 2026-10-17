@@ -3,10 +3,12 @@ import { Link } from 'react-router-dom'
 import { View } from '@react-three/drei'
 import '@fontsource-variable/plus-jakarta-sans'
 import './videoHero.css'
+import './gezinme.css'
 import { useAuth } from '../AuthContext'
 import DunyaKuresi from './atolye/DunyaKuresi'
 import Isitici from './atolye/Isitici'
 import kurePoster from '../assets/kure-poster.webp'
+import { rayOlaylari } from './navVurgu'
 
 // Hero'nun arka planı canlı WebGL küre (atolye/DunyaKuresi.jsx). Eski 38 MB'lık video ve onun
 // dış kaynaklı posteri kalktı; tuval hazır olana kadar küre sahnesinin kendi kaydı olan poster
@@ -19,8 +21,8 @@ const POSTER_KAYDI = import.meta.env.DEV && typeof window !== 'undefined' && new
 
 const LINKLER = [
     { ad: 'Ustalar', to: '/ustalar' },
-    { ad: 'İş İlanları', to: '/is-ilanlari' },
-    { ad: 'Nasıl Çalışır', to: '/#surec', bolum: 'surec' },
+    { ad: 'İş ilanları', to: '/is-ilanlari' },
+    { ad: 'Nasıl çalışır', to: '/#surec', bolum: 'surec' },
     { ad: 'Neden Kalfahane', to: '/#neden', bolum: 'neden' },
     { ad: 'Blog', to: '/blog' },
 ]
@@ -37,12 +39,13 @@ function hareketAzaltilsinMi() {
     return typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-function NavLink({ link, onClick }) {
+function NavLink({ link, onClick, className }) {
     // Sayfa içi bölümlere yumuşak kaydırma; diğerleri normal yönlendirme
     if (link.bolum) {
         return (
             <a
                 href={link.to}
+                className={className}
                 onClick={(e) => {
                     e.preventDefault()
                     onClick?.()
@@ -54,7 +57,7 @@ function NavLink({ link, onClick }) {
         )
     }
     return (
-        <Link to={link.to} onClick={onClick}>
+        <Link to={link.to} onClick={onClick} className={className}>
             {link.ad}
         </Link>
     )
@@ -195,10 +198,11 @@ export default function VideoHero({ onHazir }) {
                 <Link to="/" className="logo">
                     Kalfahane
                 </Link>
-                <nav className="nav-links" aria-label="Ana menü">
+                <nav className="nav-links nav-ray" aria-label="Ana menü" {...rayOlaylari}>
                     {LINKLER.map((l) => (
-                        <NavLink key={l.ad} link={l} />
+                        <NavLink key={l.ad} link={l} className="nav-hap" />
                     ))}
+                    <span className="nav-ray-vurgu" aria-hidden="true" />
                 </nav>
                 <div className="nav-actions">
                     {user ? (
@@ -213,10 +217,10 @@ export default function VideoHero({ onHazir }) {
                     ) : (
                         <>
                             <Link to="/giris" className="btn btn-login isik-hap">
-                                Giriş Yap
+                                Giriş yap
                             </Link>
                             <Link to="/hesap-olustur" className="btn btn-nav-start isik-hap isik-hap-birincil">
-                                Hesap Oluştur <Ok />
+                                Hesap oluştur <Ok />
                             </Link>
                         </>
                     )}
@@ -253,10 +257,10 @@ export default function VideoHero({ onHazir }) {
                 ) : (
                     <>
                         <Link to="/giris" onClick={menuKapat}>
-                            Giriş Yap
+                            Giriş yap
                         </Link>
                         <Link to="/hesap-olustur" className="m-start" onClick={menuKapat}>
-                            Hesap Oluştur <Ok />
+                            Hesap oluştur <Ok />
                         </Link>
                     </>
                 )}

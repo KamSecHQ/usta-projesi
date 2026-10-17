@@ -18,17 +18,17 @@ function DuyuruCubugu() {
     if (!gorunur) return null
 
     return (
-        <div className="duyuru relative bg-gradient-to-r from-[#8B5CF6]/15 via-[#8B5CF6]/[0.08] to-[#8B5CF6]/15 border-b border-[#8B5CF6]/20 px-6 py-2.5">
-            <div className="max-w-5xl mx-auto flex items-center justify-center gap-3 text-center relative">
-                <p className="text-[#FFFFFF] text-xs sm:text-sm">
-                    <span className="text-[#C4B5FD] font-semibold">Erken Erişim</span> — Kalfahane şu anda aktif geliştirme aşamasında, geri bildirimlerin bizim için değerli.
+        <div className="duyuru px-4 py-2 sm:px-6">
+            <div className="relative mx-auto flex max-w-5xl items-center justify-center gap-3 pr-8 text-center">
+                <span className="duyuru-cip">Erken erişim</span>
+                <p className="text-[12.5px] text-[#D4D4D8] sm:text-[13px]">
+                    <span className="hidden sm:inline">Kalfahane yeni açıldı; çarşıyı ilk ustalar ve iş verenlerle birlikte kuruyoruz.</span>
+                    <span className="sm:hidden">Çarşıyı birlikte kuruyoruz.</span>
                 </p>
-                <button
-                    onClick={kapat}
-                    className="absolute right-0 text-[#A1A1AA] hover:text-[#FFFFFF] transition-colors duration-200 text-lg leading-none"
-                    aria-label="Duyuruyu kapat"
-                >
-                    ×
+                <button type="button" onClick={kapat} className="duyuru-kapat absolute right-0" aria-label="Duyuruyu kapat">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-3.5 w-3.5" aria-hidden="true">
+                        <path d="M6 6l12 12M18 6L6 18" />
+                    </svg>
                 </button>
             </div>
         </div>

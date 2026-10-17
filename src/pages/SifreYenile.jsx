@@ -46,7 +46,7 @@ function SifreYenile() {
     }
 
     if (yukleniyor || (!user && bekleme)) {
-        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!user) {

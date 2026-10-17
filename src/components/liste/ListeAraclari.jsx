@@ -68,7 +68,7 @@ export function SiralamaSecici({ deger, degisti, secenekler }) {
 // Sayfanın tek içeriği buysa başlık h1 olarak verilir (BaslikEtiketi="h1").
 export function SonucYok({ baslik, metin, eylem, BaslikEtiketi = 'p' }) {
     return (
-        <div className="mx-auto max-w-[520px] rounded-[20px] border border-dashed border-white/[0.14] px-8 py-14 text-center" role="status">
+        <div className="mx-auto max-w-[520px] rounded-[22px] border border-dashed border-white/[0.14] bg-[linear-gradient(180deg,rgba(139,92,246,0.08),rgba(255,255,255,0.01)_62%)] px-8 py-14 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]" role="status">
             <BaslikEtiketi className="text-[20px] font-medium tracking-[-0.015em] text-white">{baslik}</BaslikEtiketi>
             <p className="mt-2 text-[15px] font-light leading-relaxed text-gri">{metin}</p>
             {eylem && <div className="mt-6 flex justify-center">{eylem}</div>}

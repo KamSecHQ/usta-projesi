@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
+import Footer from './components/Footer'
 import Yukleyici from './components/hareket/Yukleyici'
 import BasaDon from './components/BasaDon'
 import UygulamaHatasi from './components/UygulamaHatasi'
@@ -45,6 +46,8 @@ function SayfaYukleniyor() {
 
 function App() {
     const { pathname } = useLocation()
+    // Anasayfa altbilgisini kendi taşır; mesajlar tam ekran bir uygulama düzenidir
+    const altBilgi = pathname !== '/' && !pathname.startsWith('/mesajlar')
     return (
         <div>
             <a href="#icerik" className="icerige-gec">
@@ -86,6 +89,7 @@ function App() {
                     </Suspense>
                 </UygulamaHatasi>
             </div>
+            {altBilgi && <Footer kompakt />}
         </div>
     )
 }

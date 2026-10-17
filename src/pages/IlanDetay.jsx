@@ -5,10 +5,10 @@ import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import { butceGoster, butceyeGore, zamanFarki, tl, teknolojiUyumu, aramaIcinKatla, tamamlananIsSayisiGetir, kidemRozetiHesapla } from '../ustaYardimcilari'
 import { useBildirim } from '../components/bildirim/bildirimBaglami'
-import { SonucYok } from '../components/liste/ListeAraclari'
 import { HapLink, Ok } from '../components/uzay/Hareket'
 import MesajlasDugmesi from '../components/MesajlasDugmesi'
 import { aciklamayiAyir } from '../components/ilan/ilanSablonlari'
+import { KapiSayfasi } from '../components/hesap/GirisKapisi'
 
 const TEKLIF_DURUMU = { beklemede: 'Beklemede', kabul_edildi: 'Kabul edildi', reddedildi: 'Reddedildi' }
 const MESAJ_ONERI = 80
@@ -133,7 +133,7 @@ function IlanDetay() {
     const [yukleniyor, setYukleniyor] = useState(true)
     const [bulunamadi, setBulunamadi] = useState(false)
 
-    useSayfaBasligi(ilan ? ilan.baslik : 'İş İlanı', ilan?.aciklama?.replace(/\s+/g, ' ').slice(0, 155))
+    useSayfaBasligi(ilan ? ilan.baslik : 'İş ilanı', ilan?.aciklama?.replace(/\s+/g, ' ').slice(0, 155))
 
     const veriGetir = useCallback(async () => {
         const { data: ilanData, error } = await supabase.from('ilanlar').select('*').eq('id', id).single()
@@ -173,7 +173,7 @@ function IlanDetay() {
 
     if (yukleniyor) {
         return (
-            <div className="min-h-screen bg-black px-4 pt-24 sm:px-8" role="status" aria-label="Yükleniyor">
+            <div className="uzay relative min-h-screen px-4 pt-24 sm:px-8" role="status" aria-label="Yükleniyor">
                 <div className="mx-auto grid max-w-[1180px] animate-pulse gap-10 motion-reduce:animate-none lg:grid-cols-[1fr_380px]">
                     <div className="space-y-4">
                         <div className="h-12 w-3/4 rounded-2xl bg-white/[0.05]" />
@@ -187,9 +187,7 @@ function IlanDetay() {
 
     if (bulunamadi) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="İlan bulunamadı" metin="İlan kaldırılmış ya da bağlantı hatalı olabilir. Açık ilanlara göz atabilirsin." eylem={<HapLink to="/is-ilanlari">Açık ilanlar</HapLink>} />
-            </div>
+            <KapiSayfasi ikon="ilanlar" baslik="İlan bulunamadı" metin="İlan kaldırılmış ya da bağlantı hatalı olabilir. Açık ilanlara göz atabilirsin." eylem={<HapLink to="/is-ilanlari">Açık ilanlar</HapLink>} />
         )
     }
 

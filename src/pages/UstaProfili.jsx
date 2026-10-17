@@ -13,6 +13,7 @@ import { SonucYok } from '../components/liste/ListeAraclari'
 import { HapLink, Ok } from '../components/uzay/Hareket'
 import Ikon from '../components/mesaj/Ikon'
 import { cevrimiciMi, musaitlikBilgisi, ucretAraligiGoster, videoEmbedUrl, kidemRozetiHesapla, tamamlananIsSayisiGetir } from '../ustaYardimcilari'
+import { KapiSayfasi } from '../components/hesap/GirisKapisi'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return '?'
@@ -119,7 +120,7 @@ function UstaProfili() {
 
     if (yukleniyor) {
         return (
-            <div className="min-h-screen bg-black px-4 pt-20 sm:px-8" role="status" aria-label="Profil yükleniyor">
+            <div className="uzay relative min-h-screen px-4 pt-20 sm:px-8" role="status" aria-label="Profil yükleniyor">
                 <div className="mx-auto max-w-[1180px] animate-pulse motion-reduce:animate-none">
                     <div className="h-[220px] rounded-[28px] bg-white/[0.04]" />
                     <div className="-mt-14 ml-8 h-28 w-28 rounded-full border-4 border-black bg-white/[0.08]" />
@@ -132,9 +133,7 @@ function UstaProfili() {
 
     if (bulunamadi) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Usta bulunamadı" metin="Profil kaldırılmış ya da bağlantı hatalı olabilir." eylem={<HapLink to="/ustalar">Ustalara göz at</HapLink>} />
-            </div>
+            <KapiSayfasi ikon="kisi" baslik="Usta bulunamadı" metin="Profil kaldırılmış ya da bağlantı hatalı olabilir." eylem={<HapLink to="/ustalar">Ustalara göz at</HapLink>} />
         )
     }
 

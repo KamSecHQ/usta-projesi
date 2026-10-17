@@ -12,8 +12,8 @@ function CtaFooter() {
                     satirlar={['Bir işin mi var,', 'bir hünerin mi?']}
                     className="font-pjs text-[clamp(2.6rem,7vw,5.6rem)] font-medium leading-[1.01] tracking-[-0.03em] text-white"
                 />
-                <p className="uz-sub mx-auto mt-5 max-w-[44ch] text-[17px] font-light leading-[1.6] text-[#f6f6f6]" style={{ '--d': '0.3s' }}>
-                    İş verenler ilan açar, ustalar teklif verir. Kalfahane'de ikisi de ücretsiz başlar.
+                <p className="uz-sub mx-auto mt-5 max-w-[44ch] text-balance text-[17px] font-light leading-[1.6] text-[#f6f6f6]" style={{ '--d': '0.3s' }}>
+                    İş veren ilanını açar, usta teklifini verir. Kalfahane'de ikisi de ücretsiz.
                 </p>
                 <div className="mt-8 flex flex-wrap justify-center gap-2.5">
                     <HapLink to="/hesap-olustur?rol=yazilimci" className="uz-otur" gecikme={0.45}>

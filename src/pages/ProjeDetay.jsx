@@ -4,11 +4,11 @@ import { supabase } from '../supabaseClient'
 import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import { cevrimiciMi, zamanFarki } from '../ustaYardimcilari'
-import { SonucYok } from '../components/liste/ListeAraclari'
 import { HapLink, Ok } from '../components/uzay/Hareket'
 import MesajlasDugmesi from '../components/MesajlasDugmesi'
 import ProjeKarti from '../components/ProjeKarti'
 import '../components/uzay/uzay.css'
+import { KapiSayfasi } from '../components/hesap/GirisKapisi'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return '?'
@@ -90,9 +90,7 @@ function ProjeDetay() {
 
     if (durum === 'yok') {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Proje bulunamadı" metin="Proje kaldırılmış ya da bağlantı hatalı olabilir." eylem={<HapLink to="/ustalar">Ustalara göz at</HapLink>} />
-            </div>
+            <KapiSayfasi ikon="klasor" baslik="Proje bulunamadı" metin="Proje kaldırılmış ya da bağlantı hatalı olabilir." eylem={<HapLink to="/ustalar">Ustalara göz at</HapLink>} />
         )
     }
 

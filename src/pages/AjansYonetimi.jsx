@@ -6,8 +6,8 @@ import { useAuth } from '../AuthContext'
 import useSayfaBasligi from '../useSayfaBasligi'
 import { baslangicHarfleri } from '../mesajlasma'
 import { Alan } from '../components/form/Alan'
-import { SonucYok } from '../components/liste/ListeAraclari'
 import { HapLink, Ok } from '../components/uzay/Hareket'
+import GirisKapisi, { KapiSayfasi } from '../components/hesap/GirisKapisi'
 
 const kart = 'rounded-[22px] border border-white/[0.08] bg-[#08080D] p-6 sm:p-7'
 
@@ -175,26 +175,22 @@ function AjansYonetimi() {
     }
 
     if (authYukleniyor) {
-        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!user) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Ajansını buradan yönetirsin" metin="Ekibini davet etmek ve ajans profilini açmak için giriş yap." eylem={<HapLink to="/giris">Giriş yap</HapLink>} />
-            </div>
+            <GirisKapisi ikon="ustalar" baslik="Ajansını buradan yönetirsin" metin="Ekibini davet etmek ve ajans profilini açmak için giriş yap." kayitRolu="yazilimci" />
         )
     }
 
     if (yukleniyor) {
-        return <div className="min-h-screen bg-black" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (profil?.rol !== 'yazilimci') {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Ajans profili yazılımcılar için" metin="İş veren hesaplarında ajans profili yok. Ekip arıyorsan ustaları inceleyip ilan verebilirsin." eylem={<HapLink to="/ustalar">Ustalara göz at</HapLink>} />
-            </div>
+            <KapiSayfasi ikon="ustalar" baslik="Ajans profili yazılımcılar için" metin="İş veren hesaplarında ajans profili yok. Ekip arıyorsan ustaları inceleyip ilan verebilirsin." eylem={<HapLink to="/ustalar">Ustalara göz at</HapLink>} />
         )
     }
 

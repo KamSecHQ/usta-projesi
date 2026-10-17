@@ -13,6 +13,7 @@ import { profilGucuMaddeleri, profilGucuYuzdesi } from '../profilGucu'
 import { aramaIcinKatla, zamanFarki } from '../ustaYardimcilari'
 import '../components/uzay/uzay.css'
 import { adminOnizlemesi } from './adminOnizleme'
+import GirisKapisi, { KapiSayfasi } from '../components/hesap/GirisKapisi'
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return '?'
@@ -234,22 +235,18 @@ function AdminPanel() {
     const basvuruGorunen = basvuruFiltre === 'tumu' ? basvurular : basvurular.filter((b) => b.tip === basvuruFiltre)
 
     if (authYukleniyor || (kullaniciId && adminMi === null)) {
-        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor" />
+        return <div className="uzay min-h-screen" role="status" aria-label="Yükleniyor"><div className="uz-yildizlar" aria-hidden /></div>
     }
 
     if (!kullaniciId) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Yönetim paneli için giriş yap" metin="Bu sayfa yalnızca platform yöneticilerine açık." eylem={<HapLink to="/giris">Giriş yap</HapLink>} />
-            </div>
+            <GirisKapisi ikon="kalkan" baslik="Yönetim paneli için giriş yap" metin="Bu sayfa yalnızca platform yöneticilerine açık." kayitYok />
         )
     }
 
     if (!adminMi) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="Bu sayfayı görme yetkin yok" metin="Yönetim paneli yalnızca platform yöneticileri içindir." eylem={<HapLink to="/panel">Panelime dön</HapLink>} />
-            </div>
+            <KapiSayfasi ikon="kalkan" baslik="Bu sayfayı görme yetkin yok" metin="Yönetim paneli yalnızca platform yöneticileri içindir." eylem={<HapLink to="/panel">Panelime dön</HapLink>} />
         )
     }
 

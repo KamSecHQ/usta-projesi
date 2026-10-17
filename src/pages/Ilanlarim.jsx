@@ -12,6 +12,7 @@ import MesajlasDugmesi from '../components/MesajlasDugmesi'
 import { ilanlarimOnizlemesi } from './ilanlarimOnizleme'
 import DegerlendirmeFormu from '../components/degerlendirme/DegerlendirmeFormu'
 import { verdigimDegerlendirmeler } from '../components/degerlendirme/degerlendirmeVerisi'
+import GirisKapisi from '../components/hesap/GirisKapisi'
 
 const DURUMLAR = [
     ['acik', 'Açık'],
@@ -485,7 +486,7 @@ function Ilanlarim() {
 
     if (authYukleniyor || (user && yukleniyor)) {
         return (
-            <div className="min-h-screen bg-black px-4 pt-24 sm:px-8" role="status" aria-label="Yükleniyor">
+            <div className="uzay relative min-h-screen px-4 pt-24 sm:px-8" role="status" aria-label="Yükleniyor">
                 <div className="mx-auto max-w-[980px] animate-pulse space-y-5 motion-reduce:animate-none">
                     <div className="h-14 w-60 rounded-2xl bg-white/[0.05]" />
                     <div className="h-64 rounded-[24px] bg-white/[0.04]" />
@@ -496,9 +497,7 @@ function Ilanlarim() {
 
     if (!user) {
         return (
-            <div className="uzay flex min-h-screen items-center px-4">
-                <SonucYok BaslikEtiketi="h1" baslik="İlanlarını görmek için giriş yap" metin="Açtığın ilanlar ve gelen teklifler burada toplanır." eylem={<HapLink to="/giris">Giriş yap</HapLink>} />
-            </div>
+            <GirisKapisi ikon="klasor" baslik="İlanların burada toplanır" metin="Açtığın ilanları ve gelen teklifleri tek yerden yönet. Görmek için giriş yap." kayitRolu="is-veren" />
         )
     }
 

@@ -17,7 +17,7 @@ const SIRALAMALAR = [
 const butceDegeri = (ilan) => ilan.butce_max ?? ilan.butce_min ?? null
 
 function IsIlanlari() {
-    useSayfaBasligi('İş İlanları', 'İşletmelerin açtığı güncel yazılım işleri: web sitesi, mobil uygulama, entegrasyon. Bütçeyi gör, teklifini ver.')
+    useSayfaBasligi('İş ilanları', 'İşletmelerin açtığı güncel yazılım işleri: web sitesi, mobil uygulama, entegrasyon. Bütçeyi gör, teklifini ver.')
 
     // Süzme adres çubuğunda tutulur: paylaşılabilir ve geri tuşuyla korunur
     const [parametreler, setParametreler] = useSearchParams()

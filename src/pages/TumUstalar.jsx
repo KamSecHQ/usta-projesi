@@ -18,7 +18,7 @@ const SIRALAMALAR = [
 ]
 
 function TumUstalar() {
-    useSayfaBasligi('Tüm Ustalar', 'Doğrulanmış Türk yazılımcıların portföylerini incele: React, mobil, e-ticaret ve daha fazlası. Teknolojiye göre ara, ustanı seç.')
+    useSayfaBasligi('Ustalar', 'Doğrulanmış Türk yazılımcıların portföylerini incele: React, mobil, e-ticaret ve daha fazlası. Teknolojiye göre ara, ustanı seç.')
     const { user } = useAuth()
 
     // Süzme adres çubuğunda: paylaşılabilir, geri tuşuyla korunur, bant plakasından gelince güncellenir

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { supabase } from '../supabaseClient'
 import useSayfaBasligi from '../useSayfaBasligi'
 import HesapCercevesi from '../components/hesap/HesapCercevesi'
@@ -10,9 +10,17 @@ import { Ok } from '../components/uzay/Hareket'
 
 const EPOSTA = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
+// Giriş kapısından gelen ziyaretçi kaldığı sayfaya döner; yalnızca site içi yol kabul edilir
+function donusAdresi(ham) {
+    if (!ham || !ham.startsWith('/') || ham.startsWith('//') || ham.startsWith('/\\')) return '/panel'
+    return ham
+}
+
 function GirisYap() {
-    useSayfaBasligi('Giriş Yap')
+    useSayfaBasligi('Giriş yap')
     const navigate = useNavigate()
+    const [parametreler] = useSearchParams()
+    const sonra = donusAdresi(parametreler.get('sonra'))
     const bildir = useBildirim()
     const [email, setEmail] = useState('')
     const [sifre, setSifre] = useState('')
@@ -40,7 +48,7 @@ function GirisYap() {
             setHatalar({ genel: hesapHatasi(error) })
             return
         }
-        navigate('/panel')
+        navigate(sonra)
     }
 
     async function sifirlamaGonder(e) {

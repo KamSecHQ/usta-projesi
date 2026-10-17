@@ -4,14 +4,66 @@ import { supabase } from '../supabaseClient'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import AramaPaleti from './AramaPaleti'
 import DuyuruCubugu from './DuyuruCubugu'
+import Ikon from './gezinmeIkonlari'
+import { rayOlaylari } from './navVurgu'
 import { kidemRozetiHesapla, tamamlananIsSayisiGetir } from '../ustaYardimcilari'
 import { useOkunmamis } from '../mesajlasma'
 import MesajBildirimi from './MesajBildirimi'
+import './gezinme.css'
 
+// Anasayfanın bölümleri: Keşfet menüsü ve mobil menü buradan kaydırır
+const KESFET_LINKLERI = [
+    { ad: "Nasıl çalışır", aciklama: "Tarif et, teklif al, teslim al", hedef: "surec", ikon: "surec" },
+    { ad: "Kıdem cetveli", aciklama: "Rozetler yalnızca tamamlanan işlerden", hedef: "kidem", ikon: "kidem" },
+    { ad: "Neden Kalfahane", aciklama: "Yerel, açık ve doğrulanabilir", hedef: "neden", ikon: "kalkan" },
+    { ad: "Sık sorulanlar", aciklama: "Çarşıya girmeden önce", hedef: "sss", ikon: "soru" },
+]
 
 function baslangicHarfleri(adSoyad) {
     if (!adSoyad) return "?"
-    return adSoyad.split(" ").filter(Boolean).slice(0, 2).map((k) => k[0].toUpperCase()).join("")
+    return adSoyad.split(" ").filter(Boolean).slice(0, 2).map((k) => k[0].toLocaleUpperCase("tr")).join("")
+}
+
+function OkIsareti() {
+    return (
+        <svg viewBox="0 0 12 10" fill="none" aria-hidden="true" className="h-[10px] w-[12px] shrink-0">
+            <path d="M0.8 5h10M7.1 1.4 10.9 5l-3.8 3.6" stroke="currentColor" strokeWidth="1.35" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    )
+}
+
+function Avatar({ isim, kidem, boyut }) {
+    return (
+        <span
+            className={`${boyut} shrink-0 rounded-full p-[1.5px]`}
+            style={{ background: kidem ? `linear-gradient(135deg, ${kidem.renk}, transparent)` : "linear-gradient(135deg, rgba(255,255,255,0.35), transparent)" }}
+        >
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] text-[0.8em] font-bold text-[#050505]">
+                {baslangicHarfleri(isim)}
+            </span>
+        </span>
+    )
+}
+
+function Rozetler({ adminMi, kidem }) {
+    if (!adminMi && !kidem) return null
+    return (
+        <div className="flex flex-wrap items-center gap-1.5">
+            {adminMi && (
+                <span className="rounded-full border border-[#8B5CF6]/30 bg-[#8B5CF6]/10 px-2 py-0.5 text-[10.5px] font-medium text-[#C4B5FD]">
+                    Yönetici
+                </span>
+            )}
+            {kidem && (
+                <span
+                    className="rounded-full border px-2 py-0.5 text-[10.5px] font-medium"
+                    style={{ color: kidem.renk, borderColor: `${kidem.renk}50`, backgroundColor: `${kidem.renk}12` }}
+                >
+                    {kidem.etiket}
+                </span>
+            )}
+        </div>
+    )
 }
 
 function Navbar() {
@@ -31,23 +83,32 @@ function Navbar() {
     const olusturMenuRef = useRef(null)
     const bekleyenHedef = useRef(null)
 
-    const kesfetLinkleri = [
-        { ad: "Nasıl Çalışır", hedef: "surec" },
-        { ad: "Neden Kalfahane", hedef: "neden" },
-    ]
     const { user } = useAuth()
     const navigate = useNavigate()
     const location = useLocation()
     const { toplam: okunmamisMesaj, gelen: gelenMesaj } = useOkunmamis(user?.id)
     const mesajRozeti = okunmamisMesaj > 9 ? "9+" : okunmamisMesaj
+    const yol = location.pathname
+
+    // Bulunulan bölüm: üst düzey sayfa ve altındaki ayrıntı sayfaları
+    const etkinMi = (kok) => yol === kok || yol.startsWith(`${kok}/`)
+    const kesfetEtkin = etkinMi("/blog")
+    // Yönetim paneli yalnızca kendi sayfasında yanar; blog yönetimi onun alt yolu
+    const linkEtkinMi = (to) => (to === "/admin" ? yol === to : etkinMi(to))
 
     async function cikisYap() {
         await supabase.auth.signOut()
     }
 
-    function bolumeGit(id) {
+    function menuleriKapat() {
         setMenuAcik(false)
         setKesfetMenuAcik(false)
+        setOlusturMenuAcik(false)
+        setHesapMenuAcik(false)
+    }
+
+    function bolumeGit(id) {
+        menuleriKapat()
         if (location.pathname !== "/") {
             bekleyenHedef.current = id
             navigate("/")
@@ -126,11 +187,20 @@ function Navbar() {
         return () => document.removeEventListener("mousedown", disariTiklandi)
     }, [])
 
+    // Açık menüler Escape ile kapanır
+    useEffect(() => {
+        function escDinle(e) {
+            if (e.key === "Escape") menuleriKapat()
+        }
+        document.addEventListener("keydown", escDinle)
+        return () => document.removeEventListener("keydown", escDinle)
+    }, [])
+
     useEffect(() => {
         function kaydirmaKontrol() {
             setKaydirildi(window.scrollY > 12)
         }
-        window.addEventListener("scroll", kaydirmaKontrol)
+        window.addEventListener("scroll", kaydirmaKontrol, { passive: true })
         return () => window.removeEventListener("scroll", kaydirmaKontrol)
     }, [])
 
@@ -148,386 +218,226 @@ function Navbar() {
 
     const gorunenIsim = adSoyad || user?.email || ""
 
+    // Hesap menüsü ve mobil menü aynı listeyi kullanır
+    const hesapLinkleri = user
+        ? [
+            { ad: "Panelim", to: "/panel", ikon: "panel" },
+            { ad: "Mesajlar", to: "/mesajlar", ikon: "mesaj", sayac: okunmamisMesaj },
+            { ad: "Profilim", to: "/profilim", ikon: "kisi" },
+            { ad: "Favorilerim", to: "/favorilerim", ikon: "kalp" },
+            rol === 'is-veren' && { ad: "İlanlarım", to: "/ilanlarim", ikon: "klasor" },
+            rol === 'yazilimci' && { ad: "Tekliflerim", to: "/tekliflerim", ikon: "teklif" },
+            adminMi && { ad: "Yönetim paneli", to: "/admin", ikon: "kalkan", sayac: bekleyenSayisi },
+            adminMi && { ad: "Blog yönetimi", to: "/admin/blog", ikon: "kalem" },
+            { ad: "Ayarlar", to: "/ayarlar", ikon: "ayarlar" },
+        ].filter(Boolean)
+        : []
+
+    // "+" menüsü role göre: yazılımcı vitrinini büyütür, iş veren ilan açar
+    const olusturLinkleri = [
+        rol === 'yazilimci' && { ad: "Portföye proje ekle", aciklama: "Tamamladığın bir işi göster", to: "/profilim", ikon: "klasorArti" },
+        rol === 'yazilimci' && user && { ad: "Herkese açık profilim", aciklama: "Ziyaretçilerin gördüğü hâli", to: `/ustalar/${user.id}`, ikon: "vitrin" },
+        rol === 'is-veren' && { ad: "İlan ver", aciklama: "Ücretsiz, birkaç dakikada", to: "/ilan-ver", ikon: "arti" },
+        { ad: "Usta bul", aciklama: "Onaylı profilleri incele", to: "/ustalar", ikon: "ustalar" },
+    ].filter(Boolean)
+
     return (
         <>
             <DuyuruCubugu />
-            <header
-                className={`ust-cubuk sticky top-0 z-50 border-b transition-all duration-300 ${kaydirildi
-                    ? "bg-[#000000]/[0.97] border-white/[0.12] shadow-lg shadow-black/20"
-                    : "bg-[#000000]/[0.94] border-white/[0.08] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
-                    }`}
-            >
+            <header className={`ust-cubuk sticky top-0 z-50 ${kaydirildi ? "kaydirildi" : ""}`}>
                 <div
-                    className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between transition-all duration-300 ${kaydirildi ? "py-2.5" : "py-3.5"
-                        }`}
+                    className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-[padding] duration-300 sm:px-6 ${kaydirildi ? "py-2" : "py-3"}`}
                 >
 
                     {/* Logo */}
-                    <Link to="/" className="text-[1.3rem] font-extrabold tracking-[0.01em] text-[#FFFFFF]">
+                    <Link to="/" className="text-[1.3rem] font-extrabold tracking-[0.01em] text-[#FFFFFF]" onClick={menuleriKapat}>
                         Kalfahane<span className="text-[#A78BFA]">.</span>
                     </Link>
 
-                    {/* Masaüstü menü */}
-                    <nav className="hidden md:flex items-center gap-1">
-                        <Link
-                            to="/ustalar"
-                            className="text-[#A1A1AA] text-sm px-4 py-2 rounded-full hover:text-[#FFFFFF] hover:bg-white/[0.06] transition-all duration-300"
-                        >
-                            Ustalar
-                        </Link>
-
-                        <Link
-                            to="/is-ilanlari"
-                            className="text-[#A1A1AA] text-sm px-4 py-2 rounded-full hover:text-[#FFFFFF] hover:bg-white/[0.06] transition-all duration-300"
-                        >
-                            İş İlanları
-                        </Link>
-
-                        <div className="relative" ref={kesfetMenuRef}>
-                            <button
-                                onClick={() => setKesfetMenuAcik(!kesfetMenuAcik)}
-                                className="flex items-center gap-1.5 text-[#A1A1AA] text-sm px-4 py-2 rounded-full hover:text-[#FFFFFF] hover:bg-white/[0.06] transition-all duration-300"
-                            >
-                                Keşfet
-                                <svg
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                                    className={`w-3 h-3 transition-transform duration-300 ${kesfetMenuAcik ? "rotate-180" : ""}`}
-                                >
-                                    <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                            </button>
-                            {kesfetMenuAcik && (
-                                <div className="absolute left-0 mt-2 w-48 acilir bg-[#0D0D13]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden py-1.5">
-                                    {kesfetLinkleri.map((link) => (
-                                        <button
-                                            key={link.hedef}
-                                            onClick={() => bolumeGit(link.hedef)}
-                                            className="w-full flex items-center px-4 py-2.5 text-[#A1A1AA] text-sm text-left hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                        >
-                                            {link.ad}
-                                        </button>
-                                    ))}
-                                    <Link
-                                        to="/blog"
-                                        onClick={() => setKesfetMenuAcik(false)}
-                                        className="flex items-center px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                    >
-                                        Blog
-                                    </Link>
-                                </div>
-                            )}
-                        </div>
-
-                        <button
-                            onClick={() => setAramaAcik(true)}
-                            className="isik isik-cam flex items-center gap-2 text-[#A1A1AA] text-sm px-3.5 py-2 ml-1 rounded-full border border-white/[0.08] hover:border-white/[0.18] hover:bg-white/[0.04] hover:text-[#FFFFFF] transition-all duration-300"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4">
-                                <circle cx="11" cy="11" r="7" />
-                                <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
-                            </svg>
-                            Ara
-                            <kbd className="text-[10px] font-mono border border-white/[0.15] rounded px-1 py-0.5 ml-0.5">⌘K</kbd>
-                        </button>
-                    </nav>
-
-                    {/* Sağ taraf: hızlı oluştur + bildirim + hesap */}
-                    <div className="hidden md:flex items-center gap-2">
-
-                        {/* "+" Hızlı Oluştur menüsü */}
-                        <div className="relative" ref={olusturMenuRef}>
-                            <button
-                                onClick={() => setOlusturMenuAcik(!olusturMenuAcik)}
-                                className="w-8 h-8 flex items-center justify-center text-[#A1A1AA] rounded-full hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-all duration-300"
-                                aria-label="Hızlı oluştur"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" className="w-4.5 h-4.5">
-                                    <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-                                </svg>
-                            </button>
-                            {olusturMenuAcik && (
-                                <div className="absolute right-0 mt-2 w-56 acilir bg-[#0D0D13]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden py-1.5">
-                                    {user ? (
-                                        <>
-                                            <Link
-                                                to="/profilim"
-                                                onClick={() => setOlusturMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
-                                                    <path d="M4 4h6l2 2h8v12a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1z" strokeLinecap="round" strokeLinejoin="round" />
-                                                </svg>
-                                                Yeni Proje Ekle
-                                            </Link>
-                                            <Link
-                                                to={`/ustalar/${user.id}`}
-                                                onClick={() => setOlusturMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
-                                                    <circle cx="12" cy="8" r="4" />
-                                                    <path d="M4 21v-1a8 8 0 0116 0v1" strokeLinecap="round" />
-                                                </svg>
-                                                Portföyümü Görüntüle
-                                            </Link>
-                                            <div className="h-px bg-white/[0.08] my-1.5" />
-                                            {rol === 'is-veren' && (
-                                                <Link
-                                                    to="/ilan-ver"
-                                                    onClick={() => setOlusturMenuAcik(false)}
-                                                    className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                                >
-                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
-                                                        <path d="M12 5v14M5 12h14" strokeLinecap="round" />
-                                                    </svg>
-                                                    Yeni İlan Ver
-                                                </Link>
-                                            )}
-                                            <Link
-                                                to="/ustalar"
-                                                onClick={() => setOlusturMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4 h-4 shrink-0">
-                                                    <circle cx="11" cy="11" r="7" />
-                                                    <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
-                                                </svg>
-                                                Yazılımcı Bul
-                                            </Link>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Link
-                                                to="/hesap-olustur?rol=yazilimci"
-                                                onClick={() => setOlusturMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                Yazılımcı Olarak Katıl
-                                            </Link>
-                                            <Link
-                                                to="/hesap-olustur?rol=is-veren"
-                                                onClick={() => setOlusturMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                İş Vermek İstiyorum
-                                            </Link>
-                                        </>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Mesajlar — okunmamış sayısıyla */}
-                        {user && (
+                    {/* Masaüstü: ışık rayı + arama */}
+                    <div className="hidden items-center gap-2 md:flex">
+                        <nav className="nav-ray" aria-label="Ana menü" {...rayOlaylari}>
                             <Link
-                                to="/mesajlar"
-                                className={`relative w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-all duration-300 ${location.pathname.startsWith('/mesajlar') ? 'text-[#FFFFFF] bg-white/[0.06]' : 'text-[#A1A1AA]'}`}
-                                aria-label={okunmamisMesaj ? `Mesajlar, ${okunmamisMesaj} okunmamış` : "Mesajlar"}
-                                title="Mesajlar"
+                                to="/ustalar"
+                                className={`nav-hap ${etkinMi("/ustalar") ? "etkin" : ""}`}
+                                aria-current={yol === "/ustalar" ? "page" : undefined}
                             >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-4.5 h-4.5">
-                                    <path d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                {okunmamisMesaj > 0 && (
-                                    <span className="msj-nav-rozet absolute -top-1 -right-1 text-[#FFFFFF] text-[10px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center">
-                                        {mesajRozeti}
-                                    </span>
-                                )}
+                                Ustalar
                             </Link>
-                        )}
-
-                        {/* Bildirim zili — sadece adminler için, gerçek onay bekleyen sayısı */}
-                        {adminMi && (
                             <Link
-                                to="/admin"
-                                className="relative w-8 h-8 flex items-center justify-center text-[#A1A1AA] rounded-full hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-all duration-300"
-                                aria-label="Onay bekleyen profiller"
+                                to="/is-ilanlari"
+                                className={`nav-hap ${etkinMi("/is-ilanlari") ? "etkin" : ""}`}
+                                aria-current={yol === "/is-ilanlari" ? "page" : undefined}
                             >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-4.5 h-4.5">
-                                    <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                {bekleyenSayisi > 0 && (
-                                    <span className="absolute -top-0.5 -right-0.5 bg-[#FDFDFD] text-[#050505] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                                        {bekleyenSayisi > 9 ? "9+" : bekleyenSayisi}
-                                    </span>
-                                )}
+                                İş ilanları
                             </Link>
-                        )}
-
-                        {user ? (
-                            <div className="relative" ref={hesapMenuRef}>
+                            <div className="relative" ref={kesfetMenuRef}>
                                 <button
-                                    onClick={() => setHesapMenuAcik(!hesapMenuAcik)}
-                                    className="flex items-center gap-2.5 pl-1 pr-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] hover:border-white/[0.18] hover:bg-white/[0.06] transition-all duration-300"
+                                    type="button"
+                                    onClick={() => setKesfetMenuAcik(!kesfetMenuAcik)}
+                                    className={`nav-hap ${kesfetEtkin ? "etkin" : ""}`}
+                                    aria-expanded={kesfetMenuAcik}
+                                    aria-haspopup="true"
                                 >
-                                    <div
-                                        className="w-8 h-8 rounded-full p-[1.5px] shrink-0"
-                                        style={{ background: kidem ? `linear-gradient(135deg, ${kidem.renk}, transparent)` : 'transparent' }}
-                                    >
-                                        <div className="w-full h-full rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] text-xs font-bold">
-                                            {baslangicHarfleri(gorunenIsim)}
-                                        </div>
-                                    </div>
-                                    <span className="text-[#FFFFFF] text-xs font-medium max-w-[130px] truncate">
-                                        {gorunenIsim}
-                                    </span>
-                                    <svg
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                                        className={`w-3.5 h-3.5 text-[#A1A1AA] transition-transform duration-300 ${hesapMenuAcik ? "rotate-180" : ""}`}
-                                    >
-                                        <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                                    </svg>
+                                    Keşfet
+                                    <Ikon ad="asagi" className="ok-asagi" />
                                 </button>
-
-                                {hesapMenuAcik && (
-                                    <div className="absolute right-0 mt-2 w-64 acilir bg-[#0D0D13]/95 backdrop-blur-2xl border border-white/[0.1] rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
-                                        <div className="px-4 py-4 border-b border-white/[0.08] flex items-center gap-3">
-                                            <div
-                                                className="w-11 h-11 rounded-full p-[1.5px] shrink-0"
-                                                style={{ background: kidem ? `linear-gradient(135deg, ${kidem.renk}, transparent)` : 'transparent' }}
-                                            >
-                                                <div className="w-full h-full rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] font-bold">
-                                                    {baslangicHarfleri(gorunenIsim)}
-                                                </div>
-                                            </div>
-                                            <div className="min-w-0">
-                                                <div className="text-[#FFFFFF] text-sm font-semibold truncate">{gorunenIsim}</div>
-                                                <div className="text-[#A1A1AA]/70 text-xs truncate">{user.email}</div>
-                                            </div>
-                                        </div>
-                                        <div className="px-4 py-2.5 flex items-center gap-1.5 flex-wrap border-b border-white/[0.08]">
-                                            {adminMi && (
-                                                <span className="text-[#A78BFA] text-[10px] font-mono border border-[#8B5CF6]/30 rounded-full px-2 py-0.5">
-                                                    YÖNETİCİ
+                                {kesfetMenuAcik && (
+                                    <div className="menu-panel left-1/2 ml-[-160px] w-[320px]">
+                                        {KESFET_LINKLERI.map((link) => (
+                                            <button key={link.hedef} type="button" onClick={() => bolumeGit(link.hedef)} className="menu-satir">
+                                                <span className="menu-ikon"><Ikon ad={link.ikon} /></span>
+                                                <span className="menu-metin">
+                                                    <span>{link.ad}</span>
+                                                    <span className="menu-aciklama">{link.aciklama}</span>
                                                 </span>
-                                            )}
-                                            {kidem && (
-                                                <span
-                                                    className="text-[10px] font-mono rounded-full px-2 py-0.5 border"
-                                                    style={{ color: kidem.renk, borderColor: `${kidem.renk}50`, backgroundColor: `${kidem.renk}12` }}
-                                                >
-                                                    {kidem.etiket}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="py-1.5">
-                                            <Link
-                                                to="/panel"
-                                                onClick={() => setHesapMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                Panelim
-                                            </Link>
-                                            <Link
-                                                to="/mesajlar"
-                                                onClick={() => setHesapMenuAcik(false)}
-                                                className="flex items-center justify-between gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                Mesajlar
-                                                {okunmamisMesaj > 0 && (
-                                                    <span className="bg-[#8B5CF6]/20 text-[#C4B5FD] text-[10px] font-semibold tabular-nums rounded-full px-1.5 py-0.5">
-                                                        {okunmamisMesaj}
-                                                    </span>
-                                                )}
-                                            </Link>
-                                            <Link
-                                                to="/profilim"
-                                                onClick={() => setHesapMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                Profilim
-                                            </Link>
-                                            <Link
-                                                to="/favorilerim"
-                                                onClick={() => setHesapMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                Favorilerim
-                                            </Link>
-                                            {rol === 'is-veren' && (
-                                                <Link
-                                                    to="/ilanlarim"
-                                                    onClick={() => setHesapMenuAcik(false)}
-                                                    className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                                >
-                                                    İlanlarım
-                                                </Link>
-                                            )}
-                                            {rol === 'yazilimci' && (
-                                                <Link
-                                                    to="/tekliflerim"
-                                                    onClick={() => setHesapMenuAcik(false)}
-                                                    className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                                >
-                                                    Tekliflerim
-                                                </Link>
-                                            )}
-                                            {adminMi && (
-                                                <Link
-                                                    to="/admin"
-                                                    onClick={() => setHesapMenuAcik(false)}
-                                                    className="flex items-center justify-between gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                                >
-                                                    Yönetim Paneli
-                                                    {bekleyenSayisi > 0 && (
-                                                        <span className="bg-[#8B5CF6]/15 text-[#A78BFA] text-[10px] font-mono rounded-full px-1.5 py-0.5">
-                                                            {bekleyenSayisi}
-                                                        </span>
-                                                    )}
-                                                </Link>
-                                            )}
-                                            {adminMi && (
-                                                <Link
-                                                    to="/admin/blog"
-                                                    onClick={() => setHesapMenuAcik(false)}
-                                                    className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                                >
-                                                    Blog Yönetimi
-                                                </Link>
-                                            )}
-                                            <Link
-                                                to="/ayarlar"
-                                                onClick={() => setHesapMenuAcik(false)}
-                                                className="flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm hover:bg-white/[0.06] hover:text-[#FFFFFF] transition-colors duration-200"
-                                            >
-                                                Ayarlar
-                                            </Link>
-                                        </div>
-                                        <div className="border-t border-white/[0.08] py-1.5">
-                                            <button
-                                                onClick={() => { setHesapMenuAcik(false); cikisYap() }}
-                                                className="w-full flex items-center gap-2.5 px-4 py-2.5 text-[#A1A1AA] text-sm text-left hover:bg-red-400/[0.08] hover:text-red-300 transition-colors duration-200"
-                                            >
-                                                Çıkış Yap
                                             </button>
-                                        </div>
+                                        ))}
+                                        <div className="menu-ayrac" />
+                                        <Link to="/blog" onClick={() => setKesfetMenuAcik(false)} className={`menu-satir ${kesfetEtkin ? "etkin" : ""}`}>
+                                            <span className="menu-ikon"><Ikon ad="blog" /></span>
+                                            <span className="menu-metin">
+                                                <span>Blog</span>
+                                                <span className="menu-aciklama">Çarşıdan yazılar ve rehberler</span>
+                                            </span>
+                                        </Link>
                                     </div>
                                 )}
                             </div>
+                            <span className="nav-ray-vurgu" aria-hidden="true" />
+                        </nav>
+
+                        <button type="button" onClick={() => setAramaAcik(true)} className="nav-ara isik-hap" aria-label="Ara (⌘K)">
+                            <Ikon ad="ara" className="h-4 w-4" />
+                            Ara
+                            <kbd>⌘K</kbd>
+                        </button>
+                    </div>
+
+                    {/* Masaüstü sağ taraf */}
+                    <div className="hidden items-center gap-2 md:flex">
+                        {user ? (
+                            <>
+                                <div className="relative" ref={olusturMenuRef}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setOlusturMenuAcik(!olusturMenuAcik)}
+                                        className="nav-ikon isik-hap"
+                                        aria-label="Hızlı oluştur"
+                                        aria-expanded={olusturMenuAcik}
+                                        aria-haspopup="true"
+                                    >
+                                        <Ikon ad="arti" />
+                                    </button>
+                                    {olusturMenuAcik && (
+                                        <div className="menu-panel right-0 w-72">
+                                            {olusturLinkleri.map((l) => (
+                                                <Link key={l.to} to={l.to} onClick={() => setOlusturMenuAcik(false)} className="menu-satir">
+                                                    <span className="menu-ikon"><Ikon ad={l.ikon} /></span>
+                                                    <span className="menu-metin">
+                                                        <span>{l.ad}</span>
+                                                        <span className="menu-aciklama">{l.aciklama}</span>
+                                                    </span>
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Mesajlar — okunmamış sayısıyla */}
+                                <Link
+                                    to="/mesajlar"
+                                    className={`nav-ikon isik-hap ${etkinMi("/mesajlar") ? "etkin" : ""}`}
+                                    aria-label={okunmamisMesaj ? `Mesajlar, ${okunmamisMesaj} okunmamış` : "Mesajlar"}
+                                    title="Mesajlar"
+                                >
+                                    <Ikon ad="mesaj" />
+                                    {okunmamisMesaj > 0 && (
+                                        <span className="msj-nav-rozet absolute -right-1 -top-1 z-10 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-[#FFFFFF]">
+                                            {mesajRozeti}
+                                        </span>
+                                    )}
+                                </Link>
+
+                                {/* Bildirim zili — sadece adminler için, gerçek onay bekleyen sayısı */}
+                                {adminMi && (
+                                    <Link to="/admin" className={`nav-ikon isik-hap ${etkinMi("/admin") ? "etkin" : ""}`} aria-label="Onay bekleyen profiller" title="Onay bekleyen profiller">
+                                        <Ikon ad="zil" />
+                                        {bekleyenSayisi > 0 && (
+                                            <span className="absolute -right-0.5 -top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full bg-[#FDFDFD] text-[10px] font-bold text-[#050505]">
+                                                {bekleyenSayisi > 9 ? "9+" : bekleyenSayisi}
+                                            </span>
+                                        )}
+                                    </Link>
+                                )}
+
+                                <div className="relative" ref={hesapMenuRef}>
+                                    <button
+                                        type="button"
+                                        onClick={() => setHesapMenuAcik(!hesapMenuAcik)}
+                                        className="nav-hesap isik-hap"
+                                        aria-expanded={hesapMenuAcik}
+                                        aria-haspopup="true"
+                                    >
+                                        <Avatar isim={gorunenIsim} kidem={kidem} boyut="h-[34px] w-[34px] text-[12px]" />
+                                        <span className="max-w-[130px] truncate text-[13px] font-medium text-[#FFFFFF]">{gorunenIsim}</span>
+                                        <Ikon ad="asagi" className={`h-3.5 w-3.5 text-[#A1A1AA] transition-transform duration-300 ${hesapMenuAcik ? "rotate-180" : ""}`} />
+                                    </button>
+
+                                    {hesapMenuAcik && (
+                                        <div className="menu-panel right-0 w-72">
+                                            <div className="flex items-center gap-3 px-2.5 pb-3 pt-2">
+                                                <Avatar isim={gorunenIsim} kidem={kidem} boyut="h-11 w-11 text-[15px]" />
+                                                <div className="min-w-0">
+                                                    <div className="truncate text-sm font-semibold text-[#FFFFFF]">{gorunenIsim}</div>
+                                                    <div className="truncate text-xs text-[#8A8A94]">{user.email}</div>
+                                                    <div className="mt-1.5"><Rozetler adminMi={adminMi} kidem={kidem} /></div>
+                                                </div>
+                                            </div>
+                                            <div className="menu-ayrac" />
+                                            {hesapLinkleri.map((l) => (
+                                                <Link
+                                                    key={l.to}
+                                                    to={l.to}
+                                                    onClick={() => setHesapMenuAcik(false)}
+                                                    className={`menu-satir menu-satir-sade ${linkEtkinMi(l.to) ? "etkin" : ""}`}
+                                                >
+                                                    <Ikon ad={l.ikon} />
+                                                    {l.ad}
+                                                    {l.sayac > 0 && <span className="menu-sayac">{l.sayac}</span>}
+                                                </Link>
+                                            ))}
+                                            <div className="menu-ayrac" />
+                                            <button
+                                                type="button"
+                                                onClick={() => { setHesapMenuAcik(false); cikisYap() }}
+                                                className="menu-satir menu-satir-sade menu-satir-tehlike"
+                                            >
+                                                <Ikon ad="cikis" />
+                                                Çıkış yap
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </>
                         ) : (
-                            <Link
-                                to="/giris"
-                                className="isik isik-birincil giris-dugme inline-flex h-9 items-center rounded-full bg-[#FDFDFD] px-5 text-sm font-medium text-[#050505] transition-colors duration-200 hover:bg-white"
-                            >
-                                Giriş Yap
-                            </Link>
+                            <>
+                                <Link to="/giris" className="isik-hap inline-flex h-[38px] items-center rounded-full px-4 text-[13.5px] font-medium">
+                                    Giriş yap
+                                </Link>
+                                <Link to="/hesap-olustur" className="isik-hap isik-hap-birincil inline-flex h-[38px] items-center gap-2 rounded-full pl-4 pr-3.5 text-[13.5px] font-semibold">
+                                    Hesap oluştur <OkIsareti />
+                                </Link>
+                            </>
                         )}
                     </div>
 
-                    {/* Mobil sağ taraf: arama + hamburger */}
-                    <div className="md:hidden flex items-center gap-1">
+                    {/* Mobil sağ taraf: mesajlar + arama + menü */}
+                    <div className="flex items-center gap-1.5 md:hidden">
                         {adminMi && bekleyenSayisi > 0 && (
-                            <Link
-                                to="/admin"
-                                className="relative w-9 h-9 flex items-center justify-center text-[#A1A1AA]"
-                                aria-label="Onay bekleyen profiller"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-                                    <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
-                                    <path d="M13.73 21a2 2 0 01-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
-                                <span className="absolute top-0.5 right-0.5 bg-[#FDFDFD] text-[#050505] text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                            <Link to="/admin" className="nav-ikon isik-hap" aria-label="Onay bekleyen profiller">
+                                <Ikon ad="zil" />
+                                <span className="absolute -right-0.5 -top-0.5 z-10 flex h-4 w-4 items-center justify-center rounded-full bg-[#FDFDFD] text-[9px] font-bold text-[#050505]">
                                     {bekleyenSayisi > 9 ? "9+" : bekleyenSayisi}
                                 </span>
                             </Link>
@@ -535,197 +445,94 @@ function Navbar() {
                         {user && (
                             <Link
                                 to="/mesajlar"
-                                className="relative w-9 h-9 flex items-center justify-center text-[#A1A1AA]"
+                                className={`nav-ikon isik-hap ${etkinMi("/mesajlar") ? "etkin" : ""}`}
                                 aria-label={okunmamisMesaj ? `Mesajlar, ${okunmamisMesaj} okunmamış` : "Mesajlar"}
                             >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="w-5 h-5">
-                                    <path d="M4 5h16a1 1 0 011 1v10a1 1 0 01-1 1h-9l-5 4v-4H4a1 1 0 01-1-1V6a1 1 0 011-1z" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
+                                <Ikon ad="mesaj" />
                                 {okunmamisMesaj > 0 && (
-                                    <span className="msj-nav-rozet absolute top-0 right-0 text-[#FFFFFF] text-[9px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center">
+                                    <span className="msj-nav-rozet absolute -right-1 -top-1 z-10 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-[#FFFFFF]">
                                         {mesajRozeti}
                                     </span>
                                 )}
                             </Link>
                         )}
-                        <button
-                            onClick={() => setAramaAcik(true)}
-                            className="w-9 h-9 flex items-center justify-center text-[#A1A1AA]"
-                            aria-label="Ara"
-                        >
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="w-5 h-5">
-                                <circle cx="11" cy="11" r="7" />
-                                <path d="M21 21l-4.3-4.3" strokeLinecap="round" />
-                            </svg>
+                        <button type="button" onClick={() => setAramaAcik(true)} className="nav-ikon isik-hap" aria-label="Ara">
+                            <Ikon ad="ara" />
                         </button>
                         <button
-                            className="relative w-9 h-9 flex items-center justify-center text-[#FFFFFF]"
+                            type="button"
+                            className="nav-ikon isik-hap"
                             onClick={() => setMenuAcik(!menuAcik)}
-                            aria-label="Menüyü aç/kapat"
+                            aria-label={menuAcik ? "Menüyü kapat" : "Menüyü aç"}
+                            aria-expanded={menuAcik}
+                            aria-controls="mobil-menu"
                         >
-                            <span className={`absolute block w-5 h-[1.5px] bg-current transition-all duration-300 ${menuAcik ? "rotate-45" : "-translate-y-1.5"}`} />
-                            <span className={`absolute block w-5 h-[1.5px] bg-current transition-all duration-300 ${menuAcik ? "opacity-0" : "opacity-100"}`} />
-                            <span className={`absolute block w-5 h-[1.5px] bg-current transition-all duration-300 ${menuAcik ? "-rotate-45" : "translate-y-1.5"}`} />
+                            <span className={`absolute block h-[1.5px] w-[18px] bg-current transition-all duration-300 ${menuAcik ? "rotate-45" : "-translate-y-[5px]"}`} />
+                            <span className={`absolute block h-[1.5px] w-[18px] bg-current transition-all duration-300 ${menuAcik ? "-rotate-45" : "translate-y-[5px]"}`} />
                         </button>
                     </div>
                 </div>
 
                 {/* Mobil açılır menü */}
                 {menuAcik && (
-                    <nav className="acilir md:hidden flex flex-col gap-1 px-6 pb-6 pt-2 bg-[#000000]/95 backdrop-blur-2xl border-t border-white/[0.06]">
-                        <Link
-                            to="/ustalar"
-                            onClick={() => setMenuAcik(false)}
-                            className="text-[#A1A1AA] text-left px-4 py-3 rounded-xl hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                        >
+                    <nav id="mobil-menu" className="mobil-menu md:hidden" aria-label="Mobil menü">
+                        <Link to="/ustalar" onClick={menuleriKapat} className={`mobil-satir ${etkinMi("/ustalar") ? "etkin" : ""}`}>
+                            <span className="menu-ikon"><Ikon ad="ustalar" /></span>
                             Ustalar
+                            <Ikon ad="sag" className="mobil-ok" />
                         </Link>
-                        <Link
-                            to="/is-ilanlari"
-                            onClick={() => setMenuAcik(false)}
-                            className="text-[#A1A1AA] text-left px-4 py-3 rounded-xl hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                        >
-                            İş İlanları
+                        <Link to="/is-ilanlari" onClick={menuleriKapat} className={`mobil-satir ${etkinMi("/is-ilanlari") ? "etkin" : ""}`}>
+                            <span className="menu-ikon"><Ikon ad="ilanlar" /></span>
+                            İş ilanları
+                            <Ikon ad="sag" className="mobil-ok" />
                         </Link>
-                        {kesfetLinkleri.map((link) => (
-                            <button
-                                key={link.hedef}
-                                onClick={() => bolumeGit(link.hedef)}
-                                className="text-[#A1A1AA] text-left px-4 py-3 rounded-xl hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                            >
-                                {link.ad}
-                            </button>
-                        ))}
-                        <Link
-                            to="/blog"
-                            onClick={() => setMenuAcik(false)}
-                            className="text-[#A1A1AA] text-left px-4 py-3 rounded-xl hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                        >
+                        <Link to="/blog" onClick={menuleriKapat} className={`mobil-satir ${kesfetEtkin ? "etkin" : ""}`}>
+                            <span className="menu-ikon"><Ikon ad="blog" /></span>
                             Blog
+                            <Ikon ad="sag" className="mobil-ok" />
                         </Link>
 
-                        <div className="h-px bg-white/[0.08] my-2" />
+                        <div className="mobil-baslik">Keşfet</div>
+                        {KESFET_LINKLERI.map((link) => (
+                            <button key={link.hedef} type="button" onClick={() => bolumeGit(link.hedef)} className="mobil-satir">
+                                <span className="menu-ikon"><Ikon ad={link.ikon} /></span>
+                                {link.ad}
+                                <Ikon ad="sag" className="mobil-ok" />
+                            </button>
+                        ))}
 
                         {user ? (
                             <>
-                                <div className="flex items-center gap-3 px-4 py-2">
-                                    <div
-                                        className="w-9 h-9 rounded-full p-[1.5px] shrink-0"
-                                        style={{ background: kidem ? `linear-gradient(135deg, ${kidem.renk}, transparent)` : 'transparent' }}
-                                    >
-                                        <div className="w-full h-full rounded-full bg-gradient-to-br from-[#8B5CF6] to-[#C4B5FD] flex items-center justify-center text-[#050505] text-sm font-bold">
-                                            {baslangicHarfleri(gorunenIsim)}
-                                        </div>
-                                    </div>
+                                <div className="mobil-baslik">Hesabın</div>
+                                <div className="mb-1 flex items-center gap-3 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+                                    <Avatar isim={gorunenIsim} kidem={kidem} boyut="h-10 w-10 text-[14px]" />
                                     <div className="min-w-0">
-                                        <div className="text-[#FFFFFF] text-sm font-medium truncate">{gorunenIsim}</div>
-                                        <div className="text-[#A1A1AA]/60 text-xs truncate">{user.email}</div>
-                                        <div className="flex items-center gap-1.5 flex-wrap mt-1">
-                                            {adminMi && (
-                                                <span className="text-[#A78BFA] text-[10px] font-mono border border-[#8B5CF6]/30 rounded-full px-2 py-0.5">
-                                                    YÖNETİCİ
-                                                </span>
-                                            )}
-                                            {kidem && (
-                                                <span
-                                                    className="text-[10px] font-mono rounded-full px-2 py-0.5 border"
-                                                    style={{ color: kidem.renk, borderColor: `${kidem.renk}50`, backgroundColor: `${kidem.renk}12` }}
-                                                >
-                                                    {kidem.etiket}
-                                                </span>
-                                            )}
-                                        </div>
+                                        <div className="truncate text-sm font-medium text-[#FFFFFF]">{gorunenIsim}</div>
+                                        <div className="truncate text-xs text-[#8A8A94]">{user.email}</div>
+                                        <div className="mt-1.5"><Rozetler adminMi={adminMi} kidem={kidem} /></div>
                                     </div>
                                 </div>
-                                <Link
-                                    to="/panel"
-                                    onClick={() => setMenuAcik(false)}
-                                    className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                >
-                                    Panelim
-                                </Link>
-                                <Link
-                                    to="/mesajlar"
-                                    onClick={() => setMenuAcik(false)}
-                                    className="flex items-center justify-between text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                >
-                                    Mesajlar
-                                    {okunmamisMesaj > 0 && (
-                                        <span className="bg-[#8B5CF6]/20 text-[#C4B5FD] text-[11px] font-semibold tabular-nums rounded-full px-2 py-0.5">{okunmamisMesaj}</span>
-                                    )}
-                                </Link>
-                                <Link
-                                    to="/profilim"
-                                    onClick={() => setMenuAcik(false)}
-                                    className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                >
-                                    Profilim
-                                </Link>
-                                <Link
-                                    to="/favorilerim"
-                                    onClick={() => setMenuAcik(false)}
-                                    className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                >
-                                    Favorilerim
-                                </Link>
-                                {rol === 'is-veren' && (
-                                    <Link
-                                        to="/ilanlarim"
-                                        onClick={() => setMenuAcik(false)}
-                                        className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                    >
-                                        İlanlarım
+                                {hesapLinkleri.map((l) => (
+                                    <Link key={l.to} to={l.to} onClick={menuleriKapat} className={`mobil-satir ${linkEtkinMi(l.to) ? "etkin" : ""}`}>
+                                        <span className="menu-ikon"><Ikon ad={l.ikon} /></span>
+                                        {l.ad}
+                                        {l.sayac > 0 ? <span className="menu-sayac">{l.sayac}</span> : <Ikon ad="sag" className="mobil-ok" />}
                                     </Link>
-                                )}
-                                {rol === 'yazilimci' && (
-                                    <Link
-                                        to="/tekliflerim"
-                                        onClick={() => setMenuAcik(false)}
-                                        className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                    >
-                                        Tekliflerim
-                                    </Link>
-                                )}
-                                {adminMi && (
-                                    <Link
-                                        to="/admin"
-                                        onClick={() => setMenuAcik(false)}
-                                        className="isik isik-cam bg-white/[0.05] border border-white/[0.1] text-[#FFFFFF] px-4 py-3 rounded-xl text-sm font-medium text-center hover:bg-white/[0.1] transition-all duration-300"
-                                    >
-                                        Yönetim Paneli {bekleyenSayisi > 0 && `(${bekleyenSayisi})`}
-                                    </Link>
-                                )}
-                                {adminMi && (
-                                    <Link
-                                        to="/admin/blog"
-                                        onClick={() => setMenuAcik(false)}
-                                        className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                    >
-                                        Blog Yönetimi
-                                    </Link>
-                                )}
-                                <Link
-                                    to="/ayarlar"
-                                    onClick={() => setMenuAcik(false)}
-                                    className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:bg-white/[0.05] hover:text-[#FFFFFF] transition-all duration-300"
-                                >
-                                    Ayarlar
-                                </Link>
-                                <button
-                                    onClick={() => { setMenuAcik(false); cikisYap() }}
-                                    className="text-[#A1A1AA] px-4 py-3 rounded-xl text-sm text-left hover:text-red-300 hover:bg-red-400/[0.08] transition-all duration-300"
-                                >
-                                    Çıkış Yap
+                                ))}
+                                <button type="button" onClick={() => { menuleriKapat(); cikisYap() }} className="mobil-satir mt-1 text-[#A1A1AA] hover:text-red-300">
+                                    <span className="menu-ikon"><Ikon ad="cikis" /></span>
+                                    Çıkış yap
                                 </button>
                             </>
                         ) : (
-                            <Link
-                                to="/giris"
-                                onClick={() => setMenuAcik(false)}
-                                className="isik isik-birincil bg-[#FDFDFD] text-[#050505] px-4 py-3 rounded-xl text-sm font-semibold text-center hover:bg-[#FFFFFF] transition-all duration-300"
-                            >
-                                Giriş Yap
-                            </Link>
+                            <div className="mt-5 grid gap-2.5">
+                                <Link to="/hesap-olustur" onClick={menuleriKapat} className="isik-hap isik-hap-birincil flex h-12 items-center justify-center gap-2.5 rounded-full text-[15px] font-semibold">
+                                    Hesap oluştur <OkIsareti />
+                                </Link>
+                                <Link to="/giris" onClick={menuleriKapat} className="isik-hap flex h-12 items-center justify-center rounded-full text-[15px] font-medium">
+                                    Giriş yap
+                                </Link>
+                            </div>
                         )}
                     </nav>
                 )}
